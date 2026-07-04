@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "toughtongue",
+  "description": "Create, refine, and analyze ToughTongue AI voice-agent scenarios — sales roleplays, cold calls, coaching sessions — through the ToughTongue MCP server.",
+  "version": "0.1.0",
+  "author": {
+    "name": "ToughTongue AI",
+    "url": "https://app.toughtongueai.com"
+  },
+  "homepage": "https://app.toughtongueai.com",
+  "repository": "https://github.com/tough-tongue/toughtongue-skills",
+  "license": "MIT",
+  "keywords": [
+    "voice-ai",
+    "toughtongue",
+    "ttai",
+    "roleplay",
+    "sales-training",
+    "coaching",
+    "conversation-practice"
+  ]
+}

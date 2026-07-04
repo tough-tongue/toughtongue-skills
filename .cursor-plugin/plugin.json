@@ -1,0 +1,14 @@
+{
+  "name": "toughtongue",
+  "displayName": "ToughTongue AI",
+  "description": "Skills and MCP server for the ToughTongue AI voice-agent platform — create scenarios, refine them from real transcripts, and analyze session performance.",
+  "version": "0.1.0",
+  "author": {
+    "name": "ToughTongue AI",
+    "url": "https://app.toughtongueai.com"
+  },
+  "homepage": "https://app.toughtongueai.com",
+  "repository": "https://github.com/tough-tongue/toughtongue-skills",
+  "license": "MIT",
+  "keywords": ["voice-ai", "toughtongue", "ttai", "roleplay", "sales-training", "coaching"]
+}

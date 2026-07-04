@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "ttai": {
+      "type": "http",
+      "url": "https://api.toughtongueai.com/api/public/mcp",
+      "headers": {
+        "Authorization": "Bearer ${TTAI_PAT}"
+      }
+    }
+  }
+}

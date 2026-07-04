@@ -1,0 +1,17 @@
+{
+  "name": "toughtongue-skills",
+  "description": "Skills and MCP server for ToughTongue AI — the voice-agent platform for interviews, sales, coaching, and negotiations. Create scenarios, refine them from real transcripts, and analyze session performance from your coding agent.",
+  "owner": {
+    "name": "tough-tongue",
+    "url": "https://github.com/tough-tongue"
+  },
+  "plugins": [
+    {
+      "name": "toughtongue",
+      "description": "Create, refine, and analyze ToughTongue AI voice-agent scenarios through the ToughTongue MCP server. Includes scenario-creator, scenario-refiner, and session-analyst skills.",
+      "source": ".",
+      "category": "productivity",
+      "tags": ["voice", "agents", "ttai", "sales-training", "conversation-practice"]
+    }
+  ]
+}

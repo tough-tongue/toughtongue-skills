@@ -36,4 +36,31 @@ public and is installed directly into end users' agents — every word ships.
 
 Bump the version in all plugin manifests together (`.claude-plugin/plugin.json`,
 `.codex-plugin/plugin.json`, `.cursor-plugin/plugin.json`) on any user-visible
-change.
+change. The explicit `version` field controls when installed users receive
+updates — without a bump, Claude Code users on marketplace installs do not
+update.
+
+## Releasing & Publishing
+
+### Pre-release checklist (every release)
+
+1. `claude plugin validate .` — must pass; the community-marketplace review
+   pipeline runs the same check on submission.
+2. Local smoke test, Claude Code: `claude --plugin-dir .` then invoke
+   `/toughtongue:scenario-creator` (and `/reload-plugins` after edits).
+3. Local smoke test, Codex: `codex plugin marketplace add <checkout-path>`,
+   `codex plugin add toughtongue@toughtongue`, restart, verify the ttai MCP
+   tools and all three skills appear.
+4. Verify `TTAI_PAT` flows: with the env var set, "Call the ttai MCP tool
+   list_organizations" must succeed in both agents.
+5. Bump `version` in all three plugin manifests; tag the release.
+
+### Distribution channels
+
+| Channel | Mechanism | Status |
+|---|---|---|
+| Claude Code (self-hosted marketplace) | This repo's `.claude-plugin/marketplace.json`; users run `/plugin marketplace add tough-tongue/toughtongue-skills` | Live on push |
+| Claude community marketplace (`@claude-community`) | Submit at <https://platform.claude.com/plugins/submit> (Console, works for individual authors) or <https://claude.ai/admin-settings/directory/submissions/plugins/new> (Team/Enterprise). Review pins a commit SHA in `anthropics/claude-plugins-community`; CI auto-bumps on new pushes; catalog syncs nightly | Submit once |
+| Codex (GitHub marketplace) | This repo's `.agents/plugins/marketplace.json`; users run `codex plugin marketplace add tough-tongue/toughtongue-skills`. Codex also reads `.claude-plugin/marketplace.json` for compatibility | Live on push |
+| Codex official Plugin Directory | Publishing is "coming soon" per OpenAI docs — no self-serve yet. Interim: share to a ChatGPT workspace via Codex app → Plugins → Created by you → Share | Watch docs |
+| skills.sh | Indexes public GitHub repos with `skills/` | Live once repo is public |

@@ -16,25 +16,59 @@ any agent that supports the Agent Skills format:
 
 ## Install
 
-### skills.sh (Cursor, Copilot, Gemini CLI, Cline, and more)
-
-```bash
-npx skills add tough-tongue/toughtongue-skills
-```
-
 ### Claude Code
+
+Inside Claude Code:
 
 ```text
 /plugin marketplace add tough-tongue/toughtongue-skills
 /plugin install toughtongue@toughtongue-skills
 ```
 
+Or from the terminal:
+
+```bash
+claude plugin marketplace add tough-tongue/toughtongue-skills
+claude plugin install toughtongue@toughtongue-skills
+```
+
+The plugin bundles the skills and registers the ToughTongue MCP server
+(`.mcp.json`) in one install — no separate `claude mcp add` step needed.
+Just set `TTAI_PAT` (see Authenticate below).
+
+Skills are namespaced after install: invoke them as
+`/toughtongue:scenario-creator`, `/toughtongue:scenario-refiner`,
+`/toughtongue:session-analyst` — or just describe the task and Claude picks
+the right skill automatically.
+
 ### Codex
 
 ```bash
-git clone https://github.com/tough-tongue/toughtongue-skills
-cd toughtongue-skills
-codex plugin marketplace add .
+codex plugin marketplace add tough-tongue/toughtongue-skills
+codex plugin add toughtongue@toughtongue
+```
+
+Then restart Codex and start a new thread. The plugin bundles the skills and
+registers the ToughTongue MCP server (`.mcp.json`) in one install.
+
+### Cursor / Copilot / Gemini CLI / Cline (via skills.sh)
+
+```bash
+npx skills add tough-tongue/toughtongue-skills
+```
+
+Installs the skills; add the MCP server separately (see
+"MCP without the plugin" below).
+
+### Local development / testing
+
+```bash
+# Claude Code — load the plugin without installing:
+claude --plugin-dir /path/to/toughtongue-skills
+# after edits, run /reload-plugins inside the session
+
+# Codex — register the checkout as a local marketplace:
+codex plugin marketplace add /path/to/toughtongue-skills
 codex plugin add toughtongue@toughtongue
 ```
 

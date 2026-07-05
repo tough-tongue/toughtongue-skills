@@ -1,0 +1,33 @@
+[
+  {
+    "skills": ["session-analyst"],
+    "query": "For our 'Enterprise Discovery Call' scenario, pull the last 50 sessions and tell me the top 5 improvement areas for the team.",
+    "expected_behavior": [
+      "Calls ttai:list_organizations and uses org context with is_org true on ttai:list_sessions",
+      "Resolves the scenario ID via ttai:list_scenarios and paginates ttai:list_sessions until 50 sessions (or all available) are collected",
+      "Aggregates report_card topics weighted by weight and clusters weaknesses into behavior-named themes, excluding unanalyzed sessions from score math and reporting their count",
+      "Backs each top improvement area with session evidence (quotes or analytics_url links)",
+      "Produces the Team performance report structure from references/report-templates.md"
+    ]
+  },
+  {
+    "skills": ["session-analyst"],
+    "query": "Pull the 5 lowest-scoring sessions for our onboarding scenario and figure out what went wrong.",
+    "expected_behavior": [
+      "Uses ttai:list_sessions to collect the population, sorts by evaluation_results.final_score ascending, and takes the bottom 5",
+      "Fetches details with ttai:get_sessions_batch and reads transcript_url contents for the actual conversations",
+      "Distinguishes scenario faults from user-skill faults, and recommends handing off to the scenario-refiner skill if the scenario is at fault",
+      "Reports findings with transcript evidence, not just score numbers"
+    ]
+  },
+  {
+    "skills": ["session-analyst"],
+    "query": "How did priya@example.com do on her practice sessions this month? Put together a coaching report.",
+    "expected_behavior": [
+      "Filters ttai:list_sessions by user_email and from_date for the current month",
+      "Computes per-topic averages and a score trend across her sessions",
+      "Uses the Individual coaching report template with at most 3 focus areas and action items drawn from improvement_results",
+      "Notes the sample size caveat if fewer than ~10 analyzed sessions exist"
+    ]
+  }
+]

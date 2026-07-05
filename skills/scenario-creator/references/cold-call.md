@@ -3,6 +3,17 @@
 Rules for scenarios where the **AI is the outbound caller** — calling a lead
 whose data is (at least partially) known. The user plays the lead.
 
+## Contents
+
+- Voice pipeline requirements (output rules, STT errors, speech style)
+- Opening pattern (two beats, welcome_instructions)
+- Lead context handling (template variables, missing-data rules)
+- Discovery / data collection
+- Objection handling and call outcomes
+- ai_instructions and user_instructions structure
+- Rubrik structure (evaluates the LEAD)
+- Technical config, anti-patterns, quality checklist
+
 Key facts:
 
 - Voice-pipeline-first: OUTPUT RULES + STT handling + natural speech style are mandatory

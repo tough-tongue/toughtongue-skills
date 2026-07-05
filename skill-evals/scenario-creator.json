@@ -1,0 +1,34 @@
+[
+  {
+    "skills": ["scenario-creator"],
+    "query": "Create a ToughTongue scenario for my SDRs to practice cold-calling leads who filled out a demo form for our payroll software. The AI should play the caller.",
+    "expected_behavior": [
+      "Calls ttai:list_organizations before any other ttai tool and resolves whether to pass org_id",
+      "Classifies the scenario as Cold Call and reads references/cold-call.md plus references/scenario-fields.md",
+      "Drafts ai_instructions containing voice-pipeline blocks (output rules, transcription-error handling, natural speech style), a two-beat opening, and exactly three outcomes (CONVERTED / NURTURE / DEAD LEAD)",
+      "Writes a rubrik that evaluates the LEAD (the human), not the AI caller",
+      "Calls ttai:create_scenario without an id field and returns the practice link https://app.toughtongueai.com/run/<scenario_id>"
+    ]
+  },
+  {
+    "skills": ["scenario-creator"],
+    "query": "Here is a transcript of a call we lost on pricing objections: [transcript]. Build me a practice scenario so our reps can rehearse handling these exact objections.",
+    "expected_behavior": [
+      "Classifies the scenario as Sales Roleplay (AI plays the prospect) and reads references/sales-roleplay.md",
+      "Extracts the actual objections from the pasted transcript and uses them as the scenario's core objections instead of inventing generic ones",
+      "Includes a resistance pattern (one objection at a time), breakthrough conditions, and early termination rules in ai_instructions",
+      "Writes a rubrik that evaluates the SALES REP with weighted categories",
+      "Creates via ttai:create_scenario and reports what was built in 2-3 sentences with the practice link"
+    ]
+  },
+  {
+    "skills": ["scenario-creator"],
+    "query": "I have a discovery call with Sarah Chen from Acme Corp in 30 minutes. Create a quick practice scenario so I can rehearse.",
+    "expected_behavior": [
+      "Gathers real context (fetches Acme Corp information from the web or connected tools) rather than inventing details",
+      "Chooses sensible defaults instead of asking multiple clarifying questions, given the time pressure",
+      "Creates a sales roleplay where the AI plays Sarah Chen with company-specific context in ai_instructions",
+      "Returns the practice link immediately after ttai:create_scenario succeeds"
+    ]
+  }
+]

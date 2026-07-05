@@ -1,0 +1,12 @@
+interface:
+  display_name: "Getting Started"
+  short_description: "Verify your ToughTongue AI setup and start your first workflow"
+  default_prompt: "Get me started with ToughTongue AI."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "ttai"
+      description: "ToughTongue AI public API MCP server"
+      transport: "streamable_http"
+      url: "https://api.toughtongueai.com/api/public/mcp"

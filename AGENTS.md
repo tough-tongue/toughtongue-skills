@@ -6,8 +6,8 @@ public and is installed directly into end users' agents — every word ships.
 ## Rules
 
 - **MCP tool names are a contract.** Skills may only reference tools that the
-  hosted MCP server exposes (see README "MCP Server" section). If the server
-  catalog changes, skills change in the same PR.
+  hosted MCP server exposes (full catalog in [MCP.md](MCP.md)). If the server
+  catalog changes, MCP.md and the skills change in the same PR.
 - **Skills are MCP-first.** Every workflow ends in an MCP tool call
   (`create_scenario`, `update_scenario`, `list_sessions`, ...) — never in
   "write a file to disk" or references to internal ToughTongue repos, paths,
@@ -24,9 +24,16 @@ public and is installed directly into end users' agents — every word ships.
 ## Structure
 
 - `skills/<name>/SKILL.md` — frontmatter (`name`, `description`) + workflow.
-  The description doubles as the trigger; include the phrases users actually
-  say.
+  The description doubles as the trigger; front-load the key use case in the
+  first sentence (Codex truncates descriptions under context pressure) and
+  include the phrases users actually say.
 - `skills/<name>/references/` — depth files the skill tells agents to load.
+  Files over 100 lines carry a Contents block at the top.
+- `skills/<name>/agents/openai.yaml` — Codex UI metadata + the ttai MCP
+  dependency declaration. Keep the MCP URL in sync with `.mcp.json`.
+- `skill-evals/` — 3 evaluation scenarios per skill; re-run before releases
+  that touch a SKILL.md or reference file.
+- MCP tool references in skills use the qualified `ttai:tool_name` form.
 - `.claude-plugin/`, `.codex-plugin/`, `.cursor-plugin/`, `.agents/plugins/` —
   platform manifests. Keep `version` in sync across all of them when releasing.
 - `.mcp.json` / `mcp.json` — identical content; both exist for platform

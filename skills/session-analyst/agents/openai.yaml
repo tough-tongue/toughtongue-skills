@@ -1,0 +1,12 @@
+interface:
+  display_name: "Session Analyst"
+  short_description: "Turn ToughTongue AI session data into performance reports"
+  default_prompt: "Pull the last 50 sessions for my discovery-call scenario and list the top 5 improvement areas."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "ttai"
+      description: "ToughTongue AI public API MCP server"
+      transport: "streamable_http"
+      url: "https://api.toughtongueai.com/api/public/mcp"

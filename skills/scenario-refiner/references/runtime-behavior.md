@@ -5,6 +5,15 @@ registration, conductor/silence mechanics, and the difference between browser
 sessions and phone (SIP) sessions. Read this before diagnosing anything
 architectural.
 
+## Contents
+
+- System prompt assembly (variables, templates, new-sessions-only)
+- Tool system (two-axis control, end_session, browser vs SIP surfaces)
+- Conductor (timed mid-call messages)
+- Silence / nudge handling
+- Strategy quick-reference
+- Common failure modes → fix locations
+
 ---
 
 ## 1. System Prompt Assembly

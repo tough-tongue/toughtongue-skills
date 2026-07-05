@@ -3,6 +3,16 @@
 Rules for scenarios where the **AI teaches skills through interactive
 exercises** (not roleplay). The AI is the trainer/mentor.
 
+## Contents
+
+- Coach vs roleplay decision
+- The three patterns (A Situation-First, B Teach-First, C Reflective)
+- Two-part ai_instructions structure (SESSION FLOW + CONTENT)
+- One-visual-tool rule and mandatory rules
+- Pattern A / B / C step-by-step flows with templates
+- user_instructions structure
+- Technical config, anti-patterns, quick checklist
+
 Key facts:
 
 - Three patterns: A (Situation-First), B (Teach-First), C (Reflective)

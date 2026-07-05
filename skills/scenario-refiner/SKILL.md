@@ -1,13 +1,13 @@
 ---
 name: scenario-refiner
 description: >
-  Surgically refine an existing ToughTongue AI scenario based on real session
-  transcripts, low scores, or observed misbehavior — via the ttai MCP server.
-  Diagnoses whether the issue lives in ai_instructions, tools_config, or strategy,
-  then applies the smallest possible edit with update_scenario. Use when the user
-  says "refine the scenario", "fix the scenario", "the agent said X instead of Y",
-  "it ended the call too early", "it skipped a step", "make it sound more natural",
-  or pastes a transcript/complaint about a live scenario.
+  Fix and refine live ToughTongue AI scenarios from real session evidence via
+  the ttai MCP server. Diagnoses whether an issue lives in ai_instructions,
+  tools_config, or strategy, then applies the smallest possible edit with
+  ttai:update_scenario. Use when the user says "refine the scenario", "fix the
+  scenario", "the agent said X instead of Y", "it ended the call too early",
+  "it skipped a step", "make it sound more natural", or pastes a transcript or
+  complaint about a live scenario.
 ---
 
 # Scenario Refiner
@@ -16,29 +16,34 @@ Diagnose → plan → surgical edit → verify. Never expand tokens when you can
 tighten. The agent runs on a system prompt that is already long — every word
 you add is a word the model has to ignore at runtime.
 
-Read `references/runtime-behavior.md` before diagnosing anything about prompt
-assembly, tool registration, conductor, or silence mechanics.
+Read [references/runtime-behavior.md](references/runtime-behavior.md) before
+diagnosing anything about prompt assembly, tool registration, conductor, or
+silence mechanics.
 
 ## Prerequisites
 
-- The `ttai` MCP server is connected. If not, point the user at the repo README
-  and <https://app.toughtongueai.com/developer> for a `TTAI_PAT` token.
+- The **ttai** MCP server must be connected. Tool references below use the
+  `ttai:` server prefix (e.g. `ttai:update_scenario`); some agents surface
+  these as `mcp__ttai__update_scenario`. If the tools are missing, point the
+  user at the repo README and <https://app.toughtongueai.com/developer> for a
+  `TTAI_PAT` token.
 
 ## Workflow
 
 ### Step 1: Gather evidence
 
-1. Call `list_organizations`; pass `org_id` on subsequent calls if the scenario
-   belongs to an organization.
-2. Fetch the scenario with `get_scenario` (needs the scenario ID — find it via
-   `list_scenarios` if the user only gave a name). Read the **entire**
-   `ai_instructions`, plus `strategy`, `tools_config`, and `session_analysis`.
+1. Call `ttai:list_organizations`; pass `org_id` on subsequent calls if the
+   scenario belongs to an organization.
+2. Fetch the scenario with `ttai:get_scenario` (needs the scenario ID — find
+   it via `ttai:list_scenarios` if the user only gave a name). Read the
+   **entire** `ai_instructions`, plus `strategy`, `tools_config`, and
+   `session_analysis`.
 3. Get the failure evidence:
    - If the user pasted a transcript or complaint, use that.
-   - Otherwise pull sessions: `list_sessions` filtered by `scenario_id` (and
-     date range), pick the relevant ones (e.g. lowest scores), then
-     `get_sessions_batch` for details. Fetch `transcript_url` contents for
-     the actual conversation text.
+   - Otherwise pull sessions: `ttai:list_sessions` filtered by `scenario_id`
+     (and date range), pick the relevant ones (e.g. lowest scores), then
+     `ttai:get_sessions_batch` for details. Fetch `transcript_url` contents
+     for the actual conversation text.
 4. Identify the exact turn where things went wrong. Cross-reference: what did
    the scenario PRESCRIBE for that moment, and what did the agent actually DO?
    Quote both in your diagnosis.
@@ -65,7 +70,8 @@ Classify into one of these buckets. Each maps to a different fix location.
 | Robotic opening / restarts opening when interrupted | Quoted speech in `welcome_instructions` | `strategy.welcome_instructions` — rewrite in directive form |
 
 If the cause is architectural (template selection, tool registration,
-conductor injection), open `references/runtime-behavior.md` and cite the
+conductor injection), open
+[references/runtime-behavior.md](references/runtime-behavior.md) and cite the
 relevant mechanism. Don't guess.
 
 ### Step 3: Plan the edit
@@ -97,7 +103,7 @@ side — and check it against these principles:
 - Tool timing → right after the prescribed closing lines
 - Tone / style → the style rules block near the top
 
-### Step 4: Apply via `update_scenario`
+### Step 4: Apply via `ttai:update_scenario`
 
 1. Send **only** `id` plus the fields you changed — partial updates are
    supported, and untouched fields must not be re-sent (avoids clobbering
@@ -109,7 +115,7 @@ side — and check it against these principles:
 
 ### Step 5: Verify and report
 
-1. Re-fetch with `get_scenario` and confirm the change landed as planned.
+1. Re-fetch with `ttai:get_scenario` and confirm the change landed as planned.
 2. Conclude with exactly this structure:
    - **Diagnosis** (1-2 sentences) — what went wrong and why
    - **Change** — field + before/after summary
@@ -134,6 +140,6 @@ above, pick the matching closing — never substitute a generic 'thank you'."
 
 ### "Scenario scores dropped after a change"
 
-Pull sessions before and after the change date with `list_sessions`
+Pull sessions before and after the change date with `ttai:list_sessions`
 (`from_date` / `to_date`), compare `evaluation_results`, and check whether the
 prior edit introduced the regression before adding anything new.

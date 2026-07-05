@@ -4,6 +4,13 @@ Structures for the three standard reports, plus the webhook-driven coaching
 recipe. Fill every bracket; drop sections that have no data rather than
 padding them.
 
+## Contents
+
+- Team performance report
+- Scenario health report
+- Individual coaching report
+- Recipe: webhook-driven post-call coaching
+
 ---
 
 ## Team Performance Report

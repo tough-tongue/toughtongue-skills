@@ -1,0 +1,33 @@
+[
+  {
+    "skills": ["scenario-refiner"],
+    "query": "Our onboarding scenario keeps ending calls before the goodbye. Scenario name is 'Customer Onboarding Walkthrough'. Find out why and fix it.",
+    "expected_behavior": [
+      "Resolves the scenario ID via ttai:list_scenarios, then fetches the full scenario with ttai:get_scenario",
+      "Pulls session evidence via ttai:list_sessions filtered by scenario_id and inspects transcripts before proposing any edit",
+      "Diagnoses the root cause against the symptom table (end_session timing rule or tools_config) and quotes what the scenario prescribed versus what the agent did",
+      "Applies a surgical edit via ttai:update_scenario sending only id plus the changed fields",
+      "Reports diagnosis, change summary, token delta estimate, and the new-sessions-only reminder"
+    ]
+  },
+  {
+    "skills": ["scenario-refiner"],
+    "query": "Here's a transcript where our cold-call agent spoke the literal text '{{ lead_name }}' to a customer: [transcript]. Fix the scenario (ID 507f1f77bcf86cd799439011).",
+    "expected_behavior": [
+      "Fetches the scenario with ttai:get_scenario and locates the CONTEXT section handling for the lead_name variable",
+      "Adds a missing-value fallback rule (e.g. 'If lead_name is blank, open without a name') rather than removing the variable",
+      "Keeps the ai_instructions delta small (well under +50 tokens) and makes no unrelated changes",
+      "Verifies the change by re-fetching with ttai:get_scenario after ttai:update_scenario"
+    ]
+  },
+  {
+    "skills": ["scenario-refiner"],
+    "query": "Make the AI in our sales roleplay scenario sound less robotic and more empathetic.",
+    "expected_behavior": [
+      "Reads the full ai_instructions before editing and identifies the existing style rules block",
+      "Tightens or replaces existing style text instead of appending a new section, adding at most one concrete varied-acknowledgment example",
+      "Does not switch system_instructions_template or change unrelated strategy settings as a side effect",
+      "Reports the before/after and token delta"
+    ]
+  }
+]

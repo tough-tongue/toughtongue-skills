@@ -1,0 +1,23 @@
+[
+  {
+    "skills": ["getting-started"],
+    "query": "Get me started with ToughTongue AI.",
+    "expected_behavior": [
+      "Calls ttai:list_organizations first and reports whether the account is personal or has organizations",
+      "Calls ttai:list_scenarios and ttai:list_sessions with a small limit and summarizes the account state in 2-3 sentences",
+      "Recommends a first journey matching the account state (creator for empty accounts, analyst when analyzed sessions exist, refiner for low-scoring scenarios)",
+      "Closes with 2-3 concrete example prompts to try next",
+      "Never asks the user to paste their PAT into the chat"
+    ]
+  },
+  {
+    "skills": ["getting-started"],
+    "query": "Is my ToughTongue MCP working? I just installed the plugin but I'm getting errors.",
+    "expected_behavior": [
+      "Attempts ttai:list_organizations to reproduce the failure",
+      "Distinguishes the two failure modes: tools missing (MCP not registered — restart guidance or manual mcp add commands) versus 401 (TTAI_PAT not visible — export, launchctl setenv on macOS, full app restart)",
+      "Gives the fix for the observed failure mode only, not a generic dump of all troubleshooting steps",
+      "Offers to re-verify after the user applies the fix"
+    ]
+  }
+]

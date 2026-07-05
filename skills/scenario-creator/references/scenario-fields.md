@@ -1,9 +1,20 @@
 # Scenario Field Reference
 
-Field schema, valid enum values, and config defaults for `create_scenario` /
-`update_scenario` payloads. Load the MCP tool schema before calling — this file
-explains what to put in each field; the tool schema is the source of truth for
-types.
+Field schema, valid enum values, and config defaults for `ttai:create_scenario`
+/ `ttai:update_scenario` payloads. Load the MCP tool schema before calling —
+this file explains what to put in each field; the tool schema is the source of
+truth for types.
+
+## Contents
+
+- Top-level fields
+- ai_model_config (providers, models, voice quick-reference)
+- strategy (auto-start, welcome, silence, conductor, defaults by type)
+- appearance (voice, language codes)
+- tools_config (two-axis control, defaults by scenario type)
+- session_analysis (auto-analysis, extraction)
+- rubrik patterns (cold call, sales, coaching)
+- Dynamic variables and missing-value fallbacks
 
 ---
 

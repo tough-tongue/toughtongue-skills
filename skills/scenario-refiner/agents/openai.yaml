@@ -1,0 +1,12 @@
+interface:
+  display_name: "Scenario Refiner"
+  short_description: "Fix live ToughTongue AI scenarios from real session evidence"
+  default_prompt: "My ToughTongue scenario ends calls too early — pull low-scoring sessions and fix it."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "ttai"
+      description: "ToughTongue AI public API MCP server"
+      transport: "streamable_http"
+      url: "https://api.toughtongueai.com/api/public/mcp"

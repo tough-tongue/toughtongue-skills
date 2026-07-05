@@ -1,0 +1,12 @@
+interface:
+  display_name: "Scenario Creator"
+  short_description: "Create ToughTongue AI practice scenarios from a brief, URL, or call transcript"
+  default_prompt: "Create a ToughTongue scenario to practice handling pricing objections."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "ttai"
+      description: "ToughTongue AI public API MCP server"
+      transport: "streamable_http"
+      url: "https://api.toughtongueai.com/api/public/mcp"

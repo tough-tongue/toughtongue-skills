@@ -3,6 +3,16 @@
 Rules for scenarios where the **AI plays a prospect** and the user practices
 selling or negotiating.
 
+## Contents
+
+- Call types (cold / warm / discovery)
+- Resistance pattern and guarded disclosure
+- Breakthrough conditions and core objections
+- Early termination rules and end outcomes
+- ai_instructions and user_instructions structure
+- Rubrik (evaluates the REP)
+- Technical config and quality checklist
+
 Key facts:
 
 - Three call types: Cold Call, Warm Intro, Discovery Call — each has different

@@ -40,6 +40,14 @@ truth for types.
 
 ## ai_model_config
 
+Two pipeline architectures exist. **Always set `ai_model_config` explicitly** —
+do not omit it.
+
+### Cascade pipeline (Landmass)
+
+External STT → LLM → TTS. Best for outbound calls where the AI initiates and
+low latency matters. Requires all six fields:
+
 ```json
 {
   "provider": "Landmass",
@@ -47,27 +55,46 @@ truth for types.
   "tts_provider": "cartesia",
   "tts_voice_id": "f786b574-daa5-4673-aa0c-cbe3e8534c02",
   "llm_provider": "google_vertex",
+  "llm_model": "gemini-3.1-flash-lite",
   "stt_provider": "deepgram"
 }
 ```
 
-Valid values:
+When using cascade, also load [cascade-tts.md](cascade-tts.md) and include
+the voice-pipeline blocks in `ai_instructions`.
+
+### Native voice pipeline (Galaxy / Ocean)
+
+Gemini handles voice end-to-end. Best for scenarios where the user speaks
+first or turn-taking is more conversational. Only `provider` and `model`
+are needed:
+
+```json
+{
+  "provider": "Galaxy",
+  "model": "medium"
+}
+```
+
+### Valid values
 
 - `provider`: `Ocean` | `Galaxy` | `Landmass`
 - `model`: `medium` | `medium-super` | `medium-stable` | `cascade-01`
-- `tts_provider`: `cartesia` | `openai` | `elevenlabs`
-- `llm_provider`: `google` | `google_vertex` | `openai` | `cerebras`
-- `stt_provider`: `deepgram` | `cartesia`
+- `tts_provider` (cascade only): `cartesia` | `openai` | `elevenlabs`
+- `llm_provider` (cascade only): `google` | `google_vertex` | `openai` | `cerebras`
+- `stt_provider` (cascade only): `deepgram` | `cartesia`
 
 ### When to use which
 
-| Scenario | provider | model | tts |
-|---|---|---|---|
-| Voice (cold call, sales, coach) | Landmass | cascade-01 | cartesia |
-| Text-only | Ocean | medium | — |
-| High-quality text | Ocean | medium-super | — |
-
-If unsure, omit `ai_model_config` entirely — platform defaults are sensible.
+| Scenario type | provider | model | Pipeline | Notes |
+|---|---|---|---|---|
+| Cold call (AI calls) | Landmass | cascade-01 | Cascade | Cartesia TTS + Deepgram STT + Gemini Flash Lite |
+| Sales roleplay (AI is prospect) | Galaxy | medium | Native voice | Human initiates; natural turn-taking |
+| Coaching (AI is trainer) | Ocean | medium-stable | Native voice | Multi-step sessions; stability matters |
+| Demo — browser navigation | Ocean | medium-stable | Native voice | Standard voice for interactive demos |
+| Demo — slide-based | Landmass | cascade-01 | Cascade | Polished TTS delivery for presentations |
+| Text-only | Ocean | medium | — | No voice pipeline |
+| High-quality text | Ocean | medium-super | — | Longer, richer text generation |
 
 ### Voice quick-reference (Cartesia `tts_voice_id`)
 
@@ -77,6 +104,9 @@ If unsure, omit `ai_model_config` entirely — platform defaults are sensible.
 | American female | F | en-US | `f786b574-daa5-4673-aa0c-cbe3e8534c02` |
 | American male | M | en-US | `a167e0f3-df7e-4d52-a9c3-f949145f52ef` |
 | German male | M | de-DE | `384b625b-da5a-4b3a-8c5d-b9e1a5f30497` |
+
+Gemini native voices (Galaxy/Ocean — set in `appearance.voice`): `Aoede`
+(American English, default), `Puck` (American English, male).
 
 ---
 

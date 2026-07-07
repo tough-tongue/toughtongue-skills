@@ -15,6 +15,7 @@ exercises** (not roleplay). The AI is the trainer/mentor.
 
 Key facts:
 
+- Uses **Ocean/medium-stable** pipeline (native Gemini voice, no TTS/STT config)
 - Three patterns: A (Situation-First), B (Teach-First), C (Reflective)
 - Every scenario needs SESSION FLOW (steps with tool names) + CONTENT (topics)
 - ONE visual tool per scenario: `card`, `image_generation`, or `slide_generation`
@@ -70,6 +71,14 @@ ones in `tools_config`.
 Interaction tools (`emoji_reaction`, `mcq`, `end_session`) should always be
 registered for coaching scenarios.
 
+### Image generation notes
+
+- Image style is **per-org**, NOT always Ghibli. Match the brand/domain:
+  sports → Ghibli scenes, education → warm illustration, sales → not used.
+- 2-3 images per session max. More dilutes impact.
+- Prompt pattern: `"[style] illustration of [setting] showing [specific
+  situation], [people involved], [emotional tone], [lighting]"`
+
 ---
 
 ## Mandatory Rules
@@ -95,6 +104,32 @@ Session: 10-15 min. 4-8 case studies, pick 3-4 randomly. Visual: `card`
 ### 5. Practice Pitch (3-5 min) ⭐ — Trainee speaks, coach plays customer, repeat until natural
 ### 6. Teach (1-3 min) — Ideal script, good vs improve
 ### 7. Next or Wrap — After 3-4 scenarios, end_session
+```
+
+### Sample ai_instructions layout (Pattern A)
+
+```
+## YOUR ROLE & CHARACTER
+- You are Coach [Name], experienced [domain] trainer. Warm, encouraging.
+- Use card_tool and mcq_tool during session.
+
+## KEY PRODUCT KNOWLEDGE
+- [Plans, pricing, USPs — bullets the coach must know]
+
+## SESSION FLOW
+### 1. Greeting & Context (1 min)
+### 2. Present Situation — Use card_tool
+### 3. MCQ Question — Use mcq_tool with 4 options
+### 4. Explore Reasoning — "Why did you choose this?"
+### 5. PRACTICE PITCH ⭐ — "Ab aap mujhe batao — pitch karo!"
+### 6. Teach Best Approach
+### 7. Next or Wrap — Use end_session when done
+
+## THE 6 SCENARIOS (pick one randomly per round)
+### Scenario 1: "[Objection quote]"
+- Customer / Context / Objection / Root cause
+- Nuanced discussion points / Best script / Common mistakes
+### Scenario 2: ...
 ```
 
 Case study template (one per scenario in the CONTENT section):
@@ -127,6 +162,31 @@ Session: 15-20 min. 4-5 topics in logical sequence (not random). Visual: `card`.
 ### 6. Next Topic — Repeat steps 2-5
 ### 7. Final Practice Round (3-5 min) ⭐ — Apply ALL topics in one exercise
 ### 8. Wrap-Up — Summary card, end_session
+```
+
+### Sample ai_instructions layout (Pattern B)
+
+```
+## YOUR ROLE & CHARACTER
+- You are [Coach Name], [title] at [Org]. Use card_tool, mcq_tool, emoji_reaction.
+
+## KEY KNOWLEDGE
+- [Framework or process bullets]
+
+## SESSION FLOW
+### 1. Greeting (1 min) — "Aaj hum [topic] step by step seekhenge."
+### 2. Teach Concept — Use card_tool (table/bullets). Walk through verbally.
+### 3. MCQ — Test understanding (not situation yet)
+### 4. Discuss — "Yeh option kyun choose kiya?" BEFORE revealing answer
+### 5. Present Situation — Use card_tool. WAIT for trainee response.
+### 6. Next Topic — Repeat 2-5
+### 7. Final Practice Round ⭐ — Apply ALL topics in one exercise
+### 8. Wrap-Up — Summary card, end_session
+
+## TEACHING CONTENT
+### Topic 1: [Name]
+- Concept Card / Key Teaching Points / MCQ / Situation / Ideal response
+### Topic 2: ...
 ```
 
 Topic template:
@@ -184,6 +244,10 @@ Rubric weights: MCQ ~33% | Reasoning & Self-Reflection ~33% | Absorbing Better P
 
 ```json
 {
+  "ai_model_config": {
+    "provider": "Ocean",
+    "model": "medium-stable"
+  },
   "strategy": {
     "skip_auto_start": false,
     "system_instructions_template": "minimal",
@@ -206,11 +270,14 @@ Rubric weights: MCQ ~33% | Reasoning & Self-Reflection ~33% | Absorbing Better P
       "image_generation": { "should_register": false, "add_to_system_prompt": false }
     }
   },
-  "session_analysis": { "is_auto_analysis": true, "is_auto_submit": true }
+  "session_analysis": { "is_auto_analysis": true, "is_auto_submit": true },
+  "appearance": { "voice": "Aoede" },
+  "memory": { "is_memory": true }
 }
 ```
 
-(Swap which visual tool is enabled per the One-Visual-Tool Rule.)
+Ocean/medium-stable uses native Gemini voice — no TTS/STT/LLM sub-fields.
+Swap which visual tool is enabled per the One-Visual-Tool Rule.
 
 ---
 

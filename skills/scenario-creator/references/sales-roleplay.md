@@ -15,6 +15,7 @@ selling or negotiating.
 
 Key facts:
 
+- Uses **Galaxy/medium** pipeline (native Gemini voice, no TTS/STT config)
 - Three call types: Cold Call, Warm Intro, Discovery Call — each has different
   opening behavior and termination risk
 - Enforce strict resistance: ONE objection at a time, 2-3 follow-ups each
@@ -61,16 +62,48 @@ strict resistance:
 
 Make salespeople WORK for context. Never dump information unprompted.
 
-- **Phase 1**: Vague initial responses ("Quite a few", "Not sure exactly")
-- **Phase 2**: Progressive detail when asked targeted follow-ups
-- **Phase 3**: Mix with ambient context (shop activities, family, weather)
+### Phase 1: Vague initial responses
+
+```
+User: "How many customers do you serve daily?"
+AI: "Quite a few, it's a busy shop"
+User: "Can you give me a number?"
+AI: "Maybe 100-150? Not sure exactly"
+```
+
+### Phase 2: Progressive detail
+
+Answer specific questions with specific info. Naturally embed uncertainty:
+"I think", "maybe", "not sure exactly". Sometimes self-correct: "Actually
+wait, maybe closer to 20 per day."
+
+### Phase 3: Ambient context
+
+Mix answers with real-world interruptions and context:
+- Handle a customer: "Sorry, one minute — [handles customer]"
+- Weather / environment: "Hot today, makes people thirsty"
+- Family: "My wife usually handles that, I'd have to check"
+
+### Anti-pattern: info dumping
+
+```
+# BAD — dumps everything unprompted:
+"I have 150 customers daily, 40-50 remittances, BRILink for 3 years..."
+
+# GOOD — requires targeted extraction:
+User: "Tell me about your business"
+AI: "I run an FMCG shop, been here 5 years"
+User: "How many transactions daily?"
+AI: "Maybe 100-150 customers? It varies"
+```
 
 ```
 ### Discovery Process - Realistic Information Disclosure
 - NEVER dump all details at once - require targeted questions
 - Answer vaguely first, specific only when asked precise follow-ups
 - Mix answers with small talk about [shop/office/family context]
-- Sound human: "I think", "maybe", "not sure exactly"
+- Make user work to uncover problems through progressive questioning
+- Sound human: "I think", "maybe", "not sure exactly", "let me remember"
 ```
 
 ---
@@ -89,6 +122,20 @@ You become receptive ONLY when ALL [3-5] are proven:
 PLUS urgency (any one):
 - Limited-time pricing / Seasonal deadline / Competitive pressure
 ```
+
+### Examples by domain
+
+**B2B Sales**: ROI proven with customer-specific math (their numbers, not
+generic), integration plan for current systems, support guarantees (SLA,
+replacement). Urgency: Q4 budget deadline, competitor launching soon.
+
+**B2C Sales (diet/fitness)**: Past struggles validated without blame, realistic
+timeline (2-3 kg/month), health-focused beyond weight, maintenance plan.
+Urgency: discount ending, event in X weeks.
+
+**Compliance-sensitive**: Legal compliance confirmed with specific regulations,
+safety/privacy plan with concrete isolation, proof from similar risk-averse
+customers. Urgency: regulatory deadline, seasonal peak.
 
 ---
 
@@ -176,28 +223,57 @@ After [timing by call type], assess quality.
 
 ---
 
-## Rubrik
+## Rubrik Standard
 
 Evaluates the **SALES REP** (the human user) — not the AI prospect.
 
+Every rubrik uses this structure: each stage scored **1-10** independently,
+each stage has a **weight** signaling evaluation depth, overall score =
+weighted average displayed as X/10.
+
 ```
-# [Company] — Sales Performance Report
-Evaluate the SALES REP (the human user) — not the AI prospect.
+# [Scenario Title] — Evaluation Rubric
+**Overall Score: Weighted average of all stage scores (each 1-10)**
 
-## Score (1-10)
-[Performance criteria bands]
+## Stage 1: [Opening] (Weight: 30%)
+Score this stage 1-10. Focus: [what to evaluate]
 
-## Skills Assessment
-[Discovery quality, objection handling, value articulation, closing]
+**1-3 (Poor):**
+- [observable failure criteria]
 
-## Improvement Areas
-[Specific, actionable]
+**4-6 (Acceptable):**
+- [observable decent-attempt criteria]
 
-## Summary
+**7-8 (Good):**
+- [observable solid-execution criteria]
+
+**9-10 (Excellent):**
+- [observable textbook / above-and-beyond criteria]
+
+## Stage 2: [Objection Handling] (Weight: 40%)
+Score this stage 1-10. Focus: [what to evaluate]
+...
+
+## Stage 3: [Closing] (Weight: 30%)
+Score this stage 1-10. Focus: [what to evaluate]
+...
 ```
 
-4-6 categories with weights summing to 100%; observable behaviors, not vague
-"good communication".
+### Standard stage breakdowns
+
+| Call type | Stage 1 (Weight) | Stage 2 (Weight) | Stage 3 (Weight) |
+|-----------|------------------|------------------|------------------|
+| 2-5 min pitch | Opening Hook (30%) | Engagement & Objections (40%) | Close (30%) |
+| Gatekeeper + DM | Gatekeeper Nav (20%) | DM Qualification (25%) + Articulation (30%) | Close (25%) |
+
+### Leniency rules (build into every rubric)
+
+- "Send me info + call back next week" = NOT a failure — score **5/10 Close**.
+- "Never argued with an objection" earns minimum **5/10 on Objections**.
+- Calls cut short by a genuinely busy prospect should not penalize dimensions
+  the rep never got a chance to demonstrate.
+- Textbook call that books the meeting = **8-9/10**. Perfect with creative
+  extras = **10/10**.
 
 ---
 
@@ -205,6 +281,10 @@ Evaluate the SALES REP (the human user) — not the AI prospect.
 
 ```json
 {
+  "ai_model_config": {
+    "provider": "Galaxy",
+    "model": "medium"
+  },
   "strategy": {
     "skip_auto_start": true,
     "system_instructions_template": "minimal",
@@ -222,13 +302,17 @@ Evaluate the SALES REP (the human user) — not the AI prospect.
       "end_session": { "should_register": true, "add_to_system_prompt": true, "tool_settings": { "disconnectDelaySeconds": 5 } }
     }
   },
-  "session_analysis": { "is_auto_analysis": true, "is_auto_submit": true }
+  "session_analysis": { "is_auto_analysis": true, "is_auto_submit": true },
+  "appearance": { "voice": "Puck" }
 }
 ```
 
 Note `skip_auto_start: true` — the sales rep (the human) usually initiates.
 For a scenario where the prospect answers the phone first, set it to `false`
 and give the prospect's greeting in `welcome_instructions`.
+
+Galaxy/medium uses native Gemini voice — no TTS/STT/LLM sub-fields needed.
+Set `appearance.voice` to choose the Gemini voice persona.
 
 ---
 

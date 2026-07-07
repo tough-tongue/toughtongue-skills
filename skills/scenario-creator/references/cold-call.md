@@ -16,7 +16,10 @@ whose data is (at least partially) known. The user plays the lead.
 
 Key facts:
 
-- Voice-pipeline-first: OUTPUT RULES + STT handling + natural speech style are mandatory
+- Uses **Landmass/cascade-01** pipeline — see [cascade-tts.md](cascade-tts.md)
+  for voice-pipeline blocks (output rules, STT handling, speech style, SSML)
+- Three call sub-types: true cold, warm lead, follow-up — each has different
+  opening and termination risk
 - Two-beat opening: Identity + Reason + Permission → Response branching (4 paths)
 - Discovery: collect N data points, ONE question at a time
 - Exactly 3 outcomes: CONVERTED / NURTURE / DEAD LEAD
@@ -26,10 +29,26 @@ Key facts:
 
 ---
 
+## Call Sub-Types
+
+Specify the sub-type in `ai_instructions` — it determines the opening pattern
+and the lead's expected warmth level.
+
+| Sub-type | Opening pattern | Trust level |
+|----------|----------------|-------------|
+| **True Cold** | "Hello, is this [name]? I'll be brief — calling about [topic]. Do you have 30 seconds?" | Lowest — high hang-up risk |
+| **Warm Lead** | "Hello [name]! This is [Agent] from [Company]. You recently [touchpoint]. Still exploring that?" | Medium — prior intent exists |
+| **Follow-Up** | "Hello [name]! This is [Agent] — I was the [role] at [event] on [date]. Wanted to follow up." | Highest — prior contact |
+
+Default to **Warm Lead** when the sub-type is unclear from the brief.
+
+---
+
 ## Voice Pipeline Requirements
 
-**CRITICAL**: Every cold call scenario operates in a live voice pipeline
-(STT → LLM → TTS). Include ALL THREE blocks in every `ai_instructions`:
+Cold call scenarios use the **Landmass/cascade-01** pipeline. Follow the full
+rules in [cascade-tts.md](cascade-tts.md). At minimum, include ALL THREE
+blocks in every `ai_instructions`:
 
 ### 1. OUTPUT RULES
 
@@ -120,6 +139,19 @@ Script all four branches:
 - Never correct or challenge answers.
 - If they decline: "No problem at all" — skip and continue.
 
+### Progressive disclosure responses
+
+Each data point gets a brief, contextual acknowledgment before the next question:
+
+```
+# BAD — flat and robotic:
+"Got it. Next question: what's your budget?"
+
+# GOOD — brief warmth + natural flow:
+"Got it — at that scale the right tools can really make a difference.
+Quick follow-up: what are you currently using for that?"
+```
+
 Typical data points (5–6 per scenario): context/size, current solution,
 biggest pain point, timeline/urgency, budget or decision authority,
 preferred next step.
@@ -150,6 +182,39 @@ again"; hostile or abusive; wrong number; lead already completed the action.
 | **CONVERTED** | Qualified + committed next step | Confirm date/time/action + warmth → end_session |
 | **NURTURE** | Partial data, door open, not ready | Agree on follow-up plan → end_session |
 | **DEAD LEAD** | Not interested, wrong number, DNC, hostile | One polite goodbye → end_session immediately |
+
+---
+
+## Compliance and Sensitivity Rules
+
+Include a compliance section in `ai_instructions` whenever the domain is
+regulated or the call topic is sensitive.
+
+### Universal minimums (all cold calls)
+
+```
+## COMPLIANCE
+- Identify your company name clearly within the first 30 seconds.
+- Honor do-not-call requests immediately — never argue or delay.
+- Never impersonate a government agency, bank, lender, or legal representative.
+- Never make guarantees about outcomes (financial returns, admission, legal results).
+- If asked to stop calling: "Absolutely — I'll remove you now." → end_session
+```
+
+### Domain-specific additions
+
+**Financial / Wealth Management**: Never give investment advice, quote returns,
+or suggest specific securities. Identify as licensed professional if applicable.
+
+**Real Estate**: Fair Housing applies — never steer based on protected class.
+Never speculate on floor prices or invent competing offers.
+
+**Healthcare / Education (minors)**: Never share student/patient data. Never
+make admission or medical outcome guarantees. Speak with parent/guardian.
+
+**Foreclosure / Hardship**: Lead with empathy. Never pressure decisions under
+emotional duress. Never impersonate the lender/servicer. Offer the opt-out
+early. Use `disconnectDelaySeconds: 8` for these calls.
 
 ---
 
@@ -259,6 +324,15 @@ Context: [Who was called and why.]
 
 ```json
 {
+  "ai_model_config": {
+    "provider": "Landmass",
+    "model": "cascade-01",
+    "tts_provider": "cartesia",
+    "tts_voice_id": "[voice-id-for-persona]",
+    "llm_provider": "google_vertex",
+    "llm_model": "gemini-3.1-flash-lite",
+    "stt_provider": "deepgram"
+  },
   "strategy": {
     "skip_auto_start": false,
     "filler_words": "[domain-fit fillers]",
@@ -282,7 +356,8 @@ Context: [Who was called and why.]
       }
     }
   },
-  "session_analysis": { "is_auto_analysis": true, "is_auto_submit": true }
+  "session_analysis": { "is_auto_analysis": true, "is_auto_submit": true },
+  "is_recording": true
 }
 ```
 

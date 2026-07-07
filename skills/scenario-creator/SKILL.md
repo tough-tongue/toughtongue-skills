@@ -41,20 +41,24 @@ Call `ttai:list_organizations` first.
 
 | Type | AI plays | Reference file |
 |------|----------|----------------|
-| **Cold Call** | The outbound caller (user plays the lead) | [references/cold-call.md](references/cold-call.md) |
+| **Cold Call / SDR** | The outbound caller (user plays the lead) | [references/cold-call.md](references/cold-call.md) |
 | **Sales Roleplay** | The prospect (user practices selling) | [references/sales-roleplay.md](references/sales-roleplay.md) |
 | **Coaching** | The trainer/mentor (teaches via exercises) | [references/coaching.md](references/coaching.md) |
+| **Demo** | The AI SDR / product demo agent | [references/demo.md](references/demo.md) |
 | **Other** | Anything else (interview, support, negotiation) | [references/scenario-fields.md](references/scenario-fields.md) only |
 
 Decision signals:
 
-- "cold call", "outbound", "lead qualification", "AI calls the customer" → Cold Call
+- "cold call", "outbound", "lead qualification", "AI calls the customer",
+  "SDR call" → Cold Call / SDR
 - "practice selling", "objection handling", "prospect roleplay", "pitch practice",
   "prep me for this meeting" → Sales Roleplay
 - "coach", "train my team", "teach", "onboarding", "framework" → Coaching
+- "demo my product", "AI SDR demo", "show prospects", "browser demo",
+  "slide demo", "product walkthrough" → Demo
 
 If ambiguous, ask ONE question: "Should the AI play the caller/seller, the
-buyer/prospect, or a coach/trainer?"
+buyer/prospect, a coach/trainer, or a product demo agent?"
 
 Read [references/scenario-fields.md](references/scenario-fields.md) (always)
 plus the matching type reference.
@@ -88,18 +92,25 @@ Build a JSON payload matching the `ttai:create_scenario` input schema (load
 the tool schema before calling). Author these fields, in order of importance:
 
 1. `name` — short, descriptive display title.
-2. `ai_instructions` — the core field, 500+ words, structured with `##`
-   sections per the type reference. For voice scenarios ALWAYS include the
+2. `ai_model_config` — set explicitly based on scenario type. See the "When
+   to use which" table in [references/scenario-fields.md](references/scenario-fields.md).
+   Cold call and slide-demo scenarios use Landmass/cascade-01 (requires TTS,
+   STT, LLM fields). Sales roleplay uses Galaxy/medium. Coaching and
+   browser-demo use Ocean/medium-stable.
+3. `ai_instructions` — the core field, 500+ words, structured with `##`
+   sections per the type reference. For Landmass/cascade scenarios, also load
+   [references/cascade-tts.md](references/cascade-tts.md) and include the
    voice-pipeline blocks (output rules, transcription-error handling, natural
-   speech style).
-3. `user_instructions` — what the human should know before starting:
+   speech style, SSML emotion tags if Cartesia).
+4. `user_instructions` — what the human should know before starting:
    situation → what to expect → how to succeed → tips.
-4. `rubrik` — evaluation criteria. CRITICAL: evaluate the correct party
-   (cold call rubrics evaluate the LEAD; sales rubrics evaluate the REP).
-5. `user_friendly_description` — 1-2 public-facing sentences.
-6. `strategy`, `tools_config`, `session_analysis`, `appearance` — per the
+5. `rubrik` — evaluation criteria. CRITICAL: evaluate the correct party
+   (cold call rubrics evaluate the LEAD; sales rubrics evaluate the REP;
+   demo rubrics produce a buyer intelligence report).
+6. `user_friendly_description` — 1-2 public-facing sentences.
+7. `strategy`, `tools_config`, `session_analysis`, `appearance` — per the
    type reference and [references/scenario-fields.md](references/scenario-fields.md) defaults.
-7. `is_recording: true` for voice scenarios; `is_public` per Step 4.
+8. `is_recording: true` for voice scenarios; `is_public` per Step 4.
 
 Do NOT set `id` — `ttai:create_scenario` rejects it (that is
 `ttai:update_scenario`'s job).
@@ -110,12 +121,14 @@ Run the universal checklist, plus the type-specific checklist from the
 reference file:
 
 - [ ] `name`, `ai_instructions`, `user_friendly_description` present
+- [ ] `ai_model_config` set explicitly per the "When to use which" table
 - [ ] `ai_instructions` structured with `##` sections; no unresolved
       placeholders except intentional `{{ dynamic_vars }}`
 - [ ] `tools_config.tools.end_session` enabled with `add_to_system_prompt: true`
 - [ ] `session_analysis.is_auto_analysis: true` and `is_auto_submit: true`
 - [ ] `rubrik` evaluates the correct party, categories with weights
-- [ ] Voice scenarios: voice-pipeline blocks, `strategy.welcome_instructions`
+- [ ] Cascade scenarios (Landmass): voice-pipeline blocks from
+      [cascade-tts.md](references/cascade-tts.md), `strategy.welcome_instructions`
       (directive form, never quoted speech), conductor wrap-up message,
       `appearance.language_code` matches locale
 - [ ] Every dynamic variable `{{ var }}` has a documented missing-value fallback

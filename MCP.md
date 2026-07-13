@@ -192,12 +192,33 @@ Open Claude Desktop settings > "Developer" tab > "Edit Config":
 - **Arguments**: `-y mcp-remote https://api.toughtongueai.com/api/public/mcp --header "Authorization: Bearer ${TTAI_PAT}"`
 - **Environment**: `TTAI_PAT` must be set
 
-### Known limitation
+### Claude Web (custom connector) — OAuth setup
 
-Connector UIs that support only OAuth (for example claude.ai web custom
-connectors) cannot attach a Bearer header and cannot use a local stdio
-bridge. OAuth support on the server is planned; until then use one of the
-clients above.
+OAuth 2.1 clients that can't attach a Bearer header (claude.ai web custom
+connectors, and any other OAuth-only MCP UI) authenticate via the built-in
+authorization flow. Nothing extra to configure — the client points at the
+same URL and drives the flow.
+
+1. In your OAuth client, add a new MCP connector with server URL
+   `https://api.toughtongueai.com/api/public/mcp`.
+2. The client discovers OAuth via the well-known metadata endpoints and
+   registers itself automatically (RFC 7591 Dynamic Client Registration).
+3. Your browser is redirected to ToughTongue for consent. Sign in if you
+   aren't already, then click **Grant access** on the confirmation screen.
+4. You are redirected back to the OAuth client, which now holds an access
+   token. Subsequent MCP calls just work.
+
+**What Grant creates**: a dedicated PAT named `MCP: {client_name}`
+(reused if already present). The client uses that PAT as its bearer for
+every subsequent MCP call — you can inspect it under Settings → API Keys.
+
+**Org scope** is per-tool-call, same as raw Bearer PAT — pass the `org_id`
+argument on each tool or omit for personal context. Call
+`list_organizations` first to discover org IDs.
+
+**Revocation**: delete the `MCP: {client_name}` token at
+[app.toughtongueai.com/settings](https://app.toughtongueai.com/settings)
+under **API Keys**. The client is disconnected immediately.
 
 ## Conventions
 

@@ -1,0 +1,18 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "com.toughtongueai/mcp",
+  "title": "ToughTongue AI",
+  "description": "Create voice-agent scenarios, pull session analytics, place SIP calls, schedule meeting bots.",
+  "websiteUrl": "https://app.toughtongueai.com/docs/mcp",
+  "repository": {
+    "url": "https://github.com/tough-tongue/toughtongue-skills",
+    "source": "github"
+  },
+  "version": "1.0.0",
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://api.toughtongueai.com/api/public/mcp"
+    }
+  ]
+}

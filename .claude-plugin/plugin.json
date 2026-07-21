@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "toughtongue",
   "description": "Create, refine, and analyze ToughTongue AI voice-agent scenarios — sales roleplays, cold calls, coaching sessions — through the ToughTongue MCP server.",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "author": {
     "name": "ToughTongue AI",
     "url": "https://app.toughtongueai.com"

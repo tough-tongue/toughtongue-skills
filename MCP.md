@@ -1,5 +1,7 @@
 # ToughTongue AI MCP Server
 
+[![MCP Registry](https://img.shields.io/badge/MCP_Registry-com.toughtongueai%2Fmcp-blue)](https://registry.modelcontextprotocol.io/v0.1/servers?search=com.toughtongueai/mcp)
+
 Connect your AI agent to the ToughTongue AI platform. Create and refine
 voice-agent scenarios, pull session results and analytics, place SIP phone
 calls, and schedule meeting bots — directly from any MCP client like Claude
@@ -12,14 +14,15 @@ https://api.toughtongueai.com/api/public/mcp
 ```
 
 It uses Streamable HTTP. There is nothing to install and no local process to
-run. Clients authenticate with a Personal Access Token (PAT) passed as a
-Bearer token.
+run. Clients authenticate with a Personal Access Token (PAT) bearer token
+(CLI and coding agents) or OAuth 2.1 (claude.ai web, ChatGPT web).
 
 ## Contents
 
 - Get a token
 - Connect your client (Claude Code, Codex, Cursor, Copilot, Windsurf, Gemini CLI)
 - Clients without remote MCP support (mcp-remote)
+- Web connectors over OAuth (claude.ai, ChatGPT)
 - Conventions
 - Tools (full catalog)
 - Verify and troubleshoot
@@ -192,12 +195,48 @@ Open Claude Desktop settings > "Developer" tab > "Edit Config":
 - **Arguments**: `-y mcp-remote https://api.toughtongueai.com/api/public/mcp --header "Authorization: Bearer ${TTAI_PAT}"`
 - **Environment**: `TTAI_PAT` must be set
 
-### Known limitation
+## Web connectors (OAuth)
 
-Connector UIs that support only OAuth (for example claude.ai web custom
-connectors) cannot attach a Bearer header and cannot use a local stdio
-bridge. OAuth support on the server is planned; until then use one of the
-clients above.
+Browser clients connect over OAuth 2.1 with dynamic client registration — no
+PAT and no config file.
+
+### claude.ai (web)
+
+1. In claude.ai, go to **Settings > Connectors > Add custom connector**.
+2. Set **Name** to `ToughTongue AI` and **URL** to
+   `https://api.toughtongueai.com/api/public/mcp`. Leave the OAuth **Client
+   ID** and **Secret** empty — dynamic client registration handles that.
+3. Click **Add**. Approve on the ToughTongue consent page in the OAuth popup.
+   You must be signed in at
+   [toughtongueai.com](https://app.toughtongueai.com) first, or the consent
+   step won't appear. The connector then shows **Connected**.
+4. Verify: start a new chat, enable the connector, and ask "List my
+   ToughTongue organizations."
+
+The OAuth-issued access token is a PAT under the hood — manage or revoke it at
+[app.toughtongueai.com/developer](https://app.toughtongueai.com/developer).
+
+### ChatGPT (web)
+
+Web only (no mobile). Availability depends on your plan: **Business,
+Enterprise, and Edu** get full MCP including write tools (beta); **Pro** is
+read/fetch only; **Free, Plus, and Go** can't add custom apps.
+
+1. Enable **Developer mode**: **Settings > Apps > Advanced settings**. On
+   Business, only admins/owners can toggle it; on Enterprise/Edu an admin
+   grants access via **Permissions & Roles > Connected Data** (RBAC).
+2. Go to **Settings > Apps > Create**. Set the **MCP Server URL** to
+   `https://api.toughtongueai.com/api/public/mcp`, choose **OAuth**
+   authentication, click **Scan Tools**, complete the OAuth consent, then
+   **Create**.
+3. The app appears as a **Draft** with a "Dev" label. Test it in chat; admins
+   publish it workspace-wide from **Workspace Settings > Apps > Drafts >
+   Publish**.
+
+Caveats: ChatGPT freezes the tool snapshot at approval — tool changes need an
+admin refresh or republish. No refresh tokens are issued, so you
+re-authenticate after the access token expires (advertised at ~1 year). Write
+actions prompt for confirmation, and deep research uses read-only tools.
 
 ## Conventions
 
@@ -306,10 +345,11 @@ no local package to run.
 <details>
 <summary>Can I authenticate with OAuth instead of a token?</summary>
 
-Not yet. Authentication is PAT bearer only, which is why OAuth-only connector
-UIs (like claude.ai web) cannot connect today. OAuth support is planned; the
-PAT header will keep working for servers, CI, and headless agents after it
-ships.
+Yes. The server supports OAuth 2.1 with dynamic client registration — used by
+claude.ai web and ChatGPT web (see [Web connectors](#web-connectors-oauth)).
+The token it issues is a PAT under the hood; revoke it at
+[Developer settings](https://app.toughtongueai.com/developer). PAT bearer
+headers keep working for servers, CI, and headless agents.
 </details>
 
 <details>

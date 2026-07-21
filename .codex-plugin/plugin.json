@@ -1,6 +1,6 @@
 {
   "name": "toughtongue",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Skills and MCP server for the ToughTongue AI voice-agent platform — create scenarios, refine them from real transcripts, and analyze session performance.",
   "author": {
     "name": "ToughTongue AI",

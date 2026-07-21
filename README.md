@@ -1,5 +1,7 @@
 # ToughTongue Skills
 
+[![MCP Registry](https://img.shields.io/badge/MCP_Registry-com.toughtongueai%2Fmcp-blue)](https://registry.modelcontextprotocol.io/v0.1/servers?search=com.toughtongueai/mcp)
+
 Agent skills and MCP server for [ToughTongue AI](https://app.toughtongueai.com),
 the voice-agent platform for high-stakes conversation practice: interviews,
 sales, coaching, negotiations.
@@ -73,13 +75,14 @@ How the layers relate:
 
 ## Prerequisites
 
-Every setup path needs these two things first:
+Every path needs a **ToughTongue AI account** — sign up at
+[app.toughtongueai.com](https://app.toughtongueai.com).
 
-1. **A ToughTongue AI account** — sign up at
-   [app.toughtongueai.com](https://app.toughtongueai.com).
-2. **A Personal Access Token (PAT)** — create one at
-   [app.toughtongueai.com/developer](https://app.toughtongueai.com/developer)
-   and export it in the environment your agent runs in:
+The CLI and coding-agent paths in this README (Claude Code, Codex, Cursor,
+Copilot, Windsurf, Gemini CLI, Claude Desktop) also need a **Personal Access
+Token (PAT)** — create one at
+[app.toughtongueai.com/developer](https://app.toughtongueai.com/developer) and
+export it in the environment your agent runs in:
 
 ```bash
 export TTAI_PAT="<your-token>"
@@ -93,8 +96,11 @@ launchctl setenv TTAI_PAT "$TTAI_PAT"
 
 Then fully restart your agent app and start a new thread.
 
-> **Note**: authentication is PAT-based only — OAuth login is not supported
-> yet. Never commit the PAT or paste it into config files: the plugin
+The claude.ai (web) and ChatGPT (web) connectors skip the PAT entirely — they
+authenticate over OAuth. See the [web connector sections](MCP.md#claudeai-web)
+in MCP.md.
+
+> **Note**: never commit the PAT or paste it into config files: the plugin
 > references it only through the `TTAI_PAT` environment variable.
 
 ## Which setup fits you?
@@ -395,10 +401,11 @@ bots, and collections.
 (Claude Code, Codex, Cursor, Copilot, Windsurf, Gemini CLI), and
 troubleshooting.
 
-Known limitation: connector UIs that support only OAuth (for example
-claude.ai web custom connectors) cannot attach a Bearer header and cannot
-connect today. OAuth support is planned; PAT auth will keep working for
-servers, CI, and headless agents after it ships.
+OAuth is supported too. In claude.ai, add a custom connector (Settings >
+Connectors) pointing at the server URL with the Client ID and Secret left
+empty. In ChatGPT (Business/Enterprise/Edu), enable developer mode and create
+a custom MCP app with OAuth. Full steps for both are in
+[MCP.md](MCP.md#claudeai-web).
 
 ## Troubleshooting
 
@@ -411,8 +418,8 @@ servers, CI, and headless agents after it ships.
   only — the agent also needs the MCP server for live actions. See
   [Which setup fits you?](#which-setup-fits-you) and add the MCP server for
   your client.
-- **Looking for OAuth / browser sign-in**: not supported yet — authentication
-  is PAT-based only (see [Prerequisites](#prerequisites)).
+- **Using claude.ai or ChatGPT web?**: connect over OAuth — no PAT needed. See
+  the [web connector sections](MCP.md#claudeai-web) in MCP.md.
 - **Scenario edits not taking effect in a running call**: scenario changes
   apply to new sessions only; sessions compile their prompt at start.
 

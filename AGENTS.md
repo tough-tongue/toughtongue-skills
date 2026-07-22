@@ -18,8 +18,13 @@ public and is installed directly into end users' agents — every word ships.
   context; keep SKILL.md under ~250 lines and push depth into `references/`
   files that agents load on demand.
 - **Public bar.** No internal jargon, no unfinished sections, no hallucinated
-  features. Terminology: "ToughTongue AI" (one word "ToughTongue"), not
-  "Tough Tongue AI".
+  features. Terminology: "Tough Tongue AI" (two words, matching the public
+  brand at toughtongueai.com), not "ToughTongue AI". Positioning: the platform
+  for tough conversations, with a dual storyline — some the AI takes (voice
+  agents that call, demo, screen, book), others you nail (realistic roleplay
+  for negotiations, interviews, coaching). Do not describe the platform as
+  only roleplay/training, and do not drop the practice half either — lead
+  with the automate + practice pairing.
 
 ## Structure
 

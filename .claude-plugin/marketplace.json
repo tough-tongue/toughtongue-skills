@@ -1,6 +1,6 @@
 {
   "name": "toughtongue-skills",
-  "description": "Skills and MCP server for ToughTongue AI — the voice-agent platform for interviews, sales, coaching, and negotiations. Create scenarios, refine them from real transcripts, and analyze session performance from your coding agent.",
+  "description": "Skills and MCP server for Tough Tongue AI — the platform for tough conversations. Some, the AI takes: voice agents that call, demo, screen, and book. Others, you nail: realistic roleplay for negotiations, interviews, and coaching. Create agents, refine them from real transcripts, and analyze sessions from your coding agent.",
   "owner": {
     "name": "tough-tongue",
     "url": "https://github.com/tough-tongue"
@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "toughtongue",
-      "description": "Create, refine, and analyze ToughTongue AI voice-agent scenarios through the ToughTongue MCP server. Includes scenario-creator, scenario-refiner, and session-analyst skills.",
+      "description": "Build, refine, and analyze Tough Tongue AI voice agents — automate tough conversations or practice them — through the Tough Tongue MCP server. Includes scenario-creator, scenario-refiner, and session-analyst skills.",
       "source": ".",
       "category": "productivity",
       "tags": ["voice", "agents", "ttai", "sales-training", "conversation-practice"]

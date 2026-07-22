@@ -1,9 +1,9 @@
 {
   "name": "toughtongue",
   "version": "0.1.2",
-  "description": "Skills and MCP server for the ToughTongue AI voice-agent platform — create scenarios, refine them from real transcripts, and analyze session performance.",
+  "description": "Skills and MCP server for Tough Tongue AI — the platform for tough conversations. Some, the AI takes: voice agents that call, demo, screen, and book. Others, you nail: realistic roleplay for negotiations, interviews, and coaching. Build agents, refine them from real transcripts, and analyze sessions.",
   "author": {
-    "name": "ToughTongue AI",
+    "name": "Tough Tongue AI",
     "url": "https://app.toughtongueai.com"
   },
   "homepage": "https://app.toughtongueai.com",
@@ -13,10 +13,10 @@
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
-    "displayName": "ToughTongue AI",
-    "shortDescription": "Create, refine, and analyze voice-agent practice scenarios",
-    "longDescription": "Gives your agent first-class access to ToughTongue AI — the voice-agent platform for interviews, sales, coaching, and negotiations. Bundles the hosted MCP server (scenarios, sessions, analytics, SIP calls, meeting bots) with three skills: scenario-creator builds production-ready scenarios from a brief or call transcript, scenario-refiner fixes live scenarios from real session evidence, and session-analyst turns session data into team performance reports.",
-    "developerName": "ToughTongue AI",
+    "displayName": "Tough Tongue AI",
+    "shortDescription": "Automate or practice tough conversations",
+    "longDescription": "Gives your agent first-class access to Tough Tongue AI — the platform for handling tough conversations. Some, the AI takes: voice agents that answer and place phone calls, join Zoom or Google Meet, run product demos, screen candidates, and book meetings. Others, you nail: hyper-realistic roleplay that gets you ready for negotiations, interviews, and coaching conversations. Bundles the hosted MCP server (scenarios, sessions, analytics, SIP calls, meeting bots) with three skills: scenario-creator builds production-ready agent scenarios from a brief or call transcript, scenario-refiner fixes live agents from real session evidence, and session-analyst turns session data into performance reports.",
+    "developerName": "Tough Tongue AI",
     "category": "Productivity",
     "capabilities": ["Read", "Write"],
     "websiteURL": "https://app.toughtongueai.com",

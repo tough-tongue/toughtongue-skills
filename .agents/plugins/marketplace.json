@@ -1,7 +1,7 @@
 {
   "name": "toughtongue",
   "interface": {
-    "displayName": "ToughTongue AI"
+    "displayName": "Tough Tongue AI"
   },
   "plugins": [
     {

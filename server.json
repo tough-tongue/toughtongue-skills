@@ -1,8 +1,8 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "com.toughtongueai/mcp",
-  "title": "ToughTongue AI",
-  "description": "Create voice-agent scenarios, pull session analytics, place SIP calls, schedule meeting bots.",
+  "title": "Tough Tongue AI",
+  "description": "Handle tough conversations with Tough Tongue AI — voice agents that take them (calls, demos, screening, booking) and roleplay that trains you for them. Create scenarios, pull session analytics, place phone calls, schedule meeting bots.",
   "websiteUrl": "https://app.toughtongueai.com/docs/mcp",
   "repository": {
     "url": "https://github.com/tough-tongue/toughtongue-skills",

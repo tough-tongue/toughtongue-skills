@@ -2,9 +2,11 @@
 
 [![MCP Registry](https://img.shields.io/badge/MCP_Registry-com.toughtongueai%2Fmcp-blue)](https://registry.modelcontextprotocol.io/v0.1/servers?search=com.toughtongueai/mcp)
 
-Agent skills and MCP server for [ToughTongue AI](https://app.toughtongueai.com),
-the voice-agent platform for high-stakes conversation practice: interviews,
-sales, coaching, negotiations.
+Agent skills and MCP server for [Tough Tongue AI](https://app.toughtongueai.com),
+the platform for handling tough conversations. Some, the AI takes: voice
+agents that answer and place calls, qualify leads, run demos, screen
+candidates, and book meetings. Others, you nail: hyper-realistic roleplay
+that gets you ready for negotiations, interviews, and coaching conversations.
 
 Install once, then work with ToughTongue from Claude Code, Codex, Cursor, or
 any agent that supports the Agent Skills format:

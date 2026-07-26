@@ -1,7 +1,7 @@
 [
   {
     "skills": ["scenario-creator"],
-    "query": "Create a ToughTongue scenario for my SDRs to practice cold-calling leads who filled out a demo form for our payroll software. The AI should play the caller.",
+    "query": "Create a Tough Tongue AI scenario for my SDRs to practice cold-calling leads who filled out a demo form for our payroll software. The AI should play the caller.",
     "expected_behavior": [
       "Calls ttai:list_organizations before any other ttai tool and resolves whether to pass org_id",
       "Classifies the scenario as Cold Call and reads references/cold-call.md plus references/scenario-fields.md",

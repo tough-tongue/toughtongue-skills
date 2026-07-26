@@ -15,7 +15,7 @@ plugin installed and a valid `TTAI_PAT`, then grade against
 
 Grading notes:
 
-- Evals hit the live ToughTongue API — run them in a test organization, and
+- Evals hit the live Tough Tongue AI API — run them in a test organization, and
   clean up created scenarios afterward.
 - A pass requires every `expected_behavior` item to be observed, not a
   majority.

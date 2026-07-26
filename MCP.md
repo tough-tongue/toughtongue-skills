@@ -1,13 +1,13 @@
-# ToughTongue AI MCP Server
+# Tough Tongue AI MCP Server
 
 [![MCP Registry](https://img.shields.io/badge/MCP_Registry-com.toughtongueai%2Fmcp-blue)](https://registry.modelcontextprotocol.io/v0.1/servers?search=com.toughtongueai/mcp)
 
-Connect your AI agent to the ToughTongue AI platform. Create and refine
+Connect your AI agent to the Tough Tongue AI platform. Create and refine
 voice-agent scenarios, pull session results and analytics, place SIP phone
 calls, and schedule meeting bots — directly from any MCP client like Claude
 Code, Codex, Cursor, or Copilot.
 
-ToughTongue hosts the MCP server at:
+Tough Tongue AI hosts the MCP server at:
 
 ```
 https://api.toughtongueai.com/api/public/mcp
@@ -203,15 +203,15 @@ PAT and no config file.
 ### claude.ai (web)
 
 1. In claude.ai, go to **Settings > Connectors > Add custom connector**.
-2. Set **Name** to `ToughTongue AI` and **URL** to
+2. Set **Name** to `Tough Tongue AI` and **URL** to
    `https://api.toughtongueai.com/api/public/mcp`. Leave the OAuth **Client
    ID** and **Secret** empty — dynamic client registration handles that.
-3. Click **Add**. Approve on the ToughTongue consent page in the OAuth popup.
+3. Click **Add**. Approve on the Tough Tongue AI consent page in the OAuth popup.
    You must be signed in at
    [toughtongueai.com](https://app.toughtongueai.com) first, or the consent
    step won't appear. The connector then shows **Connected**.
 4. Verify: start a new chat, enable the connector, and ask "List my
-   ToughTongue organizations."
+   Tough Tongue AI organizations."
 
 The OAuth-issued access token is a PAT under the hood — manage or revoke it at
 [app.toughtongueai.com/developer](https://app.toughtongueai.com/developer).
@@ -246,15 +246,18 @@ actions prompt for confirmation, and deep research uses read-only tools.
 - **Scenario create vs update**: `create_scenario` rejects an `id`;
   `update_scenario` requires one and applies partial updates (send only the
   fields you change).
-- **Async analysis**: `post_process_session` returns immediately; poll the
-  session until `evaluation_results` appears.
+- **Async analysis**: `post_process_session` returns immediately; poll with
+  `get_session` until `evaluation_results` appears.
 - **Token safety**: the PAT authorizes your whole account — keep it
   server-side, never in client code or generated apps.
 
 ## Tools
 
-26 tools over the ToughTongue public API. Annotations: R = read-only,
-W = write, D = destructive.
+27 tools over the Tough Tongue AI public API. Annotations: R = read-only,
+W = write, D = destructive — these mirror the `readOnlyHint` and
+`destructiveHint` the server sends in `tools/list`. Four tools also carry
+`openWorldHint`, because they reach outside your account: `create_sip_call`,
+`create_sip_batch`, `schedule_meeting_bot`, and `authenticate_browser`.
 
 ### Scenarios
 
@@ -273,7 +276,8 @@ W = write, D = destructive.
 | Tool | | Description |
 |---|---|---|
 | `list_sessions` | R | List sessions with evaluation and improvement results; filters: `scenario_id`, `user_email`, `from_date`/`to_date`, `is_org`, pagination |
-| `get_sessions_batch` | R | Fetch specific sessions by ID (fast path for deep dives) |
+| `get_session` | R | One session in full: transcript plus evaluation data |
+| `get_sessions_batch` | R | Fetch several sessions by ID in one call (fast path for deep dives) |
 | `create_session` | W | Create a session, e.g. ingest an external transcript for analysis |
 | `post_process_session` | W | Trigger analysis/extraction in the background (also retries failed runs) |
 
@@ -327,7 +331,7 @@ Call the ttai MCP tool list_organizations and show me the result.
 
 | Symptom | Fix |
 |---|---|
-| Fewer than 26 ttai tools listed | Client trimmed or cached tool discovery. Start a fresh thread; if it persists, remove and re-add the server. |
+| Fewer than 27 ttai tools listed | Client trimmed or cached tool discovery. Start a fresh thread; if it persists, remove and re-add the server. |
 | 401 / authentication errors | `TTAI_PAT` is not visible to the agent process. Re-export, `launchctl setenv` on macOS, fully restart the app. |
 | Scenario edit not reflected in a running call | Scenario changes apply to new sessions only — sessions compile their prompt at start. |
 | Tool works personally but not for team data | Pass `org_id` (from `list_organizations`) and `is_org: true` where the tool supports it. |
@@ -376,6 +380,6 @@ and the skills in one step.
 
 ## API reference
 
-The MCP tools wrap the ToughTongue public API. For endpoint-level detail:
+The MCP tools wrap the Tough Tongue AI public API. For endpoint-level detail:
 [app.toughtongueai.com/docs](https://app.toughtongueai.com/docs) ·
 [llms-full.txt](https://app.toughtongueai.com/llms-full.txt) (AI-readable).

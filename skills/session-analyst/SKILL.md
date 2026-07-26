@@ -1,7 +1,7 @@
 ---
 name: session-analyst
 description: >
-  Analyze ToughTongue AI practice-session performance and build reports via
+  Analyze Tough Tongue AI practice-session performance and build reports via
   the ttai MCP server. Pulls sessions with scores, strengths, and weaknesses,
   aggregates patterns across a team or scenario, and produces structured
   reports with improvement areas and action items. Use when the user asks

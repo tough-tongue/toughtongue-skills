@@ -1,17 +1,17 @@
 ---
 name: getting-started
 description: >
-  Onboard a user to the ToughTongue AI plugin: verify the MCP connection and
+  Onboard a user to the Tough Tongue AI plugin: verify the MCP connection and
   PAT, look at what's in their account, and route them into their first
   workflow. This skill should be used when the user says "get started with
-  ToughTongue", "set up ToughTongue", "is my ToughTongue MCP working",
-  "test my ToughTongue connection", "what can I do with ToughTongue", or has
+  Tough Tongue AI", "set up Tough Tongue AI", "is my Tough Tongue AI MCP working",
+  "test my Tough Tongue AI connection", "what can I do with Tough Tongue AI", or has
   just installed the plugin. Not for creating, refining, or analyzing
   scenarios directly — hand off to scenario-creator, scenario-refiner, or
   session-analyst for those.
 ---
 
-# Getting Started with ToughTongue
+# Getting Started with Tough Tongue AI
 
 Verify the setup, orient around the user's account, and launch their first
 journey. Keep each step short — this is a welcome mat, not a manual.

@@ -1,6 +1,6 @@
 # toughtongue-skills — Agent Guide
 
-Skills + plugin manifests for the ToughTongue AI MCP server. This repo is
+Skills + plugin manifests for the Tough Tongue AI MCP server. This repo is
 public and is installed directly into end users' agents — every word ships.
 
 ## Rules
@@ -10,7 +10,7 @@ public and is installed directly into end users' agents — every word ships.
   catalog changes, MCP.md and the skills change in the same PR.
 - **Skills are MCP-first.** Every workflow ends in an MCP tool call
   (`create_scenario`, `update_scenario`, `list_sessions`, ...) — never in
-  "write a file to disk" or references to internal ToughTongue repos, paths,
+  "write a file to disk" or references to internal Tough Tongue AI repos, paths,
   or CLIs.
 - **No secrets.** The only credential is the `TTAI_PAT` environment variable,
   referenced by name only. Never hardcode tokens, user IDs, or org IDs.
@@ -67,6 +67,19 @@ update.
    list_organizations" must succeed in both agents.
 5. Bump `version` in all three plugin manifests; tag the release.
 
+### Submission assets
+
+Reused across every channel below — do not go hunting for these again:
+
+| Asset | URL |
+|---|---|
+| Privacy policy | <https://app.toughtongueai.com/privacy-policy/> |
+| Terms of service | <https://app.toughtongueai.com/terms/> |
+| Public MCP docs | <https://app.toughtongueai.com/docs/mcp> |
+| PAT / developer portal | <https://app.toughtongueai.com/developer> |
+
+The paths are `/privacy-policy/` and `/terms/`; `/privacy` and `/tos` 404.
+
 ### Distribution channels
 
 | Channel | Mechanism | Status |
@@ -74,5 +87,6 @@ update.
 | Claude Code (self-hosted marketplace) | This repo's `.claude-plugin/marketplace.json`; users run `/plugin marketplace add tough-tongue/toughtongue-skills` | Live on push |
 | Claude community marketplace (`@claude-community`) | Submit at <https://platform.claude.com/plugins/submit> (Console, works for individual authors) or <https://claude.ai/admin-settings/directory/submissions/plugins/new> (Team/Enterprise). Review pins a commit SHA in `anthropics/claude-plugins-community`; CI auto-bumps on new pushes; catalog syncs nightly | Submit once |
 | Codex (GitHub marketplace) | This repo's `.agents/plugins/marketplace.json`; users run `codex plugin marketplace add tough-tongue/toughtongue-skills`. Codex also reads `.claude-plugin/marketplace.json` for compatibility | Live on push |
+| Claude Connectors Directory (the in-app connectors list) | Submits the *hosted MCP server* (`https://api.toughtongueai.com/api/public/mcp`), not this repo, via <https://claude.ai/admin-settings/directory/submissions/new>. Requires a Team or Enterprise Claude org with directory-management access. Server already meets the technical bar: streamable HTTP, OAuth 2.1 with dynamic client registration, PKCE S256, correct 401 `resource_metadata` discovery | Not submitted |
 | Codex official Plugin Directory | Publishing is "coming soon" per OpenAI docs — no self-serve yet. Interim: share to a ChatGPT workspace via Codex app → Plugins → Created by you → Share | Watch docs |
 | skills.sh | Indexes public GitHub repos with `skills/` | Live once repo is public |

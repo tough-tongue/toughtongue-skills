@@ -1,7 +1,7 @@
 ---
 name: scenario-creator
 description: >
-  Create ToughTongue AI practice scenarios (cold call, sales roleplay, coaching)
+  Create Tough Tongue AI practice scenarios (cold call, sales roleplay, coaching)
   via the ttai MCP server. Classifies the scenario type, applies type-specific
   authoring rules, gathers context from URLs, transcripts, or other connected
   tools, validates against a checklist, and creates the scenario with
@@ -13,7 +13,7 @@ description: >
 
 # Scenario Creator
 
-Create production-ready ToughTongue AI scenarios and push them live through the
+Create production-ready Tough Tongue AI scenarios and push them live through the
 ttai MCP server. Classify → load rules → gather context → draft → validate →
 `ttai:create_scenario` → return the practice link.
 
@@ -22,7 +22,7 @@ ttai MCP server. Classify → load rules → gather context → draft → valida
 - The **ttai** MCP server must be connected. Tool references below use the
   `ttai:` server prefix (e.g. `ttai:create_scenario`); some agents surface
   these as `mcp__ttai__create_scenario`. If the tools are missing, tell the
-  user to install the ToughTongue plugin or add the MCP server (see the repo
+  user to install the Tough Tongue AI plugin or add the MCP server (see the repo
   README) with a `TTAI_PAT` token from
   <https://app.toughtongueai.com/developer>.
 

@@ -1,7 +1,7 @@
 ---
 name: scenario-refiner
 description: >
-  Fix and refine live ToughTongue AI scenarios from real session evidence via
+  Fix and refine live Tough Tongue AI scenarios from real session evidence via
   the ttai MCP server. Diagnoses whether an issue lives in ai_instructions,
   tools_config, or strategy, then applies the smallest possible edit with
   ttai:update_scenario. Use when the user says "refine the scenario", "fix the

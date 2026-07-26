@@ -1,4 +1,4 @@
-# ToughTongue Skills
+# Tough Tongue AI Skills
 
 [![MCP Registry](https://img.shields.io/badge/MCP_Registry-com.toughtongueai%2Fmcp-blue)](https://registry.modelcontextprotocol.io/v0.1/servers?search=com.toughtongueai/mcp)
 
@@ -8,7 +8,7 @@ agents that answer and place calls, qualify leads, run demos, screen
 candidates, and book meetings. Others, you nail: hyper-realistic roleplay
 that gets you ready for negotiations, interviews, and coaching conversations.
 
-Install once, then work with ToughTongue from Claude Code, Codex, Cursor, or
+Install once, then work with Tough Tongue AI from Claude Code, Codex, Cursor, or
 any agent that supports the Agent Skills format:
 
 - *"Pull the last 3 lost deals from our call notes and create a practice
@@ -50,23 +50,23 @@ conversation matches:
 
 | Skill | When it activates | What it does |
 |---|---|---|
-| [getting-started](skills/getting-started) | "Get started with ToughTongue", "is my ToughTongue MCP working?" | Post-install onboarding. Verifies the MCP connection and PAT, looks at what's in your account, and routes you into your first workflow. |
+| [getting-started](skills/getting-started) | "Get started with Tough Tongue AI", "is my Tough Tongue AI MCP working?" | Post-install onboarding. Verifies the MCP connection and PAT, looks at what's in your account, and routes you into your first workflow. |
 | [scenario-creator](skills/scenario-creator) | "Create a scenario", "build a practice roleplay", "prep me for this meeting" | Create production-ready scenarios from a brief, URL, or call transcript. Classifies the type (cold call, sales roleplay, coaching), applies proven authoring patterns, validates, and creates via MCP. |
 | [scenario-refiner](skills/scenario-refiner) | "Fix the scenario", "it ended the call too early", "make it sound more natural" | Fix a live scenario from real evidence. Pulls the scenario and low-scoring session transcripts, diagnoses the root cause, and applies the smallest possible edit via MCP. |
 | [session-analyst](skills/session-analyst) | "How is my team doing?", "top improvement areas", "build me a coaching report" | Turn session data into answers. Aggregates scores, report cards, and weaknesses across a team or scenario into structured reports: ready to hand off to slides or email tools. |
 
-**MCP server** — live actions in your ToughTongue account. 26 tools over the
+**MCP server** — live actions in your Tough Tongue AI account. 27 tools over the
 public API: scenarios (create, update, generate, access tokens), sessions
-(list with evaluations, batch fetch, ingest, post-process), analytics and
-organizations, SIP phone calls, meeting bots, and collections. Full catalog
-in [MCP.md](MCP.md).
+(list with evaluations, single and batch fetch, ingest, post-process),
+analytics and organizations, SIP phone calls, meeting bots, and collections.
+Full catalog in [MCP.md](MCP.md).
 
 **Plugins** (Claude Code, Codex, Cursor) — bundle the skills **and** the MCP
 server registration in one install.
 
 How the layers relate:
 
-- **Skills add judgment** — the agent knows *what* good ToughTongue work
+- **Skills add judgment** — the agent knows *what* good Tough Tongue AI work
   looks like: how to author a scenario, diagnose a failing one, aggregate
   session data into a report.
 - **MCP adds action** — the agent *can* do it: create scenarios, pull
@@ -77,7 +77,7 @@ How the layers relate:
 
 ## Prerequisites
 
-Every path needs a **ToughTongue AI account** — sign up at
+Every path needs a **Tough Tongue AI account** — sign up at
 [app.toughtongueai.com](https://app.toughtongueai.com).
 
 The CLI and coding-agent paths in this README (Claude Code, Codex, Cursor,
@@ -112,7 +112,7 @@ in MCP.md.
 | **Plugin** (recommended) | Claude Code, Codex, Cursor | Skills + MCP, auto-configured in one install |
 | **Skills + MCP, manual** | Copilot, Windsurf, Gemini CLI, other agents | Same capability, assembled in two steps |
 | **Skills only** | Any Agent Skills client, no live tools needed | Workflow guidance; the agent advises but can't act |
-| **MCP only** | Developers who want raw API tools | 26 tools; no workflow guidance |
+| **MCP only** | Developers who want raw API tools | 27 tools; no workflow guidance |
 
 Not sure? Use the plugin — it's the least setup. Per-client instructions
 below.
@@ -121,7 +121,7 @@ below.
 
 ### Claude Code
 
-The plugin bundles the skills and registers the ToughTongue MCP server
+The plugin bundles the skills and registers the Tough Tongue AI MCP server
 (`.mcp.json`) in one install: no separate `claude mcp add` step needed.
 Just make sure `TTAI_PAT` is set (see [Prerequisites](#prerequisites)).
 
@@ -171,7 +171,7 @@ claude --plugin-dir /path/to/toughtongue-skills
 
 ### Codex
 
-The plugin bundles the skills and registers the ToughTongue MCP server
+The plugin bundles the skills and registers the Tough Tongue AI MCP server
 (`.mcp.json`) in one install:
 
 ```bash
@@ -180,7 +180,7 @@ codex plugin add toughtongue@toughtongue
 ```
 
 Then restart Codex and start a new thread. Say "get me started with
-ToughTongue" to verify the setup and start your first workflow.
+Tough Tongue AI" to verify the setup and start your first workflow.
 
 <details>
 <summary>Upgrade / local development</summary>
@@ -289,7 +289,7 @@ npx skills add tough-tongue/toughtongue-skills
 ```
 
 The agent can advise on scenario design, evaluation rubrics, and coaching
-patterns — but it can't create or modify anything in ToughTongue. Add the
+patterns — but it can't create or modify anything in Tough Tongue AI. Add the
 MCP server later (step 2 above) when you want action.
 
 ### MCP only
@@ -319,17 +319,17 @@ Then list my scenarios.
 
 You should see two things:
 
-- The agent reaches your ToughTongue account and returns real data — the
+- The agent reaches your Tough Tongue AI account and returns real data — the
   MCP connection works.
-- The agent reasons in ToughTongue terms — scenarios, sessions, rubrics,
+- The agent reasons in Tough Tongue AI terms — scenarios, sessions, rubrics,
   report cards — the skills are loaded.
 
-On a **skills-only** setup, verify with "What can I do with ToughTongue?" —
+On a **skills-only** setup, verify with "What can I do with Tough Tongue AI?" —
 the agent should describe the workflows but won't be able to call tools.
 
 ## What you can do
 
-Coding agents are where work happens now. These journeys show ToughTongue
+Coding agents are where work happens now. These journeys show Tough Tongue AI
 composing with the other tools already connected to your agent: copy any
 prompt to start.
 
@@ -338,7 +338,7 @@ prompt to start.
 A sales manager spots an AE struggling with pricing objections in real calls.
 
 > Pull the last 3 calls from Gong where we lost on pricing. Create a
-> ToughTongue scenario to practice handling that objection, using our
+> Tough Tongue AI scenario to practice handling that objection, using our
 > positioning doc from Notion. Give me the shareable practice link.
 
 Gong MCP (`search_calls` / `list_calls` → `get_call_transcript`) + Notion MCP
@@ -391,13 +391,13 @@ completes → email MCP sends the report. Full recipe in
 
 ## MCP Server
 
-The plugin registers ToughTongue's hosted MCP server at
+The plugin registers Tough Tongue AI's hosted MCP server at
 `https://api.toughtongueai.com/api/public/mcp` (Streamable HTTP,
 `TTAI_PAT` bearer auth). There is nothing to install and no local process to
-run. It exposes 26 tools over the public API: scenarios (create, update,
-generate, access tokens), sessions (list with evaluations, batch fetch,
-ingest, post-process), analytics and organizations, SIP phone calls, meeting
-bots, and collections.
+run. It exposes 27 tools over the public API: scenarios (create, update,
+generate, access tokens), sessions (list with evaluations, single and batch
+fetch, ingest, post-process), analytics and organizations, SIP phone calls,
+meeting bots, and collections.
 
 **See [MCP.md](MCP.md)** for the full tool catalog, per-client setup
 (Claude Code, Codex, Cursor, Copilot, Windsurf, Gemini CLI), and
@@ -411,7 +411,7 @@ a custom MCP app with OAuth. Full steps for both are in
 
 ## Troubleshooting
 
-- **Fewer than 26 ttai tools listed**: your agent trimmed or cached tool
+- **Fewer than 27 ttai tools listed**: your agent trimmed or cached tool
   discovery. Start a fresh thread; if it persists, remove and re-add the MCP
   server.
 - **401 / authentication errors**: `TTAI_PAT` is not visible to the agent
@@ -466,8 +466,13 @@ toughtongue-skills/
   [Platform docs](https://app.toughtongueai.com/docs) ·
   [llms-full.txt](https://app.toughtongueai.com/llms-full.txt) (AI-readable
   API reference)
+- [Privacy policy](https://app.toughtongueai.com/privacy-policy/) ·
+  [Terms of service](https://app.toughtongueai.com/terms/) — the canonical
+  legal URLs for Tough Tongue AI, required when submitting the MCP server to
+  the Claude Connectors Directory or a plugin marketplace. Note the paths:
+  `/privacy-policy/` and `/terms/`, not `/privacy` or `/tos`.
 - [voice-ai-quickstart](https://github.com/tough-tongue/voice-ai-quickstart):
-  starter templates for building apps on ToughTongue AI (Next.js, Flask,
+  starter templates for building apps on Tough Tongue AI (Next.js, Flask,
   co-navigation demo, scenario-as-code CLI) and the `toughtongue-ai`
   integration skill for developers embedding the platform.
 

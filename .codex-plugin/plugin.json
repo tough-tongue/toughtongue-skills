@@ -1,6 +1,6 @@
 {
   "name": "toughtongue",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Skills and MCP server for Tough Tongue AI — the platform for tough conversations. Some, the AI takes: voice agents that call, demo, screen, and book. Others, you nail: realistic roleplay for negotiations, interviews, and coaching. Build agents, refine them from real transcripts, and analyze sessions.",
   "author": {
     "name": "Tough Tongue AI",
@@ -21,8 +21,8 @@
     "capabilities": ["Read", "Write"],
     "websiteURL": "https://app.toughtongueai.com",
     "defaultPrompt": [
-      "Get me started with ToughTongue AI.",
-      "Create a ToughTongue scenario to practice handling pricing objections.",
+      "Get me started with Tough Tongue AI.",
+      "Create a Tough Tongue AI scenario to practice handling pricing objections.",
       "Pull the last 50 sessions for my discovery-call scenario and list the top 5 improvement areas.",
       "The onboarding agent ends calls too early — pull low-scoring sessions and fix the scenario."
     ]

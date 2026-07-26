@@ -1,7 +1,7 @@
 [
   {
     "skills": ["getting-started"],
-    "query": "Get me started with ToughTongue AI.",
+    "query": "Get me started with Tough Tongue AI.",
     "expected_behavior": [
       "Calls ttai:list_organizations first and reports whether the account is personal or has organizations",
       "Calls ttai:list_scenarios and ttai:list_sessions with a small limit and summarizes the account state in 2-3 sentences",
@@ -12,7 +12,7 @@
   },
   {
     "skills": ["getting-started"],
-    "query": "Is my ToughTongue MCP working? I just installed the plugin but I'm getting errors.",
+    "query": "Is my Tough Tongue AI MCP working? I just installed the plugin but I'm getting errors.",
     "expected_behavior": [
       "Attempts ttai:list_organizations to reproduce the failure",
       "Distinguishes the two failure modes: tools missing (MCP not registered — restart guidance or manual mcp add commands) versus 401 (TTAI_PAT not visible — export, launchctl setenv on macOS, full app restart)",

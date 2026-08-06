@@ -63,6 +63,12 @@ buyer/prospect, a coach/trainer, or a product demo agent?"
 Read [references/scenario-fields.md](references/scenario-fields.md) (always)
 plus the matching type reference.
 
+For browser demos where the user wants a scripted, deterministic
+walkthrough ("pre-record the steps", "make the demo deterministic", "it
+should always click the same things"), load the **browser-demo-builder**
+skill after creating the scenario — it records the pre-recorded steps and
+sets up authenticated browsing.
+
 ### Step 3: Gather context
 
 - **URLs provided** (company site, product page, LinkedIn): fetch them. Extract

@@ -61,8 +61,18 @@ The browser is pre-opened at the product URL. Use `runBrowserCommand`:
 - `command: "observe"` + `instruction` — scan page elements
 - `command: "act"` + `instruction` — interact with elements
 - `command: "capture"` — take a screenshot to see the page
+- `command: "step"` + `name` — replay a pre-recorded batch of actions
+  instantly (zero AI processing), if the scenario has recorded steps
 
 Recommended flow per section: `goto → observe → capture → explain → act`
+
+**Pre-recorded steps (deterministic demos):** for a scripted walkthrough
+that always clicks the same things, record the flow into
+`tool_settings.steps` and make `step` the primary command — hand off to the
+**browser-demo-builder** skill for the recording workflow, selector rules,
+and instruction templates. That skill also covers
+`ttai:authenticate_browser`, which produces the persistent authenticated
+`[BROWSER_CONTEXT_ID]` used below.
 
 ### ai_instructions structure
 

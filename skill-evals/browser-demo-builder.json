@@ -1,0 +1,33 @@
+[
+  {
+    "skills": ["browser-demo-builder"],
+    "query": "I want my product demo scenario to stop improvising. The demo walks through app.acme.com: log in, open the dashboard, then open the Reports page. Record it as pre-recorded browser steps.",
+    "expected_behavior": [
+      "Interviews the flow screen by screen and fixes all demo data before recording (sandbox credentials only, baked into fill arguments)",
+      "Derives selectors following the preference order (stable id > aria-label > text-anchored XPath) and verifies uniqueness per screen",
+      "Pushes tools_config.tools.browser.tool_settings with initialUrl and steps via ttai:update_scenario, sending only id plus changed fields",
+      "Because the flow needs login, calls ttai:authenticate_browser and instructs the user to open the embed_url once, then stores the returned contextId on the scenario",
+      "Adds a BROWSER TOOL INSTRUCTIONS block and phased flow with narration lines and at most 3 capture milestones to ai_instructions"
+    ]
+  },
+  {
+    "skills": ["browser-demo-builder"],
+    "query": "My demo agent is supposed to click the 'Enterprise Plan' card in the pricing list, but it always clicks the first card instead. The selector is (//div[contains(@class,'plan-card')])[3]//button. Fix it.",
+    "expected_behavior": [
+      "Diagnoses the grouped + indexed XPath as a forbidden pattern that the replay engine silently simplifies to the first match",
+      "Rewrites the selector within the supported subset, e.g. anchoring on the card's visible text with chained bracket predicates and a step-level index",
+      "Verifies the corrected selector with the engine-faithful textContent check, not document.evaluate alone",
+      "Applies the fix to the one broken action via ttai:update_scenario without rewriting unrelated steps"
+    ]
+  },
+  {
+    "skills": ["browser-demo-builder"],
+    "query": "Our demo's login step works when the browser remembers the account but breaks on a fresh profile, which shows the full email+password form instead of the saved-account tile. Make the demo survive both.",
+    "expected_behavior": [
+      "Recognizes this as a state-dependent screen and records a second step (e.g. login_first_time) for the fresh-profile state",
+      "Keeps each action description specific enough to work as a standalone retry prompt",
+      "Wires the fallback into ai_instructions using the step-failure notification: if login fails at the saved-account-tile action, run login_first_time",
+      "Pushes both steps and the updated instructions via ttai:update_scenario and has the user verify with one live session"
+    ]
+  }
+]

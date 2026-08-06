@@ -300,6 +300,11 @@ W = write, D = destructive — these mirror the `readOnlyHint` and
 | `create_sip_batch` | W | Place a batch of outbound calls |
 | `delete_sip_call` | D | Cancel a SIP call |
 
+> `create_sip_call` and `create_sip_batch` are available on the primary endpoint
+> (`/api/public/mcp`) and the REST API only. The Anthropic Directory-listed
+> connector serves a reduced surface (`/api/public/mcp/directory`) without them,
+> per Anthropic's directory policy on autonomous outbound calling.
+
 ### Meeting bots
 
 | Tool | | Description |
@@ -373,8 +378,9 @@ many small calls.
 
 ## Pair with the skills
 
-This repo also ships three skills — scenario-creator, scenario-refiner, and
-session-analyst — that encode proven workflows on top of these tools.
+This repo also ships four skills — scenario-creator, scenario-refiner,
+session-analyst, and browser-demo-builder — that encode proven workflows on
+top of these tools.
 Installing the plugin (see [README.md](README.md)) registers this MCP server
 and the skills in one step.
 

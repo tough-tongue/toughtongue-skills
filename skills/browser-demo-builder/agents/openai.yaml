@@ -1,0 +1,12 @@
+interface:
+  display_name: "Browser Demo Builder"
+  short_description: "Record deterministic pre-recorded browser demo steps for a Tough Tongue AI scenario"
+  default_prompt: "Record deterministic browser demo steps for my product demo scenario."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "ttai"
+      description: "Tough Tongue AI public API MCP server"
+      transport: "streamable_http"
+      url: "https://api.toughtongueai.com/api/public/mcp"

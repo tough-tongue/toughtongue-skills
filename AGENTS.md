@@ -62,7 +62,7 @@ update.
    `/toughtongue:scenario-creator` (and `/reload-plugins` after edits).
 3. Local smoke test, Codex: `codex plugin marketplace add <checkout-path>`,
    `codex plugin add toughtongue@toughtongue`, restart, verify the ttai MCP
-   tools and all three skills appear.
+   tools and all the skills appear.
 4. Verify `TTAI_PAT` flows: with the env var set, "Call the ttai MCP tool
    list_organizations" must succeed in both agents.
 5. Bump `version` in all three plugin manifests; tag the release.

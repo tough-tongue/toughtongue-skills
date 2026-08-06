@@ -67,6 +67,7 @@ Classify into one of these buckets. Each maps to a different fix location.
 | Wrap-up fired during active conversation | Conductor `time_seconds` too low or `end_turn: true` | `strategy.conductor.messages` |
 | Wrong voice / language / accent | Voice or language config | `appearance.voice`, `appearance.language_code`, `transcribe_config` |
 | Agent said a placeholder like `{{ firstname }}` literally | Missing-context fallback not specified | `ai_instructions` CONTEXT section — add "If blank, do X" |
+| Browser demo step fails, or always clicks/scrolls the FIRST item in a list | Selector broken or outside the supported XPath subset (silently simplified) | `tools_config.tools.browser.tool_settings.steps` — fix per the **browser-demo-builder** skill's selector guide |
 | Robotic opening / restarts opening when interrupted | Quoted speech in `welcome_instructions` | `strategy.welcome_instructions` — rewrite in directive form |
 
 If the cause is architectural (template selection, tool registration,

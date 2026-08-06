@@ -54,6 +54,7 @@ conversation matches:
 | [scenario-creator](skills/scenario-creator) | "Create a scenario", "build a practice roleplay", "prep me for this meeting" | Create production-ready scenarios from a brief, URL, or call transcript. Classifies the type (cold call, sales roleplay, coaching), applies proven authoring patterns, validates, and creates via MCP. |
 | [scenario-refiner](skills/scenario-refiner) | "Fix the scenario", "it ended the call too early", "make it sound more natural" | Fix a live scenario from real evidence. Pulls the scenario and low-scoring session transcripts, diagnoses the root cause, and applies the smallest possible edit via MCP. |
 | [session-analyst](skills/session-analyst) | "How is my team doing?", "top improvement areas", "build me a coaching report" | Turn session data into answers. Aggregates scores, report cards, and weaknesses across a team or scenario into structured reports: ready to hand off to slides or email tools. |
+| [browser-demo-builder](skills/browser-demo-builder) | "Record browser demo steps", "make my demo deterministic", "the demo clicks the wrong thing" | Turn a product-demo flow into pre-recorded browser steps. Interviews the flow, harvests stable selectors, writes the steps into the scenario via MCP, and sets up persistent login for authenticated demos. |
 
 **MCP server** — live actions in your Tough Tongue AI account. 27 tools over the
 public API: scenarios (create, update, generate, access tokens), sessions
@@ -144,8 +145,8 @@ at your account, and starts your first workflow.
 
 Skills are namespaced after install: invoke them as
 `/toughtongue:scenario-creator`, `/toughtongue:scenario-refiner`,
-`/toughtongue:session-analyst`: or just describe the task and Claude picks
-the right skill automatically.
+`/toughtongue:session-analyst`, `/toughtongue:browser-demo-builder`: or just
+describe the task and Claude picks the right skill automatically.
 
 <details>
 <summary>Upgrade / local development</summary>
@@ -453,10 +454,11 @@ toughtongue-skills/
 ├── MCP.md                 # MCP server docs: setup per client, tool catalog
 ├── skill-evals/           # Evaluation scenarios per skill
 └── skills/                # Each: SKILL.md + references/ + agents/openai.yaml
-    ├── getting-started/   # Post-install onboarding: verify, orient, first journey
-    ├── scenario-creator/  # Type-specific authoring references
-    ├── scenario-refiner/  # Runtime behavior reference
-    └── session-analyst/   # Report templates
+    ├── getting-started/       # Post-install onboarding: verify, orient, first journey
+    ├── scenario-creator/      # Type-specific authoring references
+    ├── scenario-refiner/      # Runtime behavior reference
+    ├── session-analyst/       # Report templates
+    └── browser-demo-builder/  # Deterministic browser demo steps: format, selectors, example
 ```
 
 ## Related

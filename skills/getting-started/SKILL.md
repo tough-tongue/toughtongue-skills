@@ -2,8 +2,8 @@
 name: getting-started
 description: >
   Onboard a user to the Tough Tongue AI plugin: verify the MCP connection and
-  PAT, look at what's in their account, and route them into their first
-  workflow. This skill should be used when the user says "get started with
+  authentication, look at what's in their account, and route them into their
+  first workflow. This skill should be used when the user says "get started with
   Tough Tongue AI", "set up Tough Tongue AI", "is my Tough Tongue AI MCP working",
   "test my Tough Tongue AI connection", "what can I do with Tough Tongue AI", or has
   just installed the plugin. Not for creating, refining, or analyzing
@@ -25,16 +25,21 @@ Call the `ttai` MCP tool `list_organizations`.
   - Plugin install: restart the agent app fully and start a new thread; the
     plugin registers the server via its bundled `.mcp.json`.
   - Skills-only install (skills.sh / Cursor): register manually —
-    `codex mcp add ttai --url https://api.toughtongueai.com/api/public/mcp
-    --bearer-token-env-var TTAI_PAT` (Codex) or
+    `codex mcp add ttai --url https://api.toughtongueai.com/api/public/mcp`
+    then `codex mcp login ttai` (Codex), or
     `claude mcp add --transport http ttai
-    https://api.toughtongueai.com/api/public/mcp
-    --header "Authorization: Bearer ${TTAI_PAT}"` (Claude Code).
-- **401 / auth error** — the PAT is not visible to the agent process. Walk
-  through: create a token at <https://app.toughtongueai.com/developer>,
-  `export TTAI_PAT="<token>"` in the shell profile, on macOS also
-  `launchctl setenv TTAI_PAT "$TTAI_PAT"`, then fully quit and reopen the
-  agent app. NEVER ask the user to paste the token into the chat.
+    https://api.toughtongueai.com/api/public/mcp` then `/mcp` to
+    authenticate (Claude Code).
+- **401 / auth error** — the OAuth login hasn't been completed for this
+  client. Walk through the login: sign in at
+  <https://app.toughtongueai.com>, then run `/mcp` and authenticate
+  (Claude Code), `codex mcp login ttai` (Codex), or open Cursor Settings >
+  MCP and log in on the ttai server (Cursor) — a browser consent page opens;
+  approve it. If the user is on a manual PAT config (headless/CI), instead
+  check `TTAI_PAT` is visible to the agent process: re-export in the shell
+  profile, on macOS also `launchctl setenv TTAI_PAT "$TTAI_PAT"`, then fully
+  quit and reopen the agent app. NEVER ask the user to paste a token into
+  the chat.
 - **Success** — report what came back: personal account only, or
   organizations (name them). Explain that org work needs `org_id` passed to
   tools, and this happens automatically in the other skills.

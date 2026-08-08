@@ -14,12 +14,14 @@ https://api.toughtongueai.com/api/public/mcp
 ```
 
 It uses Streamable HTTP. There is nothing to install and no local process to
-run. Clients authenticate with a Personal Access Token (PAT) bearer token
-(CLI and coding agents) or OAuth 2.1 (claude.ai web, ChatGPT web).
+run. Authentication is **OAuth 2.1 first** (browser consent with dynamic
+client registration — works in Claude Code, Codex, Cursor, VS Code, claude.ai
+web, ChatGPT web). Personal Access Token (PAT) bearer auth remains for
+headless, CI, and automation setups.
 
 ## Contents
 
-- Get a token
+- Authentication (OAuth-first; PAT for headless)
 - Connect your client (Claude Code, Codex, Cursor, Copilot, Windsurf, Gemini CLI)
 - Clients without remote MCP support (mcp-remote)
 - Web connectors over OAuth (claude.ai, ChatGPT)
@@ -29,7 +31,16 @@ run. Clients authenticate with a Personal Access Token (PAT) bearer token
 - FAQ
 - Pair with the skills
 
-## Get a token
+## Authentication
+
+**OAuth (default).** Register the server with no credentials; your client
+opens a browser consent page on first use (sign in at
+[app.toughtongueai.com](https://app.toughtongueai.com) first). Tokens are
+stored by the client — no environment variables and no app restarts. The
+OAuth-issued token is a PAT under the hood; manage or revoke it at
+[app.toughtongueai.com/developer](https://app.toughtongueai.com/developer).
+
+**PAT bearer (headless / CI / automation).** Where a browser flow can't run:
 
 1. Create a PAT at
    [app.toughtongueai.com/developer](https://app.toughtongueai.com/developer)
@@ -51,23 +62,36 @@ via the environment variable.
 
 ## Connect your client
 
-Replace `${TTAI_PAT}` with the environment variable (preferred) or your
-token, depending on what your client's config supports.
+OAuth-first commands below; PAT variants are collapsed under each client for
+headless setups. Replace `${TTAI_PAT}` with the environment variable
+(preferred) or your token, depending on what your client's config supports.
 
 ### Claude Code
+
+```bash
+claude mcp add --transport http ttai https://api.toughtongueai.com/api/public/mcp
+```
+
+Then run `/mcp` in a session and complete the browser login (Claude Code
+also prompts automatically on the first 401).
+
+<details>
+<summary>PAT variant (headless)</summary>
 
 ```bash
 claude mcp add --transport http ttai https://api.toughtongueai.com/api/public/mcp \
   --header "Authorization: Bearer ${TTAI_PAT}"
 ```
 
+</details>
+
 ### Codex
 
 Configuration is shared between the Codex CLI and IDE extension.
 
 ```bash
-codex mcp add ttai --url https://api.toughtongueai.com/api/public/mcp \
-  --bearer-token-env-var TTAI_PAT
+codex mcp add ttai --url https://api.toughtongueai.com/api/public/mcp
+codex mcp login ttai
 ```
 
 Or configure directly in `~/.codex/config.toml`:
@@ -75,8 +99,25 @@ Or configure directly in `~/.codex/config.toml`:
 ```toml
 [mcp_servers.ttai]
 url = "https://api.toughtongueai.com/api/public/mcp"
+```
+
+<details>
+<summary>PAT variant (headless)</summary>
+
+```bash
+codex mcp add ttai --url https://api.toughtongueai.com/api/public/mcp \
+  --bearer-token-env-var TTAI_PAT
+```
+
+Or in `~/.codex/config.toml`:
+
+```toml
+[mcp_servers.ttai]
+url = "https://api.toughtongueai.com/api/public/mcp"
 bearer_token_env_var = "TTAI_PAT"
 ```
+
+</details>
 
 If this is your first HTTP MCP server in Codex, you may need to enable the
 rmcp client in `~/.codex/config.toml`:
@@ -88,8 +129,8 @@ experimental_use_rmcp_client = true
 
 ### Cursor
 
-[**Install in Cursor**](cursor://anysphere.cursor-deeplink/mcp/install?name=ttai&config=eyJ1cmwiOiJodHRwczovL2FwaS50b3VnaHRvbmd1ZWFpLmNvbS9hcGkvcHVibGljL21jcCIsImhlYWRlcnMiOnsiQXV0aG9yaXphdGlvbiI6IkJlYXJlciAke1RUQUlfUEFUfSJ9fQ==)
-— one click adds the server; make sure `TTAI_PAT` is exported first.
+[**Install in Cursor**](cursor://anysphere.cursor-deeplink/mcp/install?name=ttai&config=eyJ1cmwiOiJodHRwczovL2FwaS50b3VnaHRvbmd1ZWFpLmNvbS9hcGkvcHVibGljL21jcCJ9)
+— one click adds the server; Cursor prompts for OAuth login on first use.
 
 Or manually: open the command palette and choose "Cursor Settings" > "MCP" >
 "Add new global MCP server":
@@ -98,18 +139,20 @@ Or manually: open the command palette and choose "Cursor Settings" > "MCP" >
 {
   "mcpServers": {
     "ttai": {
-      "url": "https://api.toughtongueai.com/api/public/mcp",
-      "headers": {
-        "Authorization": "Bearer ${TTAI_PAT}"
-      }
+      "url": "https://api.toughtongueai.com/api/public/mcp"
     }
   }
 }
 ```
 
+For headless setups, add
+`"headers": { "Authorization": "Bearer ${TTAI_PAT}" }` instead of using
+OAuth.
+
 ### GitHub Copilot (VS Code)
 
-Add to your `settings.json`:
+Add to your `settings.json` — VS Code runs the OAuth consent flow when the
+server connects:
 
 ```json
 {
@@ -117,17 +160,20 @@ Add to your `settings.json`:
     "servers": {
       "ttai": {
         "type": "http",
-        "url": "https://api.toughtongueai.com/api/public/mcp",
-        "headers": {
-          "Authorization": "Bearer ${TTAI_PAT}"
-        }
+        "url": "https://api.toughtongueai.com/api/public/mcp"
       }
     }
   }
 }
 ```
 
+For headless setups, add
+`"headers": { "Authorization": "Bearer ${TTAI_PAT}" }`.
+
 ### Windsurf
+
+Omit `headers` if your Windsurf version prompts for OAuth; otherwise use the
+PAT header:
 
 ```json
 {
@@ -143,6 +189,9 @@ Add to your `settings.json`:
 ```
 
 ### Gemini CLI
+
+Omit `headers` if your Gemini CLI version prompts for OAuth; otherwise use
+the PAT header:
 
 ```json
 {
@@ -161,7 +210,14 @@ Add to your `settings.json`:
 
 For clients that only run local stdio MCP servers (Claude Desktop, Zed, older
 VS Code), bridge to the hosted server with
-[mcp-remote](https://github.com/geelen/mcp-remote):
+[mcp-remote](https://github.com/geelen/mcp-remote). mcp-remote runs the
+OAuth flow itself — it opens the browser consent page on first connect:
+
+```bash
+npx -y mcp-remote https://api.toughtongueai.com/api/public/mcp
+```
+
+For headless setups, pass the PAT instead:
 
 ```bash
 npx -y mcp-remote https://api.toughtongueai.com/api/public/mcp \
@@ -180,9 +236,7 @@ Open Claude Desktop settings > "Developer" tab > "Edit Config":
       "args": [
         "-y",
         "mcp-remote",
-        "https://api.toughtongueai.com/api/public/mcp",
-        "--header",
-        "Authorization: Bearer ${TTAI_PAT}"
+        "https://api.toughtongueai.com/api/public/mcp"
       ]
     }
   }
@@ -192,13 +246,14 @@ Open Claude Desktop settings > "Developer" tab > "Edit Config":
 ### Any other stdio client
 
 - **Command**: `npx`
-- **Arguments**: `-y mcp-remote https://api.toughtongueai.com/api/public/mcp --header "Authorization: Bearer ${TTAI_PAT}"`
-- **Environment**: `TTAI_PAT` must be set
+- **Arguments**: `-y mcp-remote https://api.toughtongueai.com/api/public/mcp`
+- **Authentication**: browser OAuth on first connect (add
+  `--header "Authorization: Bearer ${TTAI_PAT}"` for headless setups)
 
 ## Web connectors (OAuth)
 
-Browser clients connect over OAuth 2.1 with dynamic client registration — no
-PAT and no config file.
+Browser clients use the same OAuth 2.1 flow with dynamic client
+registration — no PAT and no config file.
 
 ### claude.ai (web)
 
@@ -337,7 +392,7 @@ Call the ttai MCP tool list_organizations and show me the result.
 | Symptom | Fix |
 |---|---|
 | Fewer than 27 ttai tools listed | Client trimmed or cached tool discovery. Start a fresh thread; if it persists, remove and re-add the server. |
-| 401 / authentication errors | `TTAI_PAT` is not visible to the agent process. Re-export, `launchctl setenv` on macOS, fully restart the app. |
+| 401 / authentication errors | OAuth login not completed for this client — Claude Code: `/mcp`; Codex: `codex mcp login ttai`; Cursor: Settings > MCP > log in. On a PAT config, `TTAI_PAT` is not visible to the agent process: re-export, `launchctl setenv` on macOS, fully restart the app. |
 | Scenario edit not reflected in a running call | Scenario changes apply to new sessions only — sessions compile their prompt at start. |
 | Tool works personally but not for team data | Pass `org_id` (from `list_organizations`) and `is_org: true` where the tool supports it. |
 
@@ -352,13 +407,14 @@ no local package to run.
 </details>
 
 <details>
-<summary>Can I authenticate with OAuth instead of a token?</summary>
+<summary>Do I still need a PAT?</summary>
 
-Yes. The server supports OAuth 2.1 with dynamic client registration — used by
-claude.ai web and ChatGPT web (see [Web connectors](#web-connectors-oauth)).
-The token it issues is a PAT under the hood; revoke it at
-[Developer settings](https://app.toughtongueai.com/developer). PAT bearer
-headers keep working for servers, CI, and headless agents.
+Not for interactive use — OAuth 2.1 with dynamic client registration is the
+default everywhere (coding agents, claude.ai web, ChatGPT web). The token
+OAuth issues is a PAT under the hood; revoke it at
+[Developer settings](https://app.toughtongueai.com/developer). Explicit PAT
+bearer headers remain for servers, CI, and headless agents — see
+[Authentication](#authentication).
 </details>
 
 <details>

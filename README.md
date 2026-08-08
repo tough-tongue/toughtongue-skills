@@ -81,30 +81,36 @@ How the layers relate:
 Every path needs a **Tough Tongue AI account** — sign up at
 [app.toughtongueai.com](https://app.toughtongueai.com).
 
-The CLI and coding-agent paths in this README (Claude Code, Codex, Cursor,
-Copilot, Windsurf, Gemini CLI, Claude Desktop) also need a **Personal Access
-Token (PAT)** — create one at
-[app.toughtongueai.com/developer](https://app.toughtongueai.com/developer) and
-export it in the environment your agent runs in:
+That's it for interactive setups. Authentication is **OAuth-first**: the
+first time your agent calls a Tough Tongue AI tool, the client opens a
+browser consent page — approve once and the client stores the token
+(Claude Code and Codex use your system keychain). No environment variables,
+no app restarts.
+
+> **Upgrading from a PAT-based install?** After updating the plugin you'll
+> see a one-time OAuth prompt (Claude Code: run `/mcp` and authenticate;
+> Codex: `codex mcp login ttai` or approve the automatic prompt). Your
+> existing PAT keeps working for manual/headless configs.
+
+<details>
+<summary>Headless / CI / automation: use a PAT instead</summary>
+
+Browser OAuth can't run in headless environments. Create a **Personal Access
+Token (PAT)** at
+[app.toughtongueai.com/developer](https://app.toughtongueai.com/developer)
+and export it where your agent runs:
 
 ```bash
 export TTAI_PAT="<your-token>"
 ```
 
-On macOS, GUI apps need the variable at the launchd level too:
+Then register the server manually with a bearer header — per-client commands
+in [MCP only](#mcp-only) and [MCP.md](MCP.md).
 
-```bash
-launchctl setenv TTAI_PAT "$TTAI_PAT"
-```
+> **Note**: never commit the PAT or paste it into config files — reference it
+> only through the `TTAI_PAT` environment variable.
 
-Then fully restart your agent app and start a new thread.
-
-The claude.ai (web) and ChatGPT (web) connectors skip the PAT entirely — they
-authenticate over OAuth. See the [web connector sections](MCP.md#claudeai-web)
-in MCP.md.
-
-> **Note**: never commit the PAT or paste it into config files: the plugin
-> references it only through the `TTAI_PAT` environment variable.
+</details>
 
 ## Which setup fits you?
 
@@ -124,7 +130,8 @@ below.
 
 The plugin bundles the skills and registers the Tough Tongue AI MCP server
 (`.mcp.json`) in one install: no separate `claude mcp add` step needed.
-Just make sure `TTAI_PAT` is set (see [Prerequisites](#prerequisites)).
+On the first tool call, Claude Code opens a browser OAuth consent — approve
+once and you're connected (re-authenticate anytime with `/mcp`).
 
 Inside Claude Code:
 
@@ -180,8 +187,10 @@ codex plugin marketplace add tough-tongue/toughtongue-skills
 codex plugin add toughtongue@toughtongue
 ```
 
-Then restart Codex and start a new thread. Say "get me started with
-Tough Tongue AI" to verify the setup and start your first workflow.
+Then restart Codex and start a new thread. Codex detects the server's OAuth
+support and prompts you to log in (or run `codex mcp login ttai`). Say "get
+me started with Tough Tongue AI" to verify the setup and start your first
+workflow.
 
 <details>
 <summary>Upgrade / local development</summary>
@@ -220,9 +229,9 @@ Or assemble it manually in two steps:
    ```
 
 2. Add the MCP server:
-   [**Install in Cursor**](cursor://anysphere.cursor-deeplink/mcp/install?name=ttai&config=eyJ1cmwiOiJodHRwczovL2FwaS50b3VnaHRvbmd1ZWFpLmNvbS9hcGkvcHVibGljL21jcCIsImhlYWRlcnMiOnsiQXV0aG9yaXphdGlvbiI6IkJlYXJlciAke1RUQUlfUEFUfSJ9fQ==)
-   — one click adds the server; make sure `TTAI_PAT` is exported first. Or
-   add it manually via "Cursor Settings" > "MCP" (config JSON in
+   [**Install in Cursor**](cursor://anysphere.cursor-deeplink/mcp/install?name=ttai&config=eyJ1cmwiOiJodHRwczovL2FwaS50b3VnaHRvbmd1ZWFpLmNvbS9hcGkvcHVibGljL21jcCJ9)
+   — one click adds the server; Cursor prompts for OAuth consent on first
+   use. Or add it manually via "Cursor Settings" > "MCP" (config JSON in
    [MCP.md](MCP.md#cursor)).
 
 <details>
@@ -265,17 +274,17 @@ general shape is:
 {
   "mcpServers": {
     "ttai": {
-      "url": "https://api.toughtongueai.com/api/public/mcp",
-      "headers": {
-        "Authorization": "Bearer ${TTAI_PAT}"
-      }
+      "url": "https://api.toughtongueai.com/api/public/mcp"
     }
   }
 }
 ```
 
-Exact config per client (Copilot/VS Code, Windsurf, Gemini CLI) is in
-[MCP.md](MCP.md#connect-your-client).
+Clients with OAuth support prompt for consent on first use. For clients (or
+headless setups) that need a bearer token instead, add
+`"headers": { "Authorization": "Bearer ${TTAI_PAT}" }` with the PAT from
+[Prerequisites](#prerequisites). Exact config per client (Copilot/VS Code,
+Windsurf, Gemini CLI) is in [MCP.md](MCP.md#connect-your-client).
 
 **Stdio-only clients** (Claude Desktop, Zed, older VS Code): bridge to the
 hosted server with [mcp-remote](https://github.com/geelen/mcp-remote) — see
@@ -295,7 +304,19 @@ MCP server later (step 2 above) when you want action.
 
 ### MCP only
 
-If you only want the tools (no skills):
+If you only want the tools (no skills) — OAuth flow starts on first use:
+
+```bash
+# Codex
+codex mcp add ttai --url https://api.toughtongueai.com/api/public/mcp
+codex mcp login ttai
+
+# Claude Code
+claude mcp add --transport http ttai https://api.toughtongueai.com/api/public/mcp
+# then run /mcp in a session to authenticate
+```
+
+Headless / CI (PAT bearer auth instead of OAuth):
 
 ```bash
 # Codex
@@ -393,36 +414,42 @@ completes → email MCP sends the report. Full recipe in
 ## MCP Server
 
 The plugin registers Tough Tongue AI's hosted MCP server at
-`https://api.toughtongueai.com/api/public/mcp` (Streamable HTTP,
-`TTAI_PAT` bearer auth). There is nothing to install and no local process to
-run. It exposes 27 tools over the public API: scenarios (create, update,
-generate, access tokens), sessions (list with evaluations, single and batch
-fetch, ingest, post-process), analytics and organizations, SIP phone calls,
-meeting bots, and collections.
+`https://api.toughtongueai.com/api/public/mcp` (Streamable HTTP, OAuth 2.1
+with dynamic client registration; PAT bearer auth for headless setups).
+There is nothing to install and no local process to run. It exposes 27 tools
+over the public API: scenarios (create, update, generate, access tokens),
+sessions (list with evaluations, single and batch fetch, ingest,
+post-process), analytics and organizations, SIP phone calls, meeting bots,
+and collections.
 
 **See [MCP.md](MCP.md)** for the full tool catalog, per-client setup
 (Claude Code, Codex, Cursor, Copilot, Windsurf, Gemini CLI), and
 troubleshooting.
 
-OAuth is supported too. In claude.ai, add a custom connector (Settings >
-Connectors) pointing at the server URL with the Client ID and Secret left
-empty. In ChatGPT (Business/Enterprise/Edu), enable developer mode and create
-a custom MCP app with OAuth. Full steps for both are in
-[MCP.md](MCP.md#claudeai-web).
+The same OAuth flow powers the web connectors. In claude.ai, add a custom
+connector (Settings > Connectors) pointing at the server URL with the Client
+ID and Secret left empty. In ChatGPT (Business/Enterprise/Edu), enable
+developer mode and create a custom MCP app with OAuth. Full steps for both
+are in [MCP.md](MCP.md#claudeai-web).
 
 ## Troubleshooting
 
 - **Fewer than 27 ttai tools listed**: your agent trimmed or cached tool
   discovery. Start a fresh thread; if it persists, remove and re-add the MCP
   server.
-- **401 / authentication errors**: `TTAI_PAT` is not visible to the agent
-  process. Re-export, `launchctl setenv` on macOS, fully restart the app.
+- **401 / authentication errors**: the OAuth login hasn't completed for this
+  client. Claude Code: run `/mcp` and authenticate in the browser. Codex:
+  `codex mcp login ttai`. Cursor: Cursor Settings > MCP > log in on the ttai
+  server. If you're on a manual PAT config instead, check `TTAI_PAT` is
+  visible to the agent process (re-export, `launchctl setenv` on macOS,
+  fully restart the app).
 - **Skills installed but the agent can't do anything**: skills are guidance
   only — the agent also needs the MCP server for live actions. See
   [Which setup fits you?](#which-setup-fits-you) and add the MCP server for
   your client.
-- **Using claude.ai or ChatGPT web?**: connect over OAuth — no PAT needed. See
-  the [web connector sections](MCP.md#claudeai-web) in MCP.md.
+- **Using claude.ai or ChatGPT web?**: same OAuth flow, via custom
+  connectors. See the [web connector sections](MCP.md#claudeai-web) in
+  MCP.md.
 - **Scenario edits not taking effect in a running call**: scenario changes
   apply to new sessions only; sessions compile their prompt at start.
 
@@ -450,7 +477,7 @@ toughtongue-skills/
 ├── .codex-plugin/         # Codex plugin manifest
 ├── .cursor-plugin/        # Cursor plugin manifest
 ├── .agents/plugins/       # Codex plugin-marketplace entry
-├── .mcp.json              # Hosted MCP server registration (TTAI_PAT bearer)
+├── .mcp.json              # Hosted MCP server registration (OAuth; no credentials)
 ├── MCP.md                 # MCP server docs: setup per client, tool catalog
 ├── skill-evals/           # Evaluation scenarios per skill
 └── skills/                # Each: SKILL.md + references/ + agents/openai.yaml

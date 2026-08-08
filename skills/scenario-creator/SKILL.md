@@ -22,9 +22,8 @@ ttai MCP server. Classify → load rules → gather context → draft → valida
 - The **ttai** MCP server must be connected. Tool references below use the
   `ttai:` server prefix (e.g. `ttai:create_scenario`); some agents surface
   these as `mcp__ttai__create_scenario`. If the tools are missing, tell the
-  user to install the Tough Tongue AI plugin or add the MCP server (see the repo
-  README) with a `TTAI_PAT` token from
-  <https://app.toughtongueai.com/developer>.
+  user to install the Tough Tongue AI plugin or add the MCP server (see the
+  repo README) — the client runs a browser OAuth login on first use.
 
 ## Workflow
 

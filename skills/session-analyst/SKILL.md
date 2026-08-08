@@ -20,8 +20,8 @@ optionally hand off to slides/email tools for distribution.
 - The **ttai** MCP server must be connected. Tool references below use the
   `ttai:` server prefix (e.g. `ttai:list_sessions`); some agents surface
   these as `mcp__ttai__list_sessions`. If the tools are missing, point the
-  user at the repo README and <https://app.toughtongueai.com/developer> for a
-  `TTAI_PAT` token.
+  user at the repo README to install the plugin or add the MCP server — the
+  client runs a browser OAuth login on first use.
 
 ## Data model (what a session gives you)
 

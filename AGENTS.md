@@ -12,8 +12,11 @@ public and is installed directly into end users' agents — every word ships.
   (`create_scenario`, `update_scenario`, `list_sessions`, ...) — never in
   "write a file to disk" or references to internal Tough Tongue AI repos, paths,
   or CLIs.
-- **No secrets.** The only credential is the `TTAI_PAT` environment variable,
-  referenced by name only. Never hardcode tokens, user IDs, or org IDs.
+- **No secrets.** Authentication is OAuth-first: the shipped MCP configs
+  (`.mcp.json` / `mcp.json`) carry no credentials and clients run the browser
+  OAuth flow. The only credential ever named is the `TTAI_PAT` environment
+  variable (headless/CI fallback), referenced by name only. Never hardcode
+  tokens, user IDs, or org IDs.
 - **Token discipline in SKILL.md files.** Skills are loaded into agent
   context; keep SKILL.md under ~250 lines and push depth into `references/`
   files that agents load on demand.
@@ -63,8 +66,11 @@ update.
 3. Local smoke test, Codex: `codex plugin marketplace add <checkout-path>`,
    `codex plugin add toughtongue@toughtongue`, restart, verify the ttai MCP
    tools and all the skills appear.
-4. Verify `TTAI_PAT` flows: with the env var set, "Call the ttai MCP tool
-   list_organizations" must succeed in both agents.
+4. Verify auth flows: OAuth first — complete the browser login (Claude Code:
+   `/mcp`; Codex: `codex mcp login ttai`), then "Call the ttai MCP tool
+   list_organizations" must succeed in both agents. Also spot-check the PAT
+   fallback: a manual server config with the `TTAI_PAT` bearer header must
+   still work.
 5. Bump `version` in all three plugin manifests; tag the release.
 
 ### Submission assets

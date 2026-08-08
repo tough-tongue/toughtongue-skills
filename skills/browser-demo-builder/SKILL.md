@@ -39,8 +39,8 @@ Reference files (load on demand):
 - The **ttai** MCP server must be connected. Tool references below use the
   `ttai:` server prefix (e.g. `ttai:update_scenario`); some agents surface
   these as `mcp__ttai__update_scenario`. If the tools are missing, point the
-  user at the repo README and <https://app.toughtongueai.com/developer> for a
-  `TTAI_PAT` token.
+  user at the repo README to install the plugin or add the MCP server — the
+  client runs a browser OAuth login on first use.
 - A way to inspect the demo app's pages: your agent's browser automation if
   available, or the user's own browser DevTools console using the snippets
   in [references/selector-guide.md](references/selector-guide.md).

@@ -46,6 +46,10 @@ public and is installed directly into end users' agents — every word ships.
   platform manifests. Keep `version` in sync across all of them when releasing.
 - `.mcp.json` / `mcp.json` — identical content; both exist for platform
   compatibility. Change both or neither.
+- `.claude-plugin/marketplace.json` plugin `source` must be the object form
+  `{ "source": "github", "repo": "tough-tongue/toughtongue-skills" }`, not the
+  string shorthand `"."`. Claude Code CLI accepts both; Claude Desktop/Cowork
+  remote sync rejects the string form with "Marketplace sync failed."
 
 ## Versioning
 

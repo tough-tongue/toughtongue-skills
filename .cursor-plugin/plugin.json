@@ -2,7 +2,7 @@
   "name": "toughtongue",
   "displayName": "Tough Tongue AI",
   "description": "Skills and MCP server for Tough Tongue AI — the platform for tough conversations. Some, the AI takes: voice agents that call, demo, screen, and book. Others, you nail: realistic roleplay for negotiations, interviews, and coaching. Build agents, refine them from real transcripts, and analyze sessions.",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "Tough Tongue AI",
     "url": "https://app.toughtongueai.com"

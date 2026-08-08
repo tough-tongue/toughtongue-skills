@@ -42,20 +42,33 @@ public and is installed directly into end users' agents — every word ships.
 - `skill-evals/` — 3 evaluation scenarios per skill; re-run before releases
   that touch a SKILL.md or reference file.
 - MCP tool references in skills use the qualified `ttai:tool_name` form.
+- `plugin.json` (repo root) — Agent Plugins 1.0.0 manifest
+  (<https://agent-plugins.org>); the portable format read natively by Cursor,
+  Codex, GitHub Copilot, Kiro, and VS Code. `$schema` and `name` are required.
 - `.claude-plugin/`, `.codex-plugin/`, `.cursor-plugin/`, `.agents/plugins/` —
   platform manifests. Keep `version` in sync across all of them when releasing.
-- `.mcp.json` / `mcp.json` — identical content; both exist for platform
-  compatibility. Change both or neither.
+- `.mcp.json` — Claude-native MCP config (`"type": "http"`).
+- `mcp.json` — Agent Plugins strict MCP config (`$schema` +
+  `"type": "streamable-http"`). The two files carry the same server URL but
+  deliberately different formats; when the MCP URL changes, update both (plus
+  `skills/*/agents/openai.yaml`).
+- `.plugin/marketplace.json` — read by the `npx plugins` CLI
+  (vercel-labs/plugins) before `.claude-plugin/marketplace.json`. Its plugin
+  `source` MUST stay the string `"./"` — the CLI treats non-string sources as
+  remote and refuses to install them.
 - `.claude-plugin/marketplace.json` plugin `source` must be the object form
   `{ "source": "github", "repo": "tough-tongue/toughtongue-skills" }`, not the
   string shorthand `"."`. Claude Code CLI accepts both; Claude Desktop/Cowork
   remote sync rejects the string form with "Marketplace sync failed."
+- Never create a root-level `marketplace.json`: the `npx plugins` CLI prefers
+  it when copying a marketplace into `~/.claude/plugins/`, which would leak a
+  string source back into Claude tooling (the Cowork sync bug above).
 
 ## Versioning
 
-Bump the version in all plugin manifests together (`.claude-plugin/plugin.json`,
-`.codex-plugin/plugin.json`, `.cursor-plugin/plugin.json`) on any user-visible
-change. The explicit `version` field controls when installed users receive
+Bump the version in all plugin manifests together (`plugin.json`,
+`.claude-plugin/plugin.json`, `.codex-plugin/plugin.json`,
+`.cursor-plugin/plugin.json`) on any user-visible change. The explicit `version` field controls when installed users receive
 updates — without a bump, Claude Code users on marketplace installs do not
 update.
 
@@ -75,7 +88,12 @@ update.
    list_organizations" must succeed in both agents. Also spot-check the PAT
    fallback: a manual server config with the `TTAI_PAT` bearer header must
    still work.
-5. Bump `version` in all three plugin manifests; tag the release.
+5. Local smoke test, `npx plugins` CLI: `npx plugins discover .` must show 1
+   local plugin with all skills + MCP; `npx plugins add . -t claude-code -s local -y`
+   must install cleanly.
+6. After push: in Claude Desktop/Cowork, Add marketplace → Sync must still
+   succeed (regression check for the string-source sync bug).
+7. Bump `version` in all four plugin manifests; tag the release.
 
 ### Submission assets
 
@@ -99,4 +117,6 @@ The paths are `/privacy-policy/` and `/terms/`; `/privacy` and `/tos` 404.
 | Codex (GitHub marketplace) | This repo's `.agents/plugins/marketplace.json`; users run `codex plugin marketplace add tough-tongue/toughtongue-skills`. Codex also reads `.claude-plugin/marketplace.json` for compatibility | Live on push |
 | Claude Connectors Directory (the in-app connectors list) | Submits the *hosted MCP server* (`https://api.toughtongueai.com/api/public/mcp`), not this repo, via <https://claude.ai/admin-settings/directory/submissions/new>. Requires a Team or Enterprise Claude org with directory-management access. Server already meets the technical bar: streamable HTTP, OAuth 2.1 with dynamic client registration, PKCE S256, correct 401 `resource_metadata` discovery | Not submitted |
 | Codex official Plugin Directory | Publishing is "coming soon" per OpenAI docs — no self-serve yet. Interim: share to a ChatGPT workspace via Codex app → Plugins → Created by you → Share | Watch docs |
+| `npx plugins add` (cross-agent installer) | The `plugins` npm CLI (vercel-labs/plugins) reads this repo's `.plugin/marketplace.json` and installs into every detected agent: Claude Code, Cursor, Codex, Grok Build, Kimi Code, GitHub Copilot CLI, VS Code. Users run `npx plugins add tough-tongue/toughtongue-skills` | Live on push |
+| Agent Plugins 1.0.0 (native clients) | Root `plugin.json` + `skills/` + `mcp.json` per <https://agent-plugins.org>; loaded directly by clients that support the standard (Cursor, Codex, GitHub Copilot, Kiro, VS Code) | Live on push |
 | skills.sh | Indexes public GitHub repos with `skills/` | Live once repo is public |

@@ -27,6 +27,7 @@ slides, email. See [What you can do](#what-you-can-do) for the full journeys.
 - [Prerequisites](#prerequisites)
 - [Which setup fits you?](#which-setup-fits-you)
 - [Set up](#set-up)
+  - [One command, every agent](#one-command-every-agent)
   - [Claude Code](#claude-code)
   - [Codex](#codex)
   - [Cursor](#cursor)
@@ -125,6 +126,26 @@ Not sure? Use the plugin — it's the least setup. Per-client instructions
 below.
 
 ## Set up
+
+### One command, every agent
+
+The fastest path. The [`plugins` CLI](https://www.npmjs.com/package/plugins)
+detects the coding agents on your machine — Claude Code, Cursor, Codex,
+Grok Build, Kimi Code, GitHub Copilot CLI, VS Code — and installs the
+skills plus the MCP server into all of them at once:
+
+```bash
+npx plugins add tough-tongue/toughtongue-skills
+```
+
+Restart your agent, then say "get me started with Tough Tongue AI". On the
+first tool call your client opens the browser OAuth consent — approve once
+and you're connected.
+
+This repo is also a standard [Agent Plugin](https://agent-plugins.org)
+(root `plugin.json`, `skills/`, `mcp.json`), so clients that load Agent
+Plugins natively can point straight at it. Prefer your client's own plugin
+system? Per-client instructions below.
 
 ### Claude Code
 
@@ -473,11 +494,14 @@ Step 3 forces Claude Code to re-read the marketplace manifest. After step 4,
 
 ```
 toughtongue-skills/
+├── plugin.json            # Agent Plugins 1.0.0 manifest (agent-plugins.org)
+├── mcp.json               # Agent Plugins MCP config (streamable-http; no credentials)
+├── .plugin/               # Marketplace entry for the `npx plugins` CLI
 ├── .claude-plugin/        # Claude Code plugin + marketplace manifests
 ├── .codex-plugin/         # Codex plugin manifest
 ├── .cursor-plugin/        # Cursor plugin manifest
 ├── .agents/plugins/       # Codex plugin-marketplace entry
-├── .mcp.json              # Hosted MCP server registration (OAuth; no credentials)
+├── .mcp.json              # Claude-native MCP server registration (OAuth; no credentials)
 ├── MCP.md                 # MCP server docs: setup per client, tool catalog
 ├── skill-evals/           # Evaluation scenarios per skill
 └── skills/                # Each: SKILL.md + references/ + agents/openai.yaml

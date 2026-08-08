@@ -1,0 +1,15 @@
+{
+  "name": "toughtongue",
+  "owner": {
+    "name": "Tough Tongue AI",
+    "url": "https://github.com/tough-tongue"
+  },
+  "plugins": [
+    {
+      "name": "toughtongue",
+      "source": "./",
+      "description": "Build, refine, and analyze Tough Tongue AI voice agents — automate tough conversations or practice them — through the Tough Tongue MCP server. Includes scenario-creator, scenario-refiner, session-analyst, and browser-demo-builder skills.",
+      "category": "productivity"
+    }
+  ]
+}

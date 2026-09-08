@@ -16,7 +16,7 @@
     "expected_behavior": [
       "Uses ttai:list_sessions to collect the population, sorts by evaluation_results.final_score ascending, and takes the bottom 5",
       "Fetches details with ttai:get_sessions_batch and reads transcript_url contents for the actual conversations",
-      "Distinguishes scenario faults from user-skill faults, and recommends handing off to the scenario-refiner skill if the scenario is at fault",
+      "Distinguishes scenario faults from user-skill faults, and recommends handing off to the scenario-maker skill if the scenario is at fault",
       "Reports findings with transcript evidence, not just score numbers"
     ]
   },

@@ -1,0 +1,89 @@
+[
+  {
+    "skills": ["ttai-agent"],
+    "query": "What lives in a Tough Tongue AI workspace? Name the resources, not just scenarios.",
+    "expected_behavior": [
+      "Describes a workspace as a personal account or an organization",
+      "Names scenarios, sessions, collections, SIP trunks, SIP calls, meeting bots, browser contexts, access tokens, and balance/subscription — not only scenarios",
+      "Loads kb/entities (resources / key-control-entities) rather than inventing the catalog",
+      "Points at features/mcp when the user asks how to create or list those resources — does not dump a full OAuth walkthrough unprompted"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Which fields do I set on a scenario besides the long AI instructions and the rubric?",
+    "expected_behavior": [
+      "Loads kb/entities/scenario/model-selection.md and/or control.md and does not paste a full ai_instructions essay",
+      "Covers ai_model_config (Realtime / separate-TTS realtime / Cascade; Galaxy and Ocean support SIP, cold call/slides stamp Landmass cascade + Cartesia; sales Galaxy; coaching/browser Ocean; never invent tts_voice_id; super scenarios require Landmass; never cascade-01 or invent tts_voice_id), opening lives in FLOW not welcome_instructions, talkative strategy.silence (omit = 120s hangup), appearance.voice, tools_config.end_session, session_analysis",
+      "Points at scenario/ai-instructions.md for the instruction shape and at a recipe under kb/scenario-recipes/ for rubrik patterns"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "How should ai_instructions be structured? Don't write a cold-call script — just the skeleton.",
+    "expected_behavior": [
+      "Loads scenario/ai-instructions.md and gives the fundamental sections (CONTEXT, ROLE, FLOW, TOOLS, GUARDRAILS, STYLE) without a situation-specific opening",
+      "States one question per turn, directive FLOW opening (no welcome_instructions field), and that every {{ var }} needs a missing-value fallback",
+      "Mentions scenario-recipes exist for cold-call / sales-roleplay / coaching / demo rather than inlining one",
+      "One-line pointer to features/mcp for create/update — no OAuth walkthrough"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Call ttai:list_organizations and show me the result.",
+    "expected_behavior": [
+      "Calls ttai:list_organizations (or explains how to connect if tools are missing)",
+      "On success, reports personal vs organizations by name",
+      "Does not author scenario field tables in the same turn"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "I just installed the plugin but I'm getting 401 errors from ttai tools.",
+    "expected_behavior": [
+      "Treats 401 as OAuth not completed for this client (Claude Code /mcp, Codex mcp login ttai, Cursor Settings > MCP)",
+      "Never asks the user to paste a PAT into chat",
+      "Mentions TTAI_PAT only as a headless/CI last resort, by variable name"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "How do I update an existing scenario versus creating a new one?",
+    "expected_behavior": [
+      "create_scenario rejects id; update_scenario requires id and is partial (send only changed fields)",
+      "Says to load the tool schema before calling; MCP does not yet publish a standalone resource schema",
+      "Notes edits apply to new sessions, not a call already in progress",
+      "Points at kb/entities/scenario for what to put in the payload"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "I am building a web chat companion. What context should I give it before it recommends or changes a Tough Tongue AI scenario?",
+    "expected_behavior": [
+      "Describes ttai-agent as a provider-neutral intelligence layer rather than a CLI or a second API client",
+      "Requests or reuses verified workspace scope, focused scenario/resource, user intent, consumer capabilities, and any live account facts",
+      "Distinguishes platform support, consumer tool availability, user entitlement, and the user's explicit request",
+      "Says the web companion must not assume a terminal or call a write action merely because it can recommend one"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "What plan am I on, and can I make SIP calls?",
+    "expected_behavior": [
+      "Explains that the current public MCP does not expose the caller's effective platform plan or feature gates",
+      "Does not use list_subscriptions as a plan lookup; identifies it as subscribers to the caller's paid scenarios or collections",
+      "May use get_balance for available personal usage minutes when relevant",
+      "Treats the live server response as authoritative for SIP entitlement rather than guessing a tier"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "For a cold-call scenario, should the AI end the session as soon as it says goodbye?",
+    "expected_behavior": [
+      "Explains that the closing is response-gated: state the outcome and goodbye first, then call end_session only after the other person's reply",
+      "Says end_session must not share a turn with a pitch, question, summary, or goodbye",
+      "Distinguishes ordinary thanks, noise, and crosstalk from substantive re-engagement; the latter requires cancelling a pending end before responding",
+      "Points to scenario-authoring.md or the relevant call recipe instead of inventing runtime behavior"
+    ]
+  }
+]

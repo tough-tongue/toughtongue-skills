@@ -1,0 +1,35 @@
+[
+  {
+    "skills": ["scenario-maker"],
+    "query": "Create a Tough Tongue AI scenario for my SDRs to practice cold-calling leads who filled out a demo form for our payroll software. The AI should play the caller.",
+    "expected_behavior": [
+      "Calls ttai:list_organizations before any other ttai tool and resolves whether to pass org_id",
+      "Classifies the scenario as Cold Call and loads ttai-agent (scenario-recipes/cold-call.md + scenario/model-selection.md + scenario/control.md + scenario/ai-instructions.md)",
+      "Drafts ai_instructions with a two-beat opening and exactly three outcomes (CONVERTED / NURTURE / DEAD LEAD). Uses Landmass cascade or half-cascade with a Cartesia tts_voice_id (listed, chosen, or Katie default). Never stamps native Galaxy/Ocean for a cold call.",
+      "Writes a rubrik that evaluates the LEAD (the human), not the AI caller",
+      "Calls ttai:create_scenario without an id field and returns the practice link https://app.toughtongueai.com/run/<scenario_id>"
+    ]
+  },
+  {
+    "skills": ["scenario-maker"],
+    "query": "Here is a transcript of a call we lost on pricing objections: [transcript]. Build me a practice scenario so our reps can rehearse handling these exact objections.",
+    "expected_behavior": [
+      "Classifies the scenario as Sales Roleplay (AI plays the prospect) and loads ttai-agent scenario-recipes/sales-roleplay.md",
+      "Extracts the actual objections from the pasted transcript and uses them as the scenario's core objections instead of inventing generic ones",
+      "Includes a resistance pattern (one objection at a time), breakthrough conditions, and early termination rules in ai_instructions",
+      "Writes a rubrik that evaluates the SALES REP with weighted categories",
+      "Creates via ttai:create_scenario and reports what was built in 2-3 sentences with the practice link"
+    ]
+  },
+  {
+    "skills": ["scenario-maker"],
+    "query": "Our onboarding scenario keeps ending calls before the goodbye. Scenario name is 'Customer Onboarding Walkthrough'. Find out why and fix it.",
+    "expected_behavior": [
+      "Resolves the scenario ID via ttai:list_scenarios, then fetches the full scenario with ttai:get_scenario",
+      "Pulls session evidence via ttai:list_sessions filtered by scenario_id and inspects transcripts before proposing any edit",
+      "Diagnoses the root cause against the symptom table (end_session timing rule or tools_config) and quotes what the scenario prescribed versus what the agent did",
+      "Applies a surgical edit via ttai:update_scenario sending only id plus the changed fields",
+      "Reports diagnosis, change summary, token delta estimate, and the new-sessions-only reminder"
+    ]
+  }
+]

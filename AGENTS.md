@@ -31,20 +31,41 @@ public and is installed directly into end users' agents — every word ships.
 
 ## Structure
 
-- `skills/<name>/SKILL.md` — frontmatter (`name`, `description`) + workflow.
-  The description doubles as the trigger; front-load the key use case in the
-  first sentence (Codex truncates descriptions under context pressure) and
-  include the phrases users actually say.
-- `skills/<name>/references/` — depth files the skill tells agents to load.
-  Files over 100 lines carry a Contents block at the top.
+Skills are layered. Load a lower layer when a higher one needs it — do not
+copy field tables or OAuth dumps into workflow skills.
+
+- Layer 0 — `skills/ttai-agent/` — **intermediate intelligence layer**.
+  It turns human intent into a scoped, capability-aware decision across the
+  Tough Tongue AI datastore: control entities, resources, scenario shape,
+  runtime channels, situation recipes (`kb/`), and MCP guidance
+  (`features/mcp/`). It is consumer-neutral: coding agents and web
+  conversational plugins share the same knowledge; their adapters execute.
+  Each subdirectory has an `index.md`.
+- Layer 1 — `scenario-maker`, `session-analyst`, `browser-demo-builder` —
+ **when**. Workflows that load `ttai-agent`.
+
+- `skills/<name>/SKILL.md` — frontmatter (`name`, `description`, `when_to_use`) + workflow.
+  `name` + `description` + `when_to_use` are the Claude Code meta-prompt markers
+  (combined trigger text capped at 1,536 characters). The description doubles as
+  the trigger; front-load the key use case in the first sentence (Codex truncates
+  descriptions under context pressure) and include the phrases users actually say.
+  Knowledge skills set `user-invocable: false` so Claude can auto-load them
+  without listing them in the slash menu.
+- Depth files — prefer `kb/` and `features/` trees with `index.md` per directory
+  (cap ~7 files per folder; nest when you outgrow that). Files over 100 lines
+  carry a Contents block at the top.
 - `skills/<name>/agents/openai.yaml` — Codex UI metadata + the ttai MCP
-  dependency declaration. Keep the MCP URL in sync with `.mcp.json`.
+  dependency declaration (omit `dependencies` on knowledge-only skills that
+  do not call tools — `ttai-agent` declares MCP because it teaches tool use).
+  Keep the MCP URL in sync with `.mcp.json`.
 - `skill-evals/` — 3 evaluation scenarios per skill; re-run before releases
   that touch a SKILL.md or reference file.
 - MCP tool references in skills use the qualified `ttai:tool_name` form.
 - `plugin.json` (repo root) — Agent Plugins 1.0.0 manifest
   (<https://agent-plugins.org>); the portable format read natively by Cursor,
   Codex, GitHub Copilot, Kiro, and VS Code. `$schema` and `name` are required.
+- `INSTALL.md` — pin a plugin, a skill, or a git ref in a coding agent.
+  [README.md](README.md) has the mermaid of how layers compose.
 - `.claude-plugin/`, `.codex-plugin/`, `.cursor-plugin/`, `.agents/plugins/` —
   platform manifests. Keep `version` in sync across all of them when releasing.
 - `.mcp.json` — Claude-native MCP config (`"type": "http"`).
@@ -79,7 +100,7 @@ update.
 1. `claude plugin validate .` — must pass; the community-marketplace review
    pipeline runs the same check on submission.
 2. Local smoke test, Claude Code: `claude --plugin-dir .` then invoke
-   `/toughtongue:scenario-creator` (and `/reload-plugins` after edits).
+   `/toughtongue:scenario-maker` (and `/reload-plugins` after edits).
 3. Local smoke test, Codex: `codex plugin marketplace add <checkout-path>`,
    `codex plugin add toughtongue@toughtongue`, restart, verify the ttai MCP
    tools and all the skills appear.
@@ -99,24 +120,24 @@ update.
 
 Reused across every channel below — do not go hunting for these again:
 
-| Asset | URL |
-|---|---|
-| Privacy policy | <https://app.toughtongueai.com/privacy-policy/> |
-| Terms of service | <https://app.toughtongueai.com/terms/> |
-| Public MCP docs | <https://app.toughtongueai.com/docs/mcp> |
-| PAT / developer portal | <https://app.toughtongueai.com/developer> |
+| Asset                  | URL                                             |
+| ---------------------- | ----------------------------------------------- |
+| Privacy policy         | <https://app.toughtongueai.com/privacy-policy/> |
+| Terms of service       | <https://app.toughtongueai.com/terms/>          |
+| Public MCP docs        | <https://app.toughtongueai.com/docs/mcp>        |
+| PAT / developer portal | <https://app.toughtongueai.com/developer>       |
 
 The paths are `/privacy-policy/` and `/terms/`; `/privacy` and `/tos` 404.
 
 ### Distribution channels
 
-| Channel | Mechanism | Status |
-|---|---|---|
-| Claude Code (self-hosted marketplace) | This repo's `.claude-plugin/marketplace.json`; users run `/plugin marketplace add tough-tongue/toughtongue-skills` | Live on push |
-| Claude community marketplace (`@claude-community`) | Submit at <https://platform.claude.com/plugins/submit> (Console, works for individual authors) or <https://claude.ai/admin-settings/directory/submissions/plugins/new> (Team/Enterprise). Review pins a commit SHA in `anthropics/claude-plugins-community`; CI auto-bumps on new pushes; catalog syncs nightly | Submit once |
-| Codex (GitHub marketplace) | This repo's `.agents/plugins/marketplace.json`; users run `codex plugin marketplace add tough-tongue/toughtongue-skills`. Codex also reads `.claude-plugin/marketplace.json` for compatibility | Live on push |
-| Claude Connectors Directory (the in-app connectors list) | Submits the *hosted MCP server* (`https://api.toughtongueai.com/api/public/mcp`), not this repo, via <https://claude.ai/admin-settings/directory/submissions/new>. Requires a Team or Enterprise Claude org with directory-management access. Server already meets the technical bar: streamable HTTP, OAuth 2.1 with dynamic client registration, PKCE S256, correct 401 `resource_metadata` discovery | Not submitted |
-| Codex official Plugin Directory | Publishing is "coming soon" per OpenAI docs — no self-serve yet. Interim: share to a ChatGPT workspace via Codex app → Plugins → Created by you → Share | Watch docs |
-| `npx plugins add` (cross-agent installer) | The `plugins` npm CLI (vercel-labs/plugins) reads this repo's `.plugin/marketplace.json` and installs into every detected agent: Claude Code, Cursor, Codex, Grok Build, Kimi Code, GitHub Copilot CLI, VS Code. Users run `npx plugins add tough-tongue/toughtongue-skills` | Live on push |
-| Agent Plugins 1.0.0 (native clients) | Root `plugin.json` + `skills/` + `mcp.json` per <https://agent-plugins.org>; loaded directly by clients that support the standard (Cursor, Codex, GitHub Copilot, Kiro, VS Code) | Live on push |
-| skills.sh | Indexes public GitHub repos with `skills/` | Live once repo is public |
+| Channel                                                  | Mechanism                                                                                                                                                                                                                                                                                                                                                                                               | Status                   |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| Claude Code (self-hosted marketplace)                    | This repo's `.claude-plugin/marketplace.json`; users run `/plugin marketplace add tough-tongue/toughtongue-skills`                                                                                                                                                                                                                                                                                      | Live on push             |
+| Claude community marketplace (`@claude-community`)       | Submit at <https://platform.claude.com/plugins/submit> (Console, works for individual authors) or <https://claude.ai/admin-settings/directory/submissions/plugins/new> (Team/Enterprise). Review pins a commit SHA in `anthropics/claude-plugins-community`; CI auto-bumps on new pushes; catalog syncs nightly                                                                                         | Submit once              |
+| Codex (GitHub marketplace)                               | This repo's `.agents/plugins/marketplace.json`; users run `codex plugin marketplace add tough-tongue/toughtongue-skills`. Codex also reads `.claude-plugin/marketplace.json` for compatibility                                                                                                                                                                                                          | Live on push             |
+| Claude Connectors Directory (the in-app connectors list) | Submits the _hosted MCP server_ (`https://api.toughtongueai.com/api/public/mcp`), not this repo, via <https://claude.ai/admin-settings/directory/submissions/new>. Requires a Team or Enterprise Claude org with directory-management access. Server already meets the technical bar: streamable HTTP, OAuth 2.1 with dynamic client registration, PKCE S256, correct 401 `resource_metadata` discovery | Not submitted            |
+| Codex official Plugin Directory                          | Publishing is "coming soon" per OpenAI docs — no self-serve yet. Interim: share to a ChatGPT workspace via Codex app → Plugins → Created by you → Share                                                                                                                                                                                                                                                 | Watch docs               |
+| `npx plugins add` (cross-agent installer)                | The `plugins` npm CLI (vercel-labs/plugins) reads this repo's `.plugin/marketplace.json` and installs into every detected agent: Claude Code, Cursor, Codex, Grok Build, Kimi Code, GitHub Copilot CLI, VS Code. Users run `npx plugins add tough-tongue/toughtongue-skills`                                                                                                                            | Live on push             |
+| Agent Plugins 1.0.0 (native clients)                     | Root `plugin.json` + `skills/` + `mcp.json` per <https://agent-plugins.org>; loaded directly by clients that support the standard (Cursor, Codex, GitHub Copilot, Kiro, VS Code)                                                                                                                                                                                                                        | Live on push             |
+| skills.sh                                                | Indexes public GitHub repos with `skills/`                                                                                                                                                                                                                                                                                                                                                              | Live once repo is public |

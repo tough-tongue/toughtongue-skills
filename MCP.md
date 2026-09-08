@@ -233,11 +233,7 @@ Open Claude Desktop settings > "Developer" tab > "Edit Config":
   "mcpServers": {
     "ttai": {
       "command": "npx",
-      "args": [
-        "-y",
-        "mcp-remote",
-        "https://api.toughtongueai.com/api/public/mcp"
-      ]
+      "args": ["-y", "mcp-remote", "https://api.toughtongueai.com/api/public/mcp"]
     }
   }
 }
@@ -316,44 +312,48 @@ W = write, D = destructive — these mirror the `readOnlyHint` and
 
 ### Scenarios
 
-| Tool | | Description |
-|---|---|---|
-| `list_scenarios` | R | List scenarios you own or can access |
-| `get_scenario` | R | Full scenario detail including `ai_instructions`, `strategy`, `tools_config` |
-| `create_scenario` | W | Create a scenario (full field schema; omit `id`) |
-| `update_scenario` | W | Partial update of an existing scenario (`id` required) |
-| `generate_scenario` | W | Server-side generation of scenario content from a name/context |
-| `create_scenario_access_token` | W | Mint a 1-hour Scenario Access Token (SAT) for private scenarios |
-| `create_self_scenario_access_token` | W | Mint a self-billed SAT |
+| Tool                                |     | Description                                                                  |
+| ----------------------------------- | --- | ---------------------------------------------------------------------------- |
+| `list_scenarios`                    | R   | List scenarios you own or can access                                         |
+| `get_scenario`                      | R   | Full scenario detail including `ai_instructions`, `strategy`, `tools_config` |
+| `create_scenario`                   | W   | Create a scenario (full field schema; omit `id`)                             |
+| `update_scenario`                   | W   | Partial update of an existing scenario (`id` required)                       |
+| `generate_scenario`                 | W   | Server-side generation of scenario content from a name/context               |
+| `create_scenario_access_token`      | W   | Mint a 1-hour Scenario Access Token (SAT) for private scenarios              |
+| `create_self_scenario_access_token` | W   | Mint a self-billed SAT                                                       |
 
 ### Sessions
 
-| Tool | | Description |
-|---|---|---|
-| `list_sessions` | R | List sessions with evaluation and improvement results; filters: `scenario_id`, `user_email`, `from_date`/`to_date`, `is_org`, pagination |
-| `get_session` | R | One session in full: transcript plus evaluation data |
-| `get_sessions_batch` | R | Fetch several sessions by ID in one call (fast path for deep dives) |
-| `create_session` | W | Create a session, e.g. ingest an external transcript for analysis |
-| `post_process_session` | W | Trigger analysis/extraction in the background (also retries failed runs) |
+| Tool                   |     | Description                                                                                                                              |
+| ---------------------- | --- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `list_sessions`        | R   | List sessions with evaluation and improvement results; filters: `scenario_id`, `user_email`, `from_date`/`to_date`, `is_org`, pagination |
+| `get_session`          | R   | One session in full: transcript plus evaluation data                                                                                     |
+| `get_sessions_batch`   | R   | Fetch several sessions by ID in one call (fast path for deep dives)                                                                      |
+| `create_session`       | W   | Create a session, e.g. ingest an external transcript for analysis                                                                        |
+| `post_process_session` | W   | Trigger analysis/extraction in the background (also retries failed runs)                                                                 |
 
 ### Analytics & account
 
-| Tool | | Description |
-|---|---|---|
-| `get_analytics` | R | Unified personal or org-wide analytics (stats, usage, member breakdown) |
-| `list_organizations` | R | Organizations the token can act in — call this first |
-| `get_balance` | R | Wallet balance |
-| `list_subscriptions` | R | Active subscriptions |
+| Tool                 |     | Description                                                             |
+| -------------------- | --- | ----------------------------------------------------------------------- |
+| `get_analytics`      | R   | Unified personal or org-wide analytics (stats, usage, member breakdown) |
+| `list_organizations` | R   | Organizations the token can act in — call this first                    |
+| `get_balance`        | R   | Personal wallet balance                                                 |
+| `list_subscriptions` | R   | Subscribers to the caller's paid scenarios / collections               |
+
+The public MCP does not currently expose the caller's profile, effective
+platform plan, or feature gates. The server response is authoritative for
+role-, balance-, and plan-gated actions.
 
 ### Phone (SIP)
 
-| Tool | | Description |
-|---|---|---|
-| `list_sip_trunks` | R | Configured SIP trunks |
-| `list_sip_calls` | R | Past and scheduled SIP calls |
-| `create_sip_call` | W | Place a single outbound call (E.164 number + scenario) |
-| `create_sip_batch` | W | Place a batch of outbound calls |
-| `delete_sip_call` | D | Cancel a SIP call |
+| Tool               |     | Description                                            |
+| ------------------ | --- | ------------------------------------------------------ |
+| `list_sip_trunks`  | R   | Configured SIP trunks                                  |
+| `list_sip_calls`   | R   | Past and scheduled SIP calls                           |
+| `create_sip_call`  | W   | Place a single outbound call (E.164 number + scenario) |
+| `create_sip_batch` | W   | Place a batch of outbound calls                        |
+| `delete_sip_call`  | D   | Cancel a SIP call                                      |
 
 > `create_sip_call` and `create_sip_batch` are available on the primary endpoint
 > (`/api/public/mcp`) and the REST API only. The Anthropic Directory-listed
@@ -362,24 +362,24 @@ W = write, D = destructive — these mirror the `readOnlyHint` and
 
 ### Meeting bots
 
-| Tool | | Description |
-|---|---|---|
-| `list_meeting_bots` | R | Scheduled meeting bots |
-| `schedule_meeting_bot` | W | Send a bot to a Google Meet meeting |
-| `delete_meeting_bot` | D | Cancel a scheduled bot |
+| Tool                   |     | Description                                         |
+| ---------------------- | --- | --------------------------------------------------- |
+| `list_meeting_bots`    | R   | Scheduled meeting bots                              |
+| `schedule_meeting_bot` | W   | Send a bot to a Google Meet, Zoom, or Teams meeting |
+| `delete_meeting_bot`   | D   | Cancel a scheduled bot                              |
 
 ### Collections
 
-| Tool | | Description |
-|---|---|---|
-| `list_collections` | R | List scenario collections |
-| `get_collection` | R | Collection detail |
+| Tool               |     | Description               |
+| ------------------ | --- | ------------------------- |
+| `list_collections` | R   | List scenario collections |
+| `get_collection`   | R   | Collection detail         |
 
 ### Browser
 
-| Tool | | Description |
-|---|---|---|
-| `authenticate_browser` | W | Create an authenticated browser context for browser-tool demo scenarios |
+| Tool                   |     | Description                                                             |
+| ---------------------- | --- | ----------------------------------------------------------------------- |
+| `authenticate_browser` | W   | Create an authenticated browser context for browser-tool demo scenarios |
 
 ## Verify and troubleshoot
 
@@ -389,12 +389,12 @@ Smoke test after connecting — ask your agent:
 Call the ttai MCP tool list_organizations and show me the result.
 ```
 
-| Symptom | Fix |
-|---|---|
-| Fewer than 27 ttai tools listed | Client trimmed or cached tool discovery. Start a fresh thread; if it persists, remove and re-add the server. |
-| 401 / authentication errors | OAuth login not completed for this client — Claude Code: `/mcp`; Codex: `codex mcp login ttai`; Cursor: Settings > MCP > log in. On a PAT config, `TTAI_PAT` is not visible to the agent process: re-export, `launchctl setenv` on macOS, fully restart the app. |
-| Scenario edit not reflected in a running call | Scenario changes apply to new sessions only — sessions compile their prompt at start. |
-| Tool works personally but not for team data | Pass `org_id` (from `list_organizations`) and `is_org: true` where the tool supports it. |
+| Symptom                                       | Fix                                                                                                                                                                                                                                                              |
+| --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fewer than 27 ttai tools listed               | Client trimmed or cached tool discovery. Start a fresh thread; if it persists, remove and re-add the server.                                                                                                                                                     |
+| 401 / authentication errors                   | OAuth login not completed for this client — Claude Code: `/mcp`; Codex: `codex mcp login ttai`; Cursor: Settings > MCP > log in. On a PAT config, `TTAI_PAT` is not visible to the agent process: re-export, `launchctl setenv` on macOS, fully restart the app. |
+| Scenario edit not reflected in a running call | Scenario changes apply to new sessions only — sessions compile their prompt at start.                                                                                                                                                                            |
+| Tool works personally but not for team data   | Pass `org_id` (from `list_organizations`) and `is_org: true` where the tool supports it.                                                                                                                                                                         |
 
 ## FAQ
 
@@ -404,6 +404,7 @@ Call the ttai MCP tool list_organizations and show me the result.
 Yes — Streamable HTTP is the only transport, at
 `https://api.toughtongueai.com/api/public/mcp`. There is no SSE endpoint and
 no local package to run.
+
 </details>
 
 <details>
@@ -415,6 +416,7 @@ OAuth issues is a PAT under the hood; revoke it at
 [Developer settings](https://app.toughtongueai.com/developer). Explicit PAT
 bearer headers remain for servers, CI, and headless agents — see
 [Authentication](#authentication).
+
 </details>
 
 <details>
@@ -422,6 +424,7 @@ bearer headers remain for servers, CI, and headless agents — see
 
 Clear its cached auth state with `rm -rf ~/.mcp-auth` and reconnect. If the
 error persists, update Node to a current LTS version.
+
 </details>
 
 <details>
@@ -430,15 +433,20 @@ error persists, update Node to a current LTS version.
 Yes — tool calls are rate-limited per token (30 calls/minute). Agents doing
 large session pulls should paginate with larger `limit` values instead of
 many small calls.
+
 </details>
 
 ## Pair with the skills
 
-This repo also ships four skills — scenario-creator, scenario-refiner,
-session-analyst, and browser-demo-builder — that encode proven workflows on
-top of these tools.
+This repo ships layered skills on top of these tools:
+
+- **ttai-agent** — intermediate intelligence layer: scope, capability,
+  datastore map, scenario quality, runtime, and MCP guidance
+- **scenario-maker**, **session-analyst**, **browser-demo-builder** — job workflows
+
 Installing the plugin (see [README.md](README.md)) registers this MCP server
-and the skills in one step.
+and the skills in one step. MCP does not yet publish a standalone schema per
+resource — load the tool input schema before writing.
 
 ## API reference
 

@@ -11,12 +11,12 @@ that gets you ready for negotiations, interviews, and coaching conversations.
 Install once, then work with Tough Tongue AI from Claude Code, Codex, Cursor, or
 any agent that supports the Agent Skills format:
 
-- *"Pull the last 3 lost deals from our call notes and create a practice
-  scenario for the pricing objection."*
-- *"For the Enterprise Discovery Call scenario, pull the last 50 sessions.
-  What are the top 5 improvement areas?"*
-- *"The onboarding agent keeps ending calls too early. Pull the low-scoring
-  sessions, find out why, and fix the scenario."*
+- _"Pull the last 3 lost deals from our call notes and create a practice
+  scenario for the pricing objection."_
+- _"For the Enterprise Discovery Call scenario, pull the last 50 sessions.
+  What are the top 5 improvement areas?"_
+- _"The onboarding agent keeps ending calls too early. Pull the low-scoring
+  sessions, find out why, and fix the scenario."_
 
 These compose with the rest of your MCP ecosystem: Gong, Notion, calendar,
 slides, email. See [What you can do](#what-you-can-do) for the full journeys.
@@ -24,6 +24,7 @@ slides, email. See [What you can do](#what-you-can-do) for the full journeys.
 ## Table of contents
 
 - [What's included](#whats-included)
+- [How this repo is structured](#how-this-repo-is-structured)
 - [Prerequisites](#prerequisites)
 - [Which setup fits you?](#which-setup-fits-you)
 - [Set up](#set-up)
@@ -34,6 +35,7 @@ slides, email. See [What you can do](#what-you-can-do) for the full journeys.
   - [Copilot / Windsurf / Gemini CLI / other agents](#copilot--windsurf--gemini-cli--other-agents)
   - [Skills only](#skills-only)
   - [MCP only](#mcp-only)
+- [Pin a version](INSTALL.md)
 - [Verify your setup](#verify-your-setup)
 - [What you can do](#what-you-can-do)
 - [MCP Server](#mcp-server)
@@ -49,33 +51,61 @@ This repo ships two layers that work together, plus plugins that bundle both:
 **Skills** — workflow guidance your agent loads automatically when the
 conversation matches:
 
-| Skill | When it activates | What it does |
-|---|---|---|
-| [getting-started](skills/getting-started) | "Get started with Tough Tongue AI", "is my Tough Tongue AI MCP working?" | Post-install onboarding. Verifies the MCP connection and PAT, looks at what's in your account, and routes you into your first workflow. |
-| [scenario-creator](skills/scenario-creator) | "Create a scenario", "build a practice roleplay", "prep me for this meeting" | Create production-ready scenarios from a brief, URL, or call transcript. Classifies the type (cold call, sales roleplay, coaching), applies proven authoring patterns, validates, and creates via MCP. |
-| [scenario-refiner](skills/scenario-refiner) | "Fix the scenario", "it ended the call too early", "make it sound more natural" | Fix a live scenario from real evidence. Pulls the scenario and low-scoring session transcripts, diagnoses the root cause, and applies the smallest possible edit via MCP. |
-| [session-analyst](skills/session-analyst) | "How is my team doing?", "top improvement areas", "build me a coaching report" | Turn session data into answers. Aggregates scores, report cards, and weaknesses across a team or scenario into structured reports: ready to hand off to slides or email tools. |
-| [browser-demo-builder](skills/browser-demo-builder) | "Record browser demo steps", "make my demo deterministic", "the demo clicks the wrong thing" | Turn a product-demo flow into pre-recorded browser steps. Interviews the flow, harvests stable selectors, writes the steps into the scenario via MCP, and sets up persistent login for authenticated demos. |
+| Skill                                               | When it activates                                                        | What it does                                                                              |
+| --------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| [ttai-agent](skills/ttai-agent)                     | Any Tough Tongue AI / ttai question                                      | Intelligence layer: scope, capability, entities, scenario quality, runtime, MCP guidance   |
+| [scenario-maker](skills/scenario-maker)             | "Create a scenario", "create a voice agent", "fix the scenario", …       | Create, edit, or refine scenarios via MCP.                                                |
+| [session-analyst](skills/session-analyst)           | "How is my team doing?", "top improvement areas", …                      | Turn session data into structured reports.                                                |
+| [browser-demo-builder](skills/browser-demo-builder) | "Record browser demo steps", …                                           | Pre-recorded browser demo steps via MCP.                                                  |
 
 **MCP server** — live actions in your Tough Tongue AI account. 27 tools over the
-public API: scenarios (create, update, generate, access tokens), sessions
-(list with evaluations, single and batch fetch, ingest, post-process),
-analytics and organizations, SIP phone calls, meeting bots, and collections.
-Full catalog in [MCP.md](MCP.md).
+public API: scenarios, sessions, analytics, organizations, SIP, meeting bots,
+and collections. Full catalog in [MCP.md](MCP.md).
 
 **Plugins** (Claude Code, Codex, Cursor) — bundle the skills **and** the MCP
 server registration in one install.
 
 How the layers relate:
 
-- **Skills add judgment** — the agent knows *what* good Tough Tongue AI work
-  looks like: how to author a scenario, diagnose a failing one, aggregate
-  session data into a report.
-- **MCP adds action** — the agent *can* do it: create scenarios, pull
-  sessions, update configs, place calls.
+- **ttai-agent** is the provider-neutral intelligence layer: it turns intent
+  into scoped, capability-aware decisions using the entity handbook and
+  features/mcp adapter guidance.
+- **Workflow skills** add judgment for a job (create, refine, analyze, record a demo).
 - With skills only, your agent can advise. With MCP only, it can call tools.
   With both, it picks the right workflow and completes it. The plugin gives
   you both in one step.
+
+Need a specific git tag, commit, or a single skill? See [INSTALL.md](INSTALL.md).
+
+## How this repo is structured
+
+```mermaid
+flowchart TB
+  subgraph install["You install one of these"]
+    P["Plugin — skills + MCP registration"]
+    Sonly["Skills only — guidance, no live tools"]
+    Monly["MCP only — 27 ttai tools, no workflows"]
+  end
+  subgraph layers["Skill layers — load down, don't copy up"]
+    L1["Workflows — scenario-maker · session-analyst · browser-demo-builder"]
+    L0["ttai-agent — kb (entities, recipes) + features/mcp"]
+    L1 --> L0
+  end
+  P --> layers
+  P --> MCP["Hosted MCP https://api.toughtongueai.com/api/public/mcp"]
+  Sonly --> layers
+  Monly --> MCP
+```
+
+Workflow skills tell the agent **when**. They load **ttai-agent** for **what
+exists** and **how to act**. Situation recipes (cold call, sales roleplay,
+coaching, demo, cascade TTS) live under
+`skills/ttai-agent/kb/scenario-recipes/` — not copied into every workflow skill.
+
+The intelligence layer has no terminal or UI dependency. Coding agents load it
+before calling MCP; web conversational plugins can pass verified account,
+workspace, and focused-resource context to the same layer, then execute the
+result through their server-side adapter.
 
 ## Prerequisites
 
@@ -115,15 +145,16 @@ in [MCP only](#mcp-only) and [MCP.md](MCP.md).
 
 ## Which setup fits you?
 
-| Setup | Best for | What you get |
-|---|---|---|
-| **Plugin** (recommended) | Claude Code, Codex, Cursor | Skills + MCP, auto-configured in one install |
-| **Skills + MCP, manual** | Copilot, Windsurf, Gemini CLI, other agents | Same capability, assembled in two steps |
-| **Skills only** | Any Agent Skills client, no live tools needed | Workflow guidance; the agent advises but can't act |
-| **MCP only** | Developers who want raw API tools | 27 tools; no workflow guidance |
+| Setup                    | Best for                                      | What you get                                       |
+| ------------------------ | --------------------------------------------- | -------------------------------------------------- |
+| **Plugin** (recommended) | Claude Code, Codex, Cursor                    | Skills + MCP, auto-configured in one install       |
+| **Skills + MCP, manual** | Copilot, Windsurf, Gemini CLI, other agents   | Same capability, assembled in two steps            |
+| **Skills only**          | Any Agent Skills client, no live tools needed | Workflow guidance; the agent advises but can't act |
+| **MCP only**             | Developers who want raw API tools             | 27 tools; no workflow guidance                     |
 
 Not sure? Use the plugin — it's the least setup. Per-client instructions
-below.
+below. To freeze a git tag, commit, or a single skill, see
+[INSTALL.md](INSTALL.md).
 
 ## Set up
 
@@ -138,9 +169,10 @@ skills plus the MCP server into all of them at once:
 npx plugins add tough-tongue/toughtongue-skills
 ```
 
-Restart your agent, then say "get me started with Tough Tongue AI". On the
-first tool call your client opens the browser OAuth consent — approve once
-and you're connected.
+Restart your agent, then say "get me started with Tough Tongue AI". The
+`ttai-agent` intelligence layer verifies the connection and routes you to the
+right workflow. On the first tool call your client opens the browser OAuth
+consent — approve once and you're connected.
 
 This repo is also a standard [Agent Plugin](https://agent-plugins.org)
 (root `plugin.json`, `skills/`, `mcp.json`), so clients that load Agent
@@ -168,13 +200,14 @@ claude plugin marketplace add tough-tongue/toughtongue-skills
 claude plugin install toughtongue@toughtongue-skills
 ```
 
-Then run `/toughtongue:getting-started`: it verifies the connection, looks
-at your account, and starts your first workflow.
+Then say "get me started with Tough Tongue AI" or call
+`ttai:list_organizations`. `ttai-agent` verifies the connection, takes a
+lightweight inventory, and selects the relevant workflow.
 
 Skills are namespaced after install: invoke them as
-`/toughtongue:scenario-creator`, `/toughtongue:scenario-refiner`,
-`/toughtongue:session-analyst`, `/toughtongue:browser-demo-builder`: or just
-describe the task and Claude picks the right skill automatically.
+`/toughtongue:scenario-maker`,
+`/toughtongue:session-analyst`, or `/toughtongue:browser-demo-builder`;
+or just describe the task and Claude picks the right skill automatically.
 
 <details>
 <summary>Upgrade / local development</summary>
@@ -236,8 +269,8 @@ codex plugin add toughtongue@toughtongue
 
 ### Cursor
 
-In Cursor, go to **Settings > Plugins > Team Marketplaces > Add Marketplace
-> Import from Repo**, point it at
+In Cursor, go to **Settings > Plugins > Team Marketplaces > Add Marketplace >
+Import from Repo**, point it at
 `https://github.com/tough-tongue/toughtongue-skills`, then install
 **toughtongue**.
 
@@ -385,7 +418,7 @@ A sales manager spots an AE struggling with pricing objections in real calls.
 > positioning doc from Notion. Give me the shareable practice link.
 
 Gong MCP (`search_calls` / `list_calls` → `get_call_transcript`) + Notion MCP
-→ **scenario-creator** builds a sales roleplay from the real objections →
+→ **scenario-maker** builds a sales roleplay from the real objections →
 `create_scenario` → shareable practice link.
 
 ### 2. How is my team doing?
@@ -407,7 +440,7 @@ A CS manager notices low scores on the onboarding scenario.
 > what went wrong, and fix the scenario.
 
 `list_sessions` (sorted by score) → `get_sessions_batch` (full transcripts +
-evaluations) → **scenario-refiner** diagnoses the root cause → surgical
+evaluations) → **scenario-maker** diagnoses the root cause → surgical
 `update_scenario`: live for the next session.
 
 ### 4. Prep me for this meeting
@@ -417,7 +450,7 @@ A sales rep has a discovery call in 30 minutes.
 > I have a call with Sarah Chen from Acme Corp in 30 minutes. Create a quick
 > practice scenario so I can rehearse.
 
-Calendar MCP + web search for attendee/company context → **scenario-creator**
+Calendar MCP + web search for attendee/company context → **scenario-maker**
 → `create_scenario` → start practicing in minutes.
 
 ### 5. Automated post-call coaching
@@ -492,6 +525,8 @@ Step 3 forces Claude Code to re-read the marketplace manifest. After step 4,
 
 ## Repository structure
 
+On-disk layout. How to pin a plugin, skill, or git ref: [INSTALL.md](INSTALL.md).
+
 ```
 toughtongue-skills/
 ├── plugin.json            # Agent Plugins 1.0.0 manifest (agent-plugins.org)
@@ -504,10 +539,9 @@ toughtongue-skills/
 ├── .mcp.json              # Claude-native MCP server registration (OAuth; no credentials)
 ├── MCP.md                 # MCP server docs: setup per client, tool catalog
 ├── skill-evals/           # Evaluation scenarios per skill
-└── skills/                # Each: SKILL.md + references/ + agents/openai.yaml
-    ├── getting-started/       # Post-install onboarding: verify, orient, first journey
-    ├── scenario-creator/      # Type-specific authoring references
-    ├── scenario-refiner/      # Runtime behavior reference
+└── skills/                # Each: SKILL.md (+ kb/ / features/ or references/) + agents/openai.yaml
+    ├── ttai-agent/            # Grand map: kb (entities, recipes) + features/mcp
+    ├── scenario-maker/        # Create / edit / refine (loads ttai-agent)
     ├── session-analyst/       # Report templates
     └── browser-demo-builder/  # Deterministic browser demo steps: format, selectors, example
 ```

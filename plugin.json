@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "toughtongue",
-  "version": "0.3.0",
-  "description": "Build, refine, and analyze Tough Tongue AI voice agents for tough conversations — agents that automate them (sales calls, lead qualification, demos, screening, booking) and agents that train you for the ones you handle yourself (negotiations, interviews, coaching). Create scenarios, place phone calls, schedule meeting bots, and analyze sessions.",
+  "version": "0.4.0",
+  "description": "Build, refine, and analyze Tough Tongue AI voice agents for tough conversations \u2014 agents that automate them (sales calls, lead qualification, demos, screening, booking) and agents that train you for the ones you handle yourself (negotiations, interviews, coaching). Create scenarios, place phone calls, schedule meeting bots, and analyze sessions.",
   "author": {
     "name": "Tough Tongue AI",
     "url": "https://app.toughtongueai.com"
@@ -12,8 +12,12 @@
   "license": "MIT",
   "keywords": [
     "voice-ai",
+    "voice-agents",
     "toughtongue",
     "ttai",
+    "outbound-calling",
+    "sip",
+    "meeting-bots",
     "roleplay",
     "sales-training",
     "coaching",

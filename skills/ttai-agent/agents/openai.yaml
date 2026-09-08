@@ -1,0 +1,11 @@
+interface:
+  display_name: "Tough Tongue AI Intelligence"
+  short_description: "Scope, capability, scenarios, sessions, and MCP guidance"
+  default_prompt: "Understand my Tough Tongue AI workspace, then help me take the right next action."
+dependencies:
+  mcpServers:
+    - name: ttai
+      url: "https://api.toughtongueai.com/api/public/mcp"
+      transport: "streamable-http"
+      auth:
+        type: "oauth"

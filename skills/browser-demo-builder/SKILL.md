@@ -8,6 +8,8 @@ description: >-
   with ttai:authenticate_browser. Use when the user says "record browser demo
   steps", "make my demo deterministic", "pre-record a demo flow", "the demo
   clicks the wrong thing", or "add browser steps to my scenario".
+when_to_use: >
+  User wants deterministic pre-recorded browser demo steps on a scenario.
 ---
 
 # Browser Demo Builder
@@ -36,11 +38,8 @@ Reference files (load on demand):
 
 ## Prerequisites
 
-- The **ttai** MCP server must be connected. Tool references below use the
-  `ttai:` server prefix (e.g. `ttai:update_scenario`); some agents surface
-  these as `mcp__ttai__update_scenario`. If the tools are missing, point the
-  user at the repo README to install the plugin or add the MCP server — the
-  client runs a browser OAuth login on first use.
+Load **ttai-agent** (features/mcp) before any `ttai:` call (prefix `ttai:`;
+some clients show `mcp__ttai__update_scenario`).
 - A way to inspect the demo app's pages: your agent's browser automation if
   available, or the user's own browser DevTools console using the snippets
   in [references/selector-guide.md](references/selector-guide.md).
@@ -70,8 +69,9 @@ Ask the user (one round; skip anything already stated):
    browser tool enabled. Also decide where capture milestones belong
    (max ~3 per demo).
 
-Call `ttai:list_organizations` first; pass `org_id` on subsequent calls if
-the scenario belongs to an organization.
+Load `ttai-agent/kb/operating-model.md`. Reuse a current, verified workspace
+context; otherwise call `ttai:list_organizations`, then pass `org_id` on
+subsequent calls if the scenario belongs to an organization.
 
 ### Phase 2 — Walk & harvest
 
@@ -147,3 +147,10 @@ If the demo needs a logged-in session:
 - [ ] Fallback steps + instructions for state-dependent screens
 - [ ] Login state configured via `ttai:authenticate_browser` if needed
 - [ ] Creator ran one live session end-to-end successfully
+
+## Key Files
+
+- [../ttai-agent/kb/operating-model.md](../ttai-agent/kb/operating-model.md) — shared scope protocol
+- [../ttai-agent/kb/entities/scenario/control.md](../ttai-agent/kb/entities/scenario/control.md) — browser-tool controls
+- [references/steps-format.md](references/steps-format.md) — replay payload
+- [references/selector-guide.md](references/selector-guide.md) — selector reliability

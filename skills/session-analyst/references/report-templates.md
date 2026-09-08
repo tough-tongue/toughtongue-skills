@@ -49,7 +49,7 @@ padding them.
 ## Scenario Health Report
 
 Use when the question is "is the scenario itself working?" — feeds the
-scenario-refiner skill.
+scenario-maker skill.
 
 ```markdown
 # Scenario Health: [Scenario Name] ([scenario_id])
@@ -69,7 +69,7 @@ scenario-refiner skill.
 - "[quote showing the failure]" ([analytics_url])
 
 ## Verdict
-- [Scenario issue → hand to scenario-refiner with diagnosis]
+- [Scenario issue → hand to scenario-maker with diagnosis]
 - [User skill issue → coaching recommendation instead]
 ```
 
@@ -122,7 +122,7 @@ platform's webhook):
 
 Notes:
 
-- The coaching scenario is created once (use the scenario-creator skill);
+- The coaching scenario is created once (use the scenario-maker skill);
   every webhook call reuses its ID.
 - Keep the `TTAI_PAT` in the automation's server-side environment — never in
   client code or the webhook payload.

@@ -1,13 +1,16 @@
 ---
 name: session-analyst
 description: >
-  Analyze Tough Tongue AI practice-session performance and build reports via
-  the ttai MCP server. Pulls sessions with scores, strengths, and weaknesses,
-  aggregates patterns across a team or scenario, and produces structured
-  reports with improvement areas and action items. Use when the user asks
-  "how is my team doing?", "top improvement areas for scenario X", "pull the
-  lowest-scoring sessions", "build me a coaching report", "session trends
-  this month", or wants session data turned into a deck, email, or dashboard.
+  Analyze Tough Tongue AI sessions — practice, SIP phone calls, and meeting
+  bots — and build reports via the ttai MCP server. Pulls scores, strengths,
+  and weaknesses, aggregates patterns across a team or scenario, and
+  produces structured reports with improvement areas and action items. Use
+  when the user asks "how is my team doing?", "top improvement areas for
+  scenario X", "pull the lowest-scoring sessions", "build me a coaching
+  report", "session trends this month", or wants session data turned into a
+  deck, email, or dashboard.
+when_to_use: >
+  User wants session scores, team trends, or a coaching report from ttai data.
 ---
 
 # Session Analyst
@@ -15,13 +18,14 @@ description: >
 Pull session data → aggregate patterns → produce a structured report →
 optionally hand off to slides/email tools for distribution.
 
+Practice runs, SIP calls, and meeting-bot joins all land as **sessions**.
+Use `ttai:list_sessions` as the source of truth; `ttai:list_sip_calls` /
+`ttai:list_meeting_bots` only if you need the live call or bot schedule.
+
 ## Prerequisites
 
-- The **ttai** MCP server must be connected. Tool references below use the
-  `ttai:` server prefix (e.g. `ttai:list_sessions`); some agents surface
-  these as `mcp__ttai__list_sessions`. If the tools are missing, point the
-  user at the repo README to install the plugin or add the MCP server — the
-  client runs a browser OAuth login on first use.
+Load **ttai-agent** (features/mcp) before any `ttai:` call (prefix `ttai:`;
+some clients show `mcp__ttai__…`).
 
 ## Data model (what a session gives you)
 
@@ -43,9 +47,10 @@ within a scenario because they come from its rubric.
 
 ### Step 1: Scope
 
-1. Call `ttai:list_organizations`. Team analysis almost always needs an
-   `org_id` — pass it on every call, along with `is_org: true` on
-   `ttai:list_sessions` for org-wide data.
+1. Load `ttai-agent/kb/operating-model.md`. Reuse a current, verified
+   workspace context; otherwise call `ttai:list_organizations`. Team analysis
+   almost always needs an `org_id` — pass it on every call, along with
+   `is_org: true` on `ttai:list_sessions` for org-wide data.
 2. Resolve the scenario: `ttai:list_scenarios` if the user gave a name, not
    an ID.
 3. Confirm the window and population: which scenario(s), which date range
@@ -93,7 +98,7 @@ Use the matching template from
 
 - **Team performance report** — "how is my team doing?"
 - **Scenario health report** — "is this scenario working?" (pairs with the
-  scenario-refiner skill when the answer is no)
+  scenario-maker skill when the answer is no)
 - **Individual coaching report** — one person, one skill gap, action items
 
 Always include: population and window, score summary, top 3-5 improvement
@@ -120,7 +125,7 @@ Team performance report → deck if asked.
 `evaluation_results.final_score` ascending, take 5 →
 `ttai:get_sessions_batch` → fetch transcripts → diagnose common failure
 patterns → if the fault is in the scenario (not the users), hand off to the
-**scenario-refiner** skill with the diagnosis.
+**scenario-maker** skill with the diagnosis.
 
 ### "How did [person] do this month?"
 
@@ -147,3 +152,9 @@ scenario, `ttai:post_process_session` triggers analysis, poll until
   results; exclude `in_progress` and `failed` from aggregates.
 - **Privacy**: coaching reports name individuals. Confirm the audience before
   distributing anything per-person to a group channel.
+
+## Key Files
+
+- [../ttai-agent/kb/operating-model.md](../ttai-agent/kb/operating-model.md) — scope and action protocol
+- [../ttai-agent/kb/entities/scenario-engine.md](../ttai-agent/kb/entities/scenario-engine.md) — session lifecycle
+- [references/report-templates.md](references/report-templates.md) — report formats

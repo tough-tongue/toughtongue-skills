@@ -23,26 +23,32 @@ slides, email. See [What you can do](#what-you-can-do) for the full journeys.
 
 ## Table of contents
 
-- [What's included](#whats-included)
-- [How this repo is structured](#how-this-repo-is-structured)
-- [Prerequisites](#prerequisites)
-- [Which setup fits you?](#which-setup-fits-you)
-- [Set up](#set-up)
-  - [One command, every agent](#one-command-every-agent)
-  - [Claude Code](#claude-code)
-  - [Codex](#codex)
-  - [Cursor](#cursor)
-  - [Copilot / Windsurf / Gemini CLI / other agents](#copilot--windsurf--gemini-cli--other-agents)
-  - [Skills only](#skills-only)
-  - [MCP only](#mcp-only)
-- [Pin a version](INSTALL.md)
-- [Verify your setup](#verify-your-setup)
-- [What you can do](#what-you-can-do)
-- [MCP Server](#mcp-server)
-- [Troubleshooting](#troubleshooting)
-- [Repository structure](#repository-structure)
-- [Related](#related)
-- [License](#license)
+- [Tough Tongue AI Skills](#tough-tongue-ai-skills)
+  - [Table of contents](#table-of-contents)
+  - [What's included](#whats-included)
+  - [How this repo is structured](#how-this-repo-is-structured)
+  - [Prerequisites](#prerequisites)
+  - [Which setup fits you?](#which-setup-fits-you)
+  - [Set up](#set-up)
+    - [All supported agents (user scope)](#all-supported-agents-user-scope)
+    - [Claude Code](#claude-code)
+    - [Codex](#codex)
+    - [Cursor](#cursor)
+    - [Copilot / Windsurf / Gemini CLI / other agents](#copilot--windsurf--gemini-cli--other-agents)
+    - [Skills only](#skills-only)
+    - [MCP only](#mcp-only)
+  - [Verify your setup](#verify-your-setup)
+  - [What you can do](#what-you-can-do)
+    - [1. Practice this sales call](#1-practice-this-sales-call)
+    - [2. How is my team doing?](#2-how-is-my-team-doing)
+    - [3. Refine from real conversations](#3-refine-from-real-conversations)
+    - [4. Prep me for this meeting](#4-prep-me-for-this-meeting)
+    - [5. Automated post-call coaching](#5-automated-post-call-coaching)
+  - [MCP Server](#mcp-server)
+  - [Troubleshooting](#troubleshooting)
+  - [Repository structure](#repository-structure)
+  - [Related](#related)
+  - [License](#license)
 
 ## What's included
 
@@ -51,12 +57,12 @@ This repo ships two layers that work together, plus plugins that bundle both:
 **Skills** — workflow guidance your agent loads automatically when the
 conversation matches:
 
-| Skill                                               | When it activates                                                        | What it does                                                                              |
-| --------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
-| [ttai-agent](skills/ttai-agent)                     | Any Tough Tongue AI / ttai question                                      | Intelligence layer: scope, capability, entities, scenario quality, runtime, MCP guidance   |
-| [scenario-maker](skills/scenario-maker)             | "Create a scenario", "create a voice agent", "fix the scenario", …       | Create, edit, or refine scenarios via MCP.                                                |
-| [session-analyst](skills/session-analyst)           | "How is my team doing?", "top improvement areas", …                      | Turn session data into structured reports.                                                |
-| [browser-demo-builder](skills/browser-demo-builder) | "Record browser demo steps", …                                           | Pre-recorded browser demo steps via MCP.                                                  |
+| Skill                                               | When it activates                                                  | What it does                                                                             |
+| --------------------------------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| [ttai-agent](skills/ttai-agent)                     | Any Tough Tongue AI / ttai question                                | Intelligence layer: scope, capability, entities, scenario quality, runtime, MCP guidance |
+| [scenario-maker](skills/scenario-maker)             | "Create a scenario", "create a voice agent", "fix the scenario", … | Create, edit, or refine scenarios via MCP.                                               |
+| [session-analyst](skills/session-analyst)           | "How is my team doing?", "top improvement areas", …                | Turn session data into structured reports.                                               |
+| [browser-demo-builder](skills/browser-demo-builder) | "Record browser demo steps", …                                     | Pre-recorded browser demo steps via MCP.                                                 |
 
 **MCP server** — live actions in your Tough Tongue AI account. 27 tools over the
 public API: scenarios, sessions, analytics, organizations, SIP, meeting bots,
@@ -158,16 +164,22 @@ below. To freeze a git tag, commit, or a single skill, see
 
 ## Set up
 
-### One command, every agent
+### All supported agents (user scope)
 
-The fastest path. The [`plugins` CLI](https://www.npmjs.com/package/plugins)
-detects the coding agents on your machine — Claude Code, Cursor, Codex,
-Grok Build, Kimi Code, GitHub Copilot CLI, VS Code — and installs the
-skills plus the MCP server into all of them at once:
+The [`plugins` CLI](https://www.npmjs.com/package/plugins) detects supported
+coding agents on your machine — Claude Code, Cursor, Codex, Grok Build, Kimi
+Code, GitHub Copilot CLI, and VS Code — then installs the skills and MCP
+server into their **user configuration**:
 
 ```bash
 npx plugins add tough-tongue/toughtongue-skills
 ```
+
+> **Scope warning:** this command defaults to user scope. Do not use its
+> automatic all-agent mode for an isolated repository test. GitHub Copilot
+> CLI and VS Code install plugins per user, and Codex has no plugin scope
+> option, so `--scope local` cannot make that automatic path fully local.
+> Use the client-specific test paths below instead.
 
 Restart your agent, then say "get me started with Tough Tongue AI". The
 `ttai-agent` intelligence layer verifies the connection and routes you to the
@@ -196,8 +208,8 @@ Inside Claude Code:
 Or from the terminal:
 
 ```bash
-claude plugin marketplace add tough-tongue/toughtongue-skills
-claude plugin install toughtongue@toughtongue-skills
+claude plugin marketplace add tough-tongue/toughtongue-skills --scope user
+claude plugin install toughtongue@toughtongue-skills --scope user
 ```
 
 Then say "get me started with Tough Tongue AI" or call
@@ -210,7 +222,7 @@ Skills are namespaced after install: invoke them as
 or just describe the task and Claude picks the right skill automatically.
 
 <details>
-<summary>Upgrade / local development</summary>
+<summary>Upgrade, scoped install, or local development</summary>
 
 **Upgrade** — refresh the marketplace catalog, then move the installed pin
 to the latest version:
@@ -222,7 +234,27 @@ claude plugin update toughtongue@toughtongue-skills
 
 Then run `/reload-plugins` in your session to apply.
 
-**Local development / testing** — load the plugin without installing:
+**Persistent install for one checkout** — use Claude Code's `local` scope:
+
+```bash
+claude plugin marketplace add tough-tongue/toughtongue-skills --scope local
+claude plugin install toughtongue@toughtongue-skills --scope local
+```
+
+`user` is the default scope and enables the plugin across your projects.
+`local` enables it only for the current checkout on this machine. Claude Code
+uses a shared cache under `~/.claude/plugins/cache` at either scope; the cache
+does not enable the plugin in other projects.
+
+Remove the local test when finished:
+
+```bash
+claude plugin uninstall toughtongue@toughtongue-skills --scope local
+claude plugin marketplace remove toughtongue-skills --scope local
+```
+
+**One-off local development** — load the checkout without installing or
+registering a marketplace:
 
 ```bash
 claude --plugin-dir /path/to/toughtongue-skills
@@ -234,7 +266,8 @@ claude --plugin-dir /path/to/toughtongue-skills
 ### Codex
 
 The plugin bundles the skills and registers the Tough Tongue AI MCP server
-(`.mcp.json`) in one install:
+(`.mcp.json`) in one install. Codex plugin commands use `CODEX_HOME` (by
+default `~/.codex`) and do **not** offer a project or local scope:
 
 ```bash
 codex plugin marketplace add tough-tongue/toughtongue-skills
@@ -247,7 +280,7 @@ me started with Tough Tongue AI" to verify the setup and start your first
 workflow.
 
 <details>
-<summary>Upgrade / local development</summary>
+<summary>Upgrade, isolated testing, or removal</summary>
 
 **Upgrade** — both steps are needed; the first refreshes the marketplace
 snapshot, the second re-pins the installed plugin to it:
@@ -257,12 +290,23 @@ codex plugin marketplace upgrade toughtongue
 codex plugin add toughtongue@toughtongue
 ```
 
-**Local development / testing** — register the checkout as a local
-marketplace:
+**Isolated local test** — direct Codex at a disposable configuration directory
+before registering the checkout:
 
 ```bash
+export CODEX_HOME="$(mktemp -d)"
 codex plugin marketplace add /path/to/toughtongue-skills
 codex plugin add toughtongue@toughtongue
+```
+
+Discard that temporary directory when finished. Without `CODEX_HOME`, the same
+commands change your normal user configuration.
+
+**Remove a normal install**:
+
+```bash
+codex plugin remove toughtongue@toughtongue
+codex plugin marketplace remove toughtongue
 ```
 
 </details>
@@ -299,8 +343,10 @@ If you installed the skills via the CLI, refresh them with
 
 ### Copilot / Windsurf / Gemini CLI / other agents
 
-No plugin for these yet — install the skills and the MCP server as two
-steps:
+For a user-wide setup, the `plugins` CLI above supports GitHub Copilot CLI and
+VS Code when detected. Those clients do not support a project-local plugin
+scope. For Windsurf, Gemini CLI, or another agent, install the skills and MCP
+server as two steps:
 
 **1. Install the skills.** Works with any Agent Skills-compatible client:
 

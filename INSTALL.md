@@ -88,27 +88,30 @@ codex plugin add toughtongue@toughtongue
 ### Cursor
 
 Import-from-repo follows GitHub `main`. For a pin: clone the ref, then
-**Settings > Plugins > Team Marketplaces > Add Marketplace** on the local
-folder, or:
+use **Settings > Plugins > Team Marketplaces > Add Marketplace** on the local
+folder. Do not use the automatic cross-agent installer for an isolated local
+test; see the scope warning below.
 
-```bash
-npx plugins add . -t cursor -s local -y
-```
-
-from that checkout.
-
-### `npx plugins` (every detected agent)
+### `npx plugins` (user-scoped, all detected agents)
 
 ```bash
 npx plugins add tough-tongue/toughtongue-skills
 ```
 
-That tracks GitHub HEAD. For a pin, run it from a cloned ref:
+This defaults to user scope and configures every supported agent it detects.
+It is appropriate when you intend that result. The automatic mode cannot be
+fully project-local: GitHub Copilot CLI and VS Code only support per-user
+plugins, and Codex has no plugin scope option.
+
+It tracks GitHub HEAD. To install a pinned clone for all detected agents:
 
 ```bash
 cd /path/to/toughtongue-skills
-npx plugins add . -s local -y
+npx plugins add .
 ```
+
+For a single-repository test, use `claude --plugin-dir` or a disposable
+`CODEX_HOME` as described in the [README](README.md#claude-code).
 
 ## One skill
 

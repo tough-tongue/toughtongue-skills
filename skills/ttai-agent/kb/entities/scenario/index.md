@@ -12,6 +12,7 @@ primary authorable resource in the datastore.
 | [ai-instructions.md](ai-instructions.md)   | Writing or repairing `ai_instructions` |
 | [rubrik.md](rubrik.md)                     | Scoring / evaluation text              |
 | [processed-rubrik.md](processed-rubrik.md) | Structured criteria from rubrik        |
+| [runtime.md](runtime.md)                   | Diagnosing runtime behavior             |
 
 Situation playbooks live under
 [../../scenario-recipes/](../../scenario-recipes/index.md) — not here.
@@ -50,3 +51,4 @@ Edits apply to **new** sessions, not a call already in progress.
 - [control.md](control.md)
 - [ai-instructions.md](ai-instructions.md)
 - [rubrik.md](rubrik.md)
+- [runtime.md](runtime.md)

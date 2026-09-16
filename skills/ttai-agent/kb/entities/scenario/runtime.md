@@ -1,9 +1,9 @@
-# Scenario Runtime Behavior
+# Scenario runtime behavior
 
 What a scenario _actually_ becomes at runtime — system prompt assembly, tool
 registration, conductor/silence mechanics, and the difference between browser
-sessions and phone (SIP) sessions. Read this before diagnosing anything
-architectural.
+sessions and phone (SIP) sessions. Read this before diagnosing a behavior
+failure or changing a live Scenario.
 
 ## Contents
 
@@ -90,9 +90,10 @@ If a scenario is used over SIP and its instructions prescribe visual tools,
 the agent will narrate actions it cannot perform. Fix the instructions, not
 the config.
 
-**Pipeline:** phone / SIP / outbound cold call must be **Cascade** or
-**half-cascade**. Native Galaxy/Ocean is a browser realtime pipeline — wrong
-mouth for PSTN. Filler words only apply on Cascade.
+**Pipeline:** do not infer the pipeline from SIP alone. For outbound cold
+calls, start with the situation recipe: Cascade is preferred for controllable
+external TTS, while Ocean realtime is the documented fallback when
+Cascade/Cartesia is unavailable. Filler words only apply on Cascade.
 
 ---
 
@@ -120,7 +121,8 @@ mouth for PSTN. Filler words only apply on Cascade.
   directive for the next turn boundary.
 - If wrap-up fires mid-conversation, the timer is too low for the real call
   length distribution — check average `duration` across recent sessions
-  (`list_sessions`) before picking a new value.
+  (`ttai:list_sessions`, because V3 has no duration projection) before
+  picking a new value.
 - Max-duration enforcement also flows through the conductor: warn → short
   grace period → hard disconnect.
 
@@ -191,3 +193,10 @@ Never write `cascade-01` — use `cascade`.
 | "AI sounds robotic"                              | `ai_instructions` style rules                    | Add ONE concrete varied-acknowledgment example, not a paragraph       |
 | "AI says 'end_session' / 'tool' aloud"           | GUARDRAILS section                               | Single NEVER bullet                                                   |
 | "Agent doesn't speak first"                      | `strategy.skip_auto_start`                       | Should be `false` for AI-led calls                                    |
+
+## Key Files
+
+- [index.md](index.md) — Scenario authoring map
+- [model-selection.md](model-selection.md) — pipeline choice
+- [control.md](control.md) — behavior controls
+- [ai-instructions.md](ai-instructions.md) — prompt repairs

@@ -23,18 +23,21 @@ Reuse a current, verified workspace context if the consumer has one. Otherwise
 call `ttai:list_organizations` first.
 
 - Team work: pass `org_id` on every later call (`is_org: true` where the
-  tool has it).
+  legacy tool has it).
 - Personal practice: omit `org_id`.
 - Ambiguous: ask which workspace.
-- The public MCP does not expose the caller's profile, effective plan, or
-  feature gates. `ttai:list_subscriptions` lists customers subscribed to
-  paid scenarios or collections—it is not a plan lookup.
+- The public MCP does not expose the caller's profile.
+  `ttai:v3_get_entitlements` exposes effective capability limits, but no
+  price, wallet, subscription, or payment-provider data.
 
 Details: [../../kb/entities/key-control-entities.md](../../kb/entities/key-control-entities.md).
 
 ## Conventions
 
 - **Load the tool schema** before calling. Do not guess field names.
+- **Use V3 compact reads first** for inventory, counts, versions, and generic
+  resources. Read `ttai://guide/v3-tools`; use legacy lists only for their
+  specialized filters.
 - `create_scenario` **rejects** `id`. `update_scenario` **requires** `id`
   and is partial — send only changed fields. Create requires `name` +
   `ai_instructions`. `type` is `default` | `super` | `composite` only.

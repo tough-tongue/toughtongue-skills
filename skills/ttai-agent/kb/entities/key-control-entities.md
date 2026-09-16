@@ -31,18 +31,17 @@ collections created with `org_id` live on that org.
 | Action             | Tool / rule                                              |
 | ------------------ | -------------------------------------------------------- |
 | List memberships   | `ttai:list_organizations`                                |
-| Scope later calls  | Pass `org_id` (and `is_org: true` where the tool has it) |
+| Scope later calls  | Pass `org_id` (and `is_org: true` on legacy list tools)  |
 | Personal workspace | Omit `org_id`                                            |
 
 Ambiguous team vs personal? Ask which workspace before writes.
 
 ## Billing and capability visibility
 
-| Resource                       | Tool                      | Notes                                                                                        |
-| ------------------------------ | ------------------------- | -------------------------------------------------------------------------------------------- |
-| Personal wallet                | `ttai:get_balance`        | Available usage minutes; not an organization wallet                                          |
-| Product subscribers            | `ttai:list_subscriptions` | Subscribers to the caller's paid scenarios / collections; **not** the caller's platform plan |
-| Effective plan / feature gates | Not exposed               | Do not infer model, SIP, meeting-bot, or analysis entitlement                                |
+| Resource                       | Tool                        | Notes                                                                          |
+| ------------------------------ | --------------------------- | ------------------------------------------------------------------------------ |
+| Wallet minutes                 | `ttai:get_balance`          | Personal balance, or selected-org shared balance plus member quota when allocated |
+| Effective plan / feature gates | `ttai:v3_get_entitlements` | Capability limits only; no price, wallet, subscription, or provider data       |
 
 Plan changes and top-ups happen in the web app at
 [app.toughtongueai.com](https://app.toughtongueai.com), not via MCP.

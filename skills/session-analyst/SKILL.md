@@ -19,17 +19,22 @@ Pull session data → aggregate patterns → produce a structured report →
 optionally hand off to slides/email tools for distribution.
 
 Practice runs, SIP calls, and meeting-bot joins all land as **sessions**.
-Use `ttai:list_sessions` as the source of truth; `ttai:list_sip_calls` /
-`ttai:list_meeting_bots` only if you need the live call or bot schedule.
+Use `ttai:v3_list_sessions` for compact Scenario-scoped evidence. Use legacy
+`ttai:list_sessions` when person, date, or full-detail filters are needed;
+`ttai:list_sip_calls` / `ttai:list_meeting_bots` are for live call or bot
+schedules.
 
 ## Prerequisites
 
 Load **ttai-agent** (features/mcp) before any `ttai:` call (prefix `ttai:`;
-some clients show `mcp__ttai__…`).
+some clients show `mcp__ttai__…`). Read `ttai://guide/v3-tools` before the
+first V3 list call.
 
 ## Data model (what a session gives you)
 
-Each session from `ttai:list_sessions` / `ttai:get_sessions_batch` includes:
+`ttai:v3_list_sessions` returns a small identity, lifecycle, and timestamp
+projection. Request `participant` and `evaluation` only when the report needs
+them. `ttai:get_sessions_batch` supplies selected deep dives:
 
 - Identity: `scenario_id`, `scenario_name`, `user_name`, `user_email`
 - Lifecycle: `status`, `created_at`, `completed_at`, `duration_minutes`
@@ -51,17 +56,22 @@ within a scenario because they come from its rubric.
    workspace context; otherwise call `ttai:list_organizations`. Team analysis
    almost always needs an `org_id` — pass it on every call, along with
    `is_org: true` on `ttai:list_sessions` for org-wide data.
-2. Resolve the scenario: `ttai:list_scenarios` if the user gave a name, not
-   an ID.
+2. Resolve an exact visible scenario title with `ttai:v3_list_scenarios`.
+   Use legacy `ttai:list_scenarios` only for free-text discovery or when the
+   compact page does not find it.
 3. Confirm the window and population: which scenario(s), which date range
    (`from_date` / `to_date`), which people (`user_email` filter), how many
    sessions.
 
 ### Step 2: Pull
 
-- `ttai:list_sessions` with `scenario_id`, date filters, and pagination
-  (`page`, `limit`). Iterate pages until you have the requested population —
-  check the page metadata rather than assuming one page is everything.
+- For a Scenario-only recent report, call `ttai:v3_list_sessions` with
+  `scenario_ids`, pagination, and `include_fields: ["participant",
+  "evaluation"]`. Use `include_total: true` only when the exact population
+  count matters.
+- For person or date-window reports, use legacy `ttai:list_sessions` with
+  `user_email`, `from_date` / `to_date`, `is_org`, and pagination. V3 does
+  not expose compact equivalents yet.
 - Sessions missing `evaluation_results`: either exclude them from scoring
   aggregates (note the count), or backfill — call `ttai:post_process_session`
   for each, then re-fetch after a wait and check that `evaluation_results`
@@ -115,9 +125,10 @@ one improvement area per slide/section, evidence quote included.
 
 ### "Top 5 improvement areas for scenario X, last 50 sessions"
 
-`ttai:list_scenarios` (resolve ID) → `ttai:list_sessions` (scenario_id,
-limit 50, org context) → aggregate report_card topics + weakness themes →
-Team performance report → deck if asked.
+`ttai:v3_list_scenarios` (resolve ID) → `ttai:v3_list_sessions`
+(`scenario_ids`, limit 50, `include_fields: ["evaluation"]`, org context) →
+aggregate report_card topics + weakness themes → Team performance report →
+deck if asked.
 
 ### "Pull the 5 lowest-scoring sessions and find out what went wrong"
 

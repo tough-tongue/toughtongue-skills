@@ -46,6 +46,7 @@ Load depth files only when the job needs them.
 | Scenario quality principles   | [kb/scenario-authoring.md](kb/scenario-authoring.md)                               |
 | Model stamp                   | [kb/entities/scenario/model-selection.md](kb/entities/scenario/model-selection.md) |
 | Control fields / instructions | [kb/entities/scenario/](kb/entities/scenario/index.md)                             |
+| Runtime behavior repair       | [kb/entities/scenario/runtime.md](kb/entities/scenario/runtime.md)                 |
 | Run channels + results        | [kb/entities/scenario-engine.md](kb/entities/scenario-engine.md)                   |
 | Situation recipes             | [kb/scenario-recipes/](kb/scenario-recipes/index.md)                               |
 | MCP connect / tools           | [features/mcp/](features/mcp/index.md)                                             |

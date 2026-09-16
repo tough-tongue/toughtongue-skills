@@ -24,10 +24,10 @@ A scenario is only a definition. A **session** is one execution.
 | **Meeting bot**    | Agent joins **Google Meet, Zoom, or Teams** | `ttai:schedule_meeting_bot`                                                  |
 | **Incoming**       | Inbound telephony / configured entry points | Trunk + scenario routing in the product; MCP lists trunks/calls              |
 
-Choose the model pipeline for the voice and interaction, not the channel:
-Galaxy, Ocean, and Landmass scenarios can run over SIP. Ocean is a strong
-realtime starting point for phone-call realism; Landmass is appropriate for
-full STT/LLM/TTS control or a selected external voice. See
+Choose the model pipeline for the voice and interaction, not the channel.
+For outbound cold calls, start with the recipe: Cascade is preferred for
+controllable external TTS, while Ocean realtime is its documented fallback
+when Cascade is unavailable. See
 [scenario/model-selection.md](scenario/model-selection.md).
 
 Silent `meet_assist` overlays are Studio-managed scenario types. MCP can run
@@ -45,13 +45,13 @@ an existing scenario through a meeting bot but cannot create or set that type.
 
 ## Fetching results
 
-| Need            | Tool                                                     |
-| --------------- | -------------------------------------------------------- |
-| Recent runs     | `ttai:list_sessions` (prefer a larger `limit`)           |
-| One run         | `ttai:get_session`                                       |
-| Many ids        | `ttai:get_sessions_batch`                                |
-| Re-run analysis | `ttai:post_process_session` (async — poll `get_session`) |
-| Aggregates      | `ttai:get_analytics`                                     |
+| Need            | Tool                                                                 |
+| --------------- | -------------------------------------------------------------------- |
+| Recent runs     | `ttai:v3_list_sessions` (request optional fields only when needed) |
+| One run         | `ttai:get_session`                                                  |
+| Many ids        | `ttai:get_sessions_batch`                                           |
+| Re-run analysis | `ttai:post_process_session` (async — poll `get_session`)           |
+| Aggregates      | `ttai:get_analytics`                                                |
 
 Session rows carry transcripts, scores, and report-card style fields when
 analysis has finished. Edits to the scenario do not rewrite old sessions.
@@ -61,12 +61,13 @@ analysis has finished. Edits to the scenario do not rewrite old sessions.
 1. Confirm the scenario id and workspace.
 2. Pick the channel; do not invent trunk or meeting ids — list first.
 3. After the run, pull sessions; wait for analysis before claiming scores.
-4. Diagnose failures with evidence → workflow skill **scenario-maker**
-   (refine) or **session-analyst** (team reports).
+4. Diagnose behavior with [scenario/runtime.md](scenario/runtime.md), then
+   choose **scenario-maker** (refine) or **session-analyst** (team reports).
 
 ## Key Files
 
 - [scenario/model-selection.md](scenario/model-selection.md) — pipeline stamps
+- [scenario/runtime.md](scenario/runtime.md) — failure diagnosis
 - [resources.md](resources.md) — operational attachments
 - [auth-and-sharing.md](auth-and-sharing.md) — access and sharing
 - [../../features/mcp/tools-by-resource.md](../../features/mcp/tools-by-resource.md) — action catalog

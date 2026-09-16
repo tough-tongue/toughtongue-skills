@@ -38,14 +38,14 @@ flowchart TB
 | --------------- | ----------------------------- | -------------------------------- |
 | **Plugin**      | Skills + MCP registration     | Git ref + plugin `version`       |
 | **Skills only** | Workflow files, no live tools | Git ref of this repo             |
-| **MCP only**    | 27 `ttai` tools               | The hosted server, not this repo |
+| **MCP only**    | 35 `ttai` tools               | The hosted server, not this repo |
 
 ## Git pin (most reliable)
 
 Clone a branch, tag, or commit, then point the agent at that checkout.
 
 ```bash
-git clone --depth 1 --branch v0.4.0 \
+git clone --depth 1 --branch v0.4.2 \
   https://github.com/tough-tongue/toughtongue-skills.git
 # or: git clone https://github.com/tough-tongue/toughtongue-skills.git
 #     git -C toughtongue-skills checkout <commit-sha>
@@ -62,11 +62,11 @@ reproducibility — tags and branches can move.
 Marketplace add accepts `@ref` (branch or tag):
 
 ```bash
-claude plugin marketplace add tough-tongue/toughtongue-skills@v0.4.0
+claude plugin marketplace add tough-tongue/toughtongue-skills@v0.4.2
 claude plugin install toughtongue@toughtongue-skills
 ```
 
-Same from inside a session: `/plugin marketplace add tough-tongue/toughtongue-skills@v0.4.0`
+Same from inside a session: `/plugin marketplace add tough-tongue/toughtongue-skills@v0.4.2`
 then `/plugin install toughtongue@toughtongue-skills`.
 
 `/plugin install` itself has no `--version` flag. To freeze a **commit**,

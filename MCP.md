@@ -291,12 +291,19 @@ actions prompt for confirmation, and deep research uses read-only tools.
 
 ## Conventions
 
-- **Organizations**: every tool accepts an optional `org_id`. Call
+- **Quickstart**: on a client that does not load MCP resources, call
+  `ttai:callme_before_using_tough_tongue_mcp`. It returns the complete
+  `ttai://guide/mcp-agent` resource as a tool result.
+- **Organizations**: account-scoped tools accept an optional `org_id`. Call
   `list_organizations` first and pass the chosen ID for team/organization
   work; omit it for personal context.
 - **Scenario create vs update**: `create_scenario` rejects an `id`;
   `update_scenario` requires one and applies partial updates (send only the
   fields you change).
+- **V3 compact reads**: read `ttai://guide/v3-tools` before an inventory,
+  count, version, or generic-resource workflow. Use `v3_list_scenarios` or
+  `v3_list_sessions` with `limit: 1, include_total: true` for an exact
+  authorized count; request optional Session fields only when needed.
 - **Async analysis**: `post_process_session` returns immediately; poll with
   `get_session` until `evaluation_results` appears.
 - **Token safety**: the PAT authorizes your whole account — keep it
@@ -304,18 +311,30 @@ actions prompt for confirmation, and deep research uses read-only tools.
 
 ## Tools
 
-27 tools over the Tough Tongue AI public API. Annotations: R = read-only,
+35 tools over the Tough Tongue AI public API. Annotations: R = read-only,
 W = write, D = destructive — these mirror the `readOnlyHint` and
 `destructiveHint` the server sends in `tools/list`. Four tools also carry
 `openWorldHint`, because they reach outside your account: `create_sip_call`,
 `create_sip_batch`, `schedule_meeting_bot`, and `authenticate_browser`.
+V3 tools use MCP-first handlers; use their tools rather than treating handler
+URLs as direct REST documentation. Legacy lists remain for specialized filters
+that V3 does not yet expose.
+
+### Quickstart
+
+| Tool                                         |     | Description                                        |
+| -------------------------------------------- | --- | -------------------------------------------------- |
+| `callme_before_using_tough_tongue_mcp`       | R   | Tool result equivalent of `ttai://guide/mcp-agent` |
 
 ### Scenarios
 
 | Tool                                |     | Description                                                                  |
 | ----------------------------------- | --- | ---------------------------------------------------------------------------- |
-| `list_scenarios`                    | R   | List scenarios you own or can access                                         |
+| `v3_list_scenarios`                 | R   | Compact current-Scenario page with opt-in exact count                        |
+| `list_scenarios`                    | R   | Legacy full list and free-text Scenario search                               |
 | `get_scenario`                      | R   | Full scenario detail including `ai_instructions`, `strategy`, `tools_config` |
+| `v3_get_scenario_version`           | R   | Current Scenario detail or one version by exact ID or name                   |
+| `v3_list_scenario_versions`         | R   | Current plus archived version metadata for `EDIT+` callers                   |
 | `create_scenario`                   | W   | Create a scenario (full field schema; omit `id`)                             |
 | `update_scenario`                   | W   | Partial update of an existing scenario (`id` required)                       |
 | `generate_scenario`                 | W   | Server-side generation of scenario content from a name/context               |
@@ -326,6 +345,7 @@ W = write, D = destructive — these mirror the `readOnlyHint` and
 
 | Tool                   |     | Description                                                                                                                              |
 | ---------------------- | --- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `v3_list_sessions`     | R   | Compact Session page; optional fields and exact count                                                                                    |
 | `list_sessions`        | R   | List sessions with evaluation and improvement results; filters: `scenario_id`, `user_email`, `from_date`/`to_date`, `is_org`, pagination |
 | `get_session`          | R   | One session in full: transcript plus evaluation data                                                                                     |
 | `get_sessions_batch`   | R   | Fetch several sessions by ID in one call (fast path for deep dives)                                                                      |
@@ -338,12 +358,21 @@ W = write, D = destructive — these mirror the `readOnlyHint` and
 | -------------------- | --- | ----------------------------------------------------------------------- |
 | `get_analytics`      | R   | Unified personal or org-wide analytics (stats, usage, member breakdown) |
 | `list_organizations` | R   | Organizations the token can act in — call this first                    |
-| `get_balance`        | R   | Personal wallet balance                                                 |
-| `list_subscriptions` | R   | Subscribers to the caller's paid scenarios / collections               |
+| `get_balance`        | R   | Personal balance or shared organization balance plus member quota       |
+| `v3_get_entitlements` | R  | Effective personal or selected-organization capability limits           |
 
-The public MCP does not currently expose the caller's profile, effective
-platform plan, or feature gates. The server response is authoritative for
-role-, balance-, and plan-gated actions.
+The public MCP does not expose the caller's profile. `v3_get_entitlements`
+returns effective capability limits but no price, wallet, subscription, or
+payment-provider data. The server response is authoritative for role-, balance-,
+and plan-gated actions.
+
+### Resource directory
+
+| Tool                     |     | Description                                              |
+| ------------------------ | --- | -------------------------------------------------------- |
+| `v3_list_resource_types` | R   | Self-describing types, fields, semantics, and next tools |
+| `v3_list_resources`      | R   | Bounded, projected resource list                         |
+| `v3_get_resource`        | R   | One safe projected resource                              |
 
 ### Phone (SIP)
 
@@ -386,12 +415,12 @@ role-, balance-, and plan-gated actions.
 Smoke test after connecting — ask your agent:
 
 ```text
-Call the ttai MCP tool list_organizations and show me the result.
+Call the ttai MCP tool callme_before_using_tough_tongue_mcp, then list_organizations.
 ```
 
 | Symptom                                       | Fix                                                                                                                                                                                                                                                              |
 | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Fewer than 27 ttai tools listed               | Client trimmed or cached tool discovery. Start a fresh thread; if it persists, remove and re-add the server.                                                                                                                                                     |
+| Fewer than 35 ttai tools listed               | Client trimmed or cached tool discovery. Start a fresh thread; if it persists, remove and re-add the server.                                                                                                                                                     |
 | 401 / authentication errors                   | OAuth login not completed for this client — Claude Code: `/mcp`; Codex: `codex mcp login ttai`; Cursor: Settings > MCP > log in. On a PAT config, `TTAI_PAT` is not visible to the agent process: re-export, `launchctl setenv` on macOS, fully restart the app. |
 | Scenario edit not reflected in a running call | Scenario changes apply to new sessions only — sessions compile their prompt at start.                                                                                                                                                                            |
 | Tool works personally but not for team data   | Pass `org_id` (from `list_organizations`) and `is_org: true` where the tool supports it.                                                                                                                                                                         |
@@ -441,8 +470,10 @@ many small calls.
 This repo ships layered skills on top of these tools:
 
 - **ttai-agent** — intermediate intelligence layer: scope, capability,
-  datastore map, scenario quality, runtime, and MCP guidance
-- **scenario-maker**, **session-analyst**, **browser-demo-builder** — job workflows
+  datastore map, Scenario facts, runtime, and MCP guidance
+- **scenario-maker** — thin loop for a new build, exact edit, or
+  evidence-backed Scenario repair
+- **session-analyst**, **browser-demo-builder** — report and demo workflows
 
 Installing the plugin (see [README.md](README.md)) registers this MCP server
 and the skills in one step. MCP does not yet publish a standalone schema per

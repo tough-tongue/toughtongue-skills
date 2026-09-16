@@ -5,25 +5,26 @@ Everything in a Tough Tongue AI workspace that is not the control plane
 Resources share one permission / sharing universe — see
 [auth-and-sharing.md](auth-and-sharing.md).
 
-MCP does not yet publish a JSON schema per resource. Until it does, load
-the relevant `ttai` tool's input schema before writing. Do not invent
-fields.
+For bounded generic discovery, first call `ttai:v3_list_resource_types`. Its
+catalog advertises safe resource fields and the matching
+`ttai:v3_list_resources` / `ttai:v3_get_resource` calls. Load the relevant
+`ttai` tool's input schema before writing; do not invent fields.
 
 ## Contents
 
 - Primary authoring resources
 - Run / results resources
 - Operational attachments
-- What MCP cannot set today
+- Sensitive boundary
 
 ---
 
 ## Primary authoring resources
 
-| Resource                | What it is                                        | MCP (high level)                                        |
-| ----------------------- | ------------------------------------------------- | ------------------------------------------------------- |
-| **Scenario**            | Voice (or text) agent definition                  | create / update / list / get / generate / access tokens |
-| **Collection (course)** | Named group of scenarios — library or course path | list / get (create/update in Studio today)              |
+| Resource                | What it is                                        | MCP (high level)                                                       |
+| ----------------------- | ------------------------------------------------- | ---------------------------------------------------------------------- |
+| **Scenario**            | Voice (or text) agent definition                  | V3 compact list/version discovery; legacy create / update / detail    |
+| **Collection (course)** | Named group of scenarios — library or course path | list / get (create/update in Studio today)                             |
 
 Scenario deep-dive: [scenario/](scenario/index.md).
 
@@ -38,25 +39,23 @@ How runs are **started** across channels: [scenario-engine.md](scenario-engine.m
 
 ## Operational attachments
 
-| Resource                                               | What it is                                        | MCP                            |
-| ------------------------------------------------------ | ------------------------------------------------- | ------------------------------ |
-| **SIP trunk**                                          | Phone line for outbound / inbound                 | list                           |
-| **SIP call**                                           | One phone call (trunk + scenario + E.164)         | list / create / batch / delete |
-| **Meeting bot**                                        | Joins Google Meet, Zoom, or Teams as the scenario | list / schedule / delete       |
-| **Browser context**                                    | Logged-in browser for scripted product demos      | `authenticate_browser`         |
-| **Access token (SAT)**                                 | Time-limited link to a private scenario           | create (scenario or self)      |
-| **Static assets / custom functions / knowledge bases** | Studio-attached capabilities                      | **not** writable via MCP today |
+| Resource                | What it is                                        | MCP                                                                 |
+| ----------------------- | ------------------------------------------------- | ------------------------------------------------------------------- |
+| **SIP trunk**           | Phone line for outbound / inbound                 | list; safe metadata in the Resource Directory                     |
+| **SIP call**            | One phone call (trunk + scenario + E.164)         | list / create / batch / delete                                    |
+| **Meeting bot**         | Joins Google Meet, Zoom, or Teams as the scenario | list / schedule / delete                                          |
+| **Browser context**     | Logged-in browser for scripted product demos      | `authenticate_browser`                                             |
+| **Access token (SAT)**  | Time-limited link to a private scenario           | create (scenario or self)                                         |
+| **Custom Function**     | Scenario-invoked HTTP function                    | discover safely, then attach by ID through Scenario authoring      |
+| **Knowledge Base**      | Processed sources a Scenario can use              | discover safely, then attach by ID through Scenario authoring      |
 
-## What MCP cannot set today
+## Sensitive boundary
 
-Attach in Scenario Studio (not invent ids over MCP):
-
-- `knowledge_base_ids`
-- `custom_function_ids`
-- Some Studio-only scenario `type` values (e.g. meet-assist)
-
-Voice-agent mid-session MCP servers use `mcp_server_ids` on the scenario
-when the catalog id is known — do not invent ids.
+The generic Resource Directory exposes purpose-built safe metadata, never
+credentials, URLs, source chunks, or arbitrary model fields. It is not generic
+CRUD. Use IDs returned by a trusted workspace call and validate the
+`create_scenario` or `update_scenario` tool schema before attaching a Knowledge
+Base, Custom Function, or voice-agent MCP server.
 
 ## Next
 

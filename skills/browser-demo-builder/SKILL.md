@@ -39,7 +39,8 @@ Reference files (load on demand):
 ## Prerequisites
 
 Load **ttai-agent** (features/mcp) before any `ttai:` call (prefix `ttai:`;
-some clients show `mcp__ttai__update_scenario`).
+some clients show `mcp__ttai__update_scenario`). Read `ttai://guide/v3-tools`
+before using compact V3 Scenario discovery.
 - A way to inspect the demo app's pages: your agent's browser automation if
   available, or the user's own browser DevTools console using the snippets
   in [references/selector-guide.md](references/selector-guide.md).
@@ -65,9 +66,10 @@ Ask the user (one round; skip anything already stated):
    auto-assigned resources, optional fields) and propose dropping it. A
    shorter deterministic demo beats a longer brittle one.
 6. **Target scenario** — an existing scenario (find the ID via
-   `ttai:list_scenarios`) or a new one via `ttai:create_scenario` with the
-   browser tool enabled. Also decide where capture milestones belong
-   (max ~3 per demo).
+   `ttai:v3_list_scenarios` when its exact name is visible; use legacy
+   `ttai:list_scenarios` only for free-text discovery) or a new one via
+   `ttai:create_scenario` with the browser tool enabled. Also decide where
+   capture milestones belong (max ~3 per demo).
 
 Load `ttai-agent/kb/operating-model.md`. Reuse a current, verified workspace
 context; otherwise call `ttai:list_organizations`, then pass `org_id` on

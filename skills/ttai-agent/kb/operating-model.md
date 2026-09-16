@@ -70,9 +70,9 @@ from the same user and scope; do not re-fetch it on every turn.
    `ttai:list_organizations`. Omit `org_id` for the personal workspace.
    Before a write, ask only if personal versus organization is materially
    ambiguous.
-2. **Resolve focus.** A scenario ID is authoritative. A supplied name requires
-   `ttai:list_scenarios` before a read or write. An account-level request has
-   no focused scenario.
+2. **Resolve focus.** A scenario ID is authoritative. For an exact visible
+   name, use `ttai:v3_list_scenarios`; use legacy `ttai:list_scenarios` only
+   for free-text discovery. An account-level request has no focused scenario.
 3. **Separate support from entitlement.**
    - **Supported**: Tough Tongue AI has the entity or operation.
    - **Available**: this consumer can call the required tool.
@@ -92,30 +92,33 @@ is a real blocker, not a cue to retry with invented parameters.
 | Need | Current source | Do not infer |
 | --- | --- | --- |
 | Organization memberships | `ttai:list_organizations` | An organization ID or role |
-| Wallet minutes | `ttai:get_balance` | An organization wallet balance |
-| Product subscribers | `ttai:list_subscriptions` | The caller's plan or feature gate |
-| Effective plan / feature gates | Not published by the public MCP today | Ocean, SIP, meeting-bot, or multimodal entitlement |
+| Wallet minutes | `ttai:get_balance` | Whether a balance grants a feature |
+| Effective capabilities | `ttai:v3_get_entitlements` | Price, wallet, subscription, or payment-provider data |
 | User profile | Not published by the public MCP today | User ID, email, or other identity data |
 
-`list_subscriptions` lists people subscribed to scenarios or collections
-created by the caller. It does **not** return the caller's platform
-subscription tier. If a web host has an authenticated account/entitlement
-object, it may pass that verified data into its own context packet; do not
-fabricate equivalent data in an MCP-only client.
+`v3_get_entitlements` is the caller's effective capability source. If a web
+host has an authenticated account/entitlement object, it may pass that
+verified data into its own context packet; do not fabricate equivalent data
+in an MCP-only client.
 
 ## First-run orientation
 
 When someone says "get started", "is MCP working?", or "what can I do?",
 perform a short read-only orientation:
 
-1. **Verify connection.** Call `ttai:list_organizations`. On a missing tool or
-   `401`, load [../features/mcp/connect.md](../features/mcp/connect.md); never
-   ask for a token in chat.
-2. **Take a lightweight inventory.** If connected, list scenarios and recent
-   sessions with schema-supported small limits. State only what the live
-   response establishes: personal versus organization scope, whether scenarios
-   exist, and whether there is session evidence to inspect.
-3. **Route to the smallest next workflow.**
+1. **Load the MCP quickstart.** Call
+   `ttai:callme_before_using_tough_tongue_mcp`; it returns the same guide as
+   `ttai://guide/mcp-agent` for clients that do not load resources. On a
+   missing tool or `401`, load
+   [../features/mcp/connect.md](../features/mcp/connect.md); never ask for a
+   token in chat.
+2. **Verify connection.** Call `ttai:list_organizations`.
+3. **Take a lightweight inventory.** Read `ttai://guide/v3-tools`, then use
+   `ttai:v3_list_scenarios` and `ttai:v3_list_sessions` with small limits.
+   Add `include_total: true` only when the exact count matters. State only
+   what the live response establishes: personal versus organization scope,
+   whether scenarios exist, and whether there is session evidence to inspect.
+4. **Route to the smallest next workflow.**
    - No scenario or a named new goal → `scenario-maker`.
    - Existing scenario to refine or run → `scenario-maker`.
    - Existing session evidence to interpret → `session-analyst`.
@@ -133,8 +136,8 @@ new Tough Tongue AI resource.
 
 | Focus | First read | Usual next action |
 | --- | --- | --- |
-| Scenario | `ttai:get_scenario` | Create, update, share, or run |
-| Sessions for a scenario | `ttai:list_sessions` | Read evidence or analyze |
+| Scenario | `ttai:v3_list_scenarios` or `ttai:get_scenario` | Create, update, share, or run |
+| Sessions for a scenario | `ttai:v3_list_sessions` | Read evidence or analyze |
 | SIP call | `ttai:list_sip_trunks` / calls | Place or inspect a call |
 | Meeting bot | scenario + meeting details | Schedule or inspect |
 | Account / workspace | Organizations and relevant lists | Recommend a workflow |

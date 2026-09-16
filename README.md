@@ -54,12 +54,13 @@ conversation matches:
 | Skill                                               | When it activates                                                        | What it does                                                                              |
 | --------------------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
 | [ttai-agent](skills/ttai-agent)                     | Any Tough Tongue AI / ttai question                                      | Intelligence layer: scope, capability, entities, scenario quality, runtime, MCP guidance   |
-| [scenario-maker](skills/scenario-maker)             | "Create a scenario", "create a voice agent", "fix the scenario", …       | Create, edit, or refine scenarios via MCP.                                                |
+| [scenario-maker](skills/scenario-maker)             | "Create a scenario", "create a voice agent", "fix the scenario", …       | Turn a brief or bad session into the smallest correct Scenario change.                    |
 | [session-analyst](skills/session-analyst)           | "How is my team doing?", "top improvement areas", …                      | Turn session data into structured reports.                                                |
 | [browser-demo-builder](skills/browser-demo-builder) | "Record browser demo steps", …                                           | Pre-recorded browser demo steps via MCP.                                                  |
 
-**MCP server** — live actions in your Tough Tongue AI account. 27 tools over the
-public API: scenarios, sessions, analytics, organizations, SIP, meeting bots,
+**MCP server** — live actions in your Tough Tongue AI account. 35 tools over the
+public API: compact V3 Scenario and Session inventory, legacy detailed search,
+versions, effective entitlements, safe resource discovery, SIP, meeting bots,
 and collections. Full catalog in [MCP.md](MCP.md).
 
 **Plugins** (Claude Code, Codex, Cursor) — bundle the skills **and** the MCP
@@ -70,7 +71,8 @@ How the layers relate:
 - **ttai-agent** is the provider-neutral intelligence layer: it turns intent
   into scoped, capability-aware decisions using the entity handbook and
   features/mcp adapter guidance.
-- **Workflow skills** add judgment for a job (create, refine, analyze, record a demo).
+- **Workflow skills** are thin job loops: they choose and verify an action
+  without duplicating the intelligence layer's facts.
 - With skills only, your agent can advise. With MCP only, it can call tools.
   With both, it picks the right workflow and completes it. The plugin gives
   you both in one step.
@@ -84,7 +86,7 @@ flowchart TB
   subgraph install["You install one of these"]
     P["Plugin — skills + MCP registration"]
     Sonly["Skills only — guidance, no live tools"]
-    Monly["MCP only — 27 ttai tools, no workflows"]
+    Monly["MCP only — 35 ttai tools, no workflows"]
   end
   subgraph layers["Skill layers — load down, don't copy up"]
     L1["Workflows — scenario-maker · session-analyst · browser-demo-builder"]
@@ -150,7 +152,7 @@ in [MCP only](#mcp-only) and [MCP.md](MCP.md).
 | **Plugin** (recommended) | Claude Code, Codex, Cursor                    | Skills + MCP, auto-configured in one install       |
 | **Skills + MCP, manual** | Copilot, Windsurf, Gemini CLI, other agents   | Same capability, assembled in two steps            |
 | **Skills only**          | Any Agent Skills client, no live tools needed | Workflow guidance; the agent advises but can't act |
-| **MCP only**             | Developers who want raw API tools             | 27 tools; no workflow guidance                     |
+| **MCP only**             | Developers who want raw API tools             | 35 tools; no workflow guidance                     |
 
 Not sure? Use the plugin — it's the least setup. Per-client instructions
 below. To freeze a git tag, commit, or a single skill, see
@@ -428,9 +430,9 @@ A VP of Sales wants the team's skill gaps, not raw transcripts.
 > For the "Enterprise Discovery Call" scenario, pull the last 50 sessions.
 > What are the top 5 improvement areas? Build me a 3-slide deck.
 
-**session-analyst** → `list_sessions` (scores, strengths, weaknesses per
-session) → aggregates report-card topics and weakness themes → slides MCP for
-the deck.
+**session-analyst** → `v3_list_sessions` (compact page with evaluation
+requested) → aggregates report-card topics and weakness themes → slides MCP
+for the deck.
 
 ### 3. Refine from real conversations
 
@@ -439,9 +441,10 @@ A CS manager notices low scores on the onboarding scenario.
 > Pull the 5 lowest-scoring sessions for our onboarding scenario, figure out
 > what went wrong, and fix the scenario.
 
-`list_sessions` (sorted by score) → `get_sessions_batch` (full transcripts +
-evaluations) → **scenario-maker** diagnoses the root cause → surgical
-`update_scenario`: live for the next session.
+`v3_list_sessions` (evaluation requested; paginate and sort by score) →
+`get_sessions_batch` (full transcripts + evaluations) → **scenario-maker**
+diagnoses the root cause → surgical `update_scenario`: live for the next
+session.
 
 ### 4. Prep me for this meeting
 
@@ -470,11 +473,14 @@ completes → email MCP sends the report. Full recipe in
 The plugin registers Tough Tongue AI's hosted MCP server at
 `https://api.toughtongueai.com/api/public/mcp` (Streamable HTTP, OAuth 2.1
 with dynamic client registration; PAT bearer auth for headless setups).
-There is nothing to install and no local process to run. It exposes 27 tools
-over the public API: scenarios (create, update, generate, access tokens),
-sessions (list with evaluations, single and batch fetch, ingest,
-post-process), analytics and organizations, SIP phone calls, meeting bots,
-and collections.
+There is nothing to install and no local process to run. It exposes 35 tools
+over the public API, starting with
+`callme_before_using_tough_tongue_mcp`, which returns the MCP guide as a tool
+result for clients that do not load resources: scenarios (compact V3 inventory,
+create, update, generate, versions, access tokens), sessions (compact V3 inventory or legacy detailed
+search, single and batch fetch, ingest, post-process), analytics and
+organizations, effective entitlements, safe resource discovery, SIP phone calls,
+meeting bots, and collections.
 
 **See [MCP.md](MCP.md)** for the full tool catalog, per-client setup
 (Claude Code, Codex, Cursor, Copilot, Windsurf, Gemini CLI), and
@@ -488,7 +494,7 @@ are in [MCP.md](MCP.md#claudeai-web).
 
 ## Troubleshooting
 
-- **Fewer than 27 ttai tools listed**: your agent trimmed or cached tool
+- **Fewer than 35 ttai tools listed**: your agent trimmed or cached tool
   discovery. Start a fresh thread; if it persists, remove and re-add the MCP
   server.
 - **401 / authentication errors**: the OAuth login hasn't completed for this

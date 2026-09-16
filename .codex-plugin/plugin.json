@@ -1,7 +1,7 @@
 {
   "name": "toughtongue",
-  "version": "0.4.0",
-  "description": "Skills and MCP server for Tough Tongue AI \u2014 the platform for tough conversations. Some, the AI takes: voice agents that call, demo, screen, and book. Others, you nail: realistic roleplay for negotiations, interviews, and coaching. Build agents, refine them from real transcripts, and analyze sessions.",
+  "version": "0.4.3",
+  "description": "Turn a brief, transcript, or tough conversation into a Tough Tongue AI voice agent that takes it — or a realistic practice Scenario that helps your team nail it. Create and repair Scenarios, run calls and demos, and learn from sessions through the hosted MCP server.",
   "author": {
     "name": "Tough Tongue AI",
     "url": "https://app.toughtongueai.com"
@@ -25,8 +25,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Tough Tongue AI",
-    "shortDescription": "Automate or practice tough conversations",
-    "longDescription": "Gives your agent first-class access to Tough Tongue AI \u2014 the platform for handling tough conversations. Some, the AI takes: voice agents that answer and place phone calls, join Zoom or Google Meet, run product demos, screen candidates, and book meetings. Others, you nail: hyper-realistic roleplay that gets you ready for negotiations, interviews, and coaching conversations. Bundles the hosted MCP server with layered skills: ttai-agent (datastore map + scenario shape + MCP how-to), scenario-maker, session-analyst, and browser-demo-builder.",
+    "shortDescription": "Turn briefs and session evidence into better conversations",
+    "longDescription": "Turns a brief, transcript, or tough conversation into a Tough Tongue AI voice agent that takes it—or a practice Scenario that gets your team ready to nail it. The hosted MCP server handles live account actions; layered skills turn intent into scoped actions: ttai-agent owns product knowledge, scenario-maker creates, edits, or repairs, session-analyst explains session evidence, and browser-demo-builder records deterministic demos.",
     "developerName": "Tough Tongue AI",
     "category": "Productivity",
     "capabilities": [

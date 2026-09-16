@@ -310,7 +310,7 @@ Feel free to ask questions at any point!
 | Reading slides verbatim                         | Use slides as visual anchors, add context beyond the screen                        |
 | Waiting for the user to drive                   | Be proactive — transition between sections                                         |
 | Interrogating with qualifying questions upfront | Weave questions naturally between demo sections                                    |
-| Enabling `knowledge_base_search` with no docs   | Attach FAQs/pricing in Scenario Studio first — MCP cannot set `knowledge_base_ids` |
+| Enabling `knowledge_base_search` with no docs   | Discover the approved Knowledge Base ID, attach it through Scenario authoring, then enable the tool |
 | Browser demo without `multimodal_analysis`      | Enable it — visual navigation is part of the analysis                              |
 
 ---

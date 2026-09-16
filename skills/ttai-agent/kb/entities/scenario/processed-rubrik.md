@@ -21,8 +21,9 @@ reading session analyses. Do **not** invent a `processed_rubrik` payload
 unless the live tool schema includes it. Prefer:
 
 1. Set clear `rubrik` text when creating/updating.
-2. Run sessions; read scores via `ttai:get_session` /
-   `ttai:list_sessions` / `ttai:get_analytics`.
+2. Run sessions; read compact scores via `ttai:v3_list_sessions` with
+   `include_fields: ["evaluation"]`, or use `ttai:get_session` /
+   `ttai:get_sessions_batch` / `ttai:get_analytics` for a deeper read.
 3. Point power users at Scenario Studio for fine-grained criteria edits.
 
 ## Related

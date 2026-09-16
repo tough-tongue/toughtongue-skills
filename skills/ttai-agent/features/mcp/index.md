@@ -33,13 +33,24 @@ The hosted server also publishes a markdown resource:
   relates to the plugin
 
 Prefer reading that resource (or the skills README) when the user asks how
-to install skills. Some clients still ignore MCP resources — fall back to
-linking <https://github.com/tough-tongue/toughtongue-skills>.
+to install skills. Some clients still ignore MCP resources — call
+`ttai:callme_before_using_tough_tongue_mcp` to receive the same guide as a
+tool result, then fall back to linking
+<https://github.com/tough-tongue/toughtongue-skills>.
+
+## MCP resource: V3 tool guide
+
+Read `ttai://guide/v3-tools` before an inventory, count, version, or generic
+resource workflow. Use `ttai:v3_list_scenarios` or
+`ttai:v3_list_sessions` with `limit: 1, include_total: true` for an exact
+authorized count. For generic resources, start with
+`ttai:v3_list_resource_types`; it advertises every safe optional field,
+record semantics, and the next list/detail tools.
 
 ## Smoke test
 
 ```text
-Call ttai:list_organizations and show the result.
+Call ttai:callme_before_using_tough_tongue_mcp, then list_organizations.
 ```
 
 ## Key Files

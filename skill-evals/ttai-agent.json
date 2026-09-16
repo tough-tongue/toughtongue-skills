@@ -48,6 +48,15 @@
   },
   {
     "skills": ["ttai-agent"],
+    "query": "I just connected Tough Tongue AI. What can I do here?",
+    "expected_behavior": [
+      "Calls ttai:callme_before_using_tough_tongue_mcp before broad account inventory",
+      "Uses the returned MCP guide as current tool and setup context",
+      "Keeps orientation read-only and does not create, update, call, schedule, or share anything"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
     "query": "How do I update an existing scenario versus creating a new one?",
     "expected_behavior": [
       "create_scenario rejects id; update_scenario requires id and is partial (send only changed fields)",
@@ -70,8 +79,8 @@
     "skills": ["ttai-agent"],
     "query": "What plan am I on, and can I make SIP calls?",
     "expected_behavior": [
-      "Explains that the current public MCP does not expose the caller's effective platform plan or feature gates",
-      "Does not use list_subscriptions as a plan lookup; identifies it as subscribers to the caller's paid scenarios or collections",
+      "Uses ttai:v3_get_entitlements as the caller's effective capability source without claiming it exposes prices, wallets, subscriptions, or provider data",
+      "Does not infer a plan from balance or from a removed subscription tool",
       "May use get_balance for available personal usage minutes when relevant",
       "Treats the live server response as authoritative for SIP entitlement rather than guessing a tier"
     ]

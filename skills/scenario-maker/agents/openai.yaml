@@ -1,7 +1,7 @@
 interface:
   display_name: "Scenario Maker"
-  short_description: "Create, edit, or refine Tough Tongue AI scenarios via MCP"
-  default_prompt: "Create a Tough Tongue AI scenario to practice handling pricing objections."
+  short_description: "Turn a brief or bad session into a better Scenario"
+  default_prompt: "Turn this sales-call transcript into a practice Scenario for pricing objections."
 
 dependencies:
   tools:

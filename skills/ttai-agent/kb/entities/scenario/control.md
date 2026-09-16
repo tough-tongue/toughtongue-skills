@@ -21,7 +21,7 @@ prompt: "Greet the user with your opening line." Put the opening in FLOW.
 - appearance
 - tools_config
 - session_analysis, memory, transcribe
-- What MCP cannot set
+- Linked-resource boundary
 
 ---
 
@@ -207,14 +207,17 @@ rep scorecard; coaching → engagement-weighted). See
 `{{ var }}` in instructions is filled from `?t_var=` URL params. Every
 variable needs a missing-value fallback in `ai_instructions`.
 
-## What MCP cannot set
+## Linked-resource boundary
 
-Public create/update **omits** `knowledge_base_ids` and `custom_function_ids`.
-Do not invent those fields. Attach KBs and custom functions in Scenario
-Studio, then enable the matching tool flags here.
+Public create/update accepts `knowledge_base_ids`, `custom_function_ids`, and
+`mcp_server_ids` alongside the other caller-controlled Scenario settings.
+Discover safe IDs with `ttai:v3_list_resource_types` →
+`ttai:v3_list_resources` (or use trusted workspace IDs), then validate the
+create/update tool schema before attaching them. MCP does not create or expose
+the sensitive configuration of those linked resources.
 
-Public `type` is only `default` | `super` | `composite`. Do not send
-`meet_assist`, `quiz`, or `coding`.
+Use the type and field variants accepted by the `create_scenario` or
+`update_scenario` schema. Do not invent enum values or configuration shapes.
 
 ## Key Files
 

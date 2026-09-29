@@ -10,7 +10,7 @@
   "homepage": "https://app.toughtongueai.com",
   "repository": "https://github.com/tough-tongue/toughtongue-skills",
   "license": "MIT",
-  "icon": "./assets/icon.svg",
+  "icon": "./assets/icon.png",
   "privacyPolicyUrl": "https://app.toughtongueai.com/privacy-policy/",
   "keywords": [
     "voice-ai",

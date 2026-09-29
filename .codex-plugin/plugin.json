@@ -1,7 +1,7 @@
 {
   "name": "toughtongue",
-  "version": "0.4.0",
-  "description": "Skills and MCP server for Tough Tongue AI \u2014 the platform for tough conversations. Some, the AI takes: voice agents that call, demo, screen, and book. Others, you nail: realistic roleplay for negotiations, interviews, and coaching. Build agents, refine them from real transcripts, and analyze sessions.",
+  "version": "0.4.1",
+  "description": "Skills and MCP server for Tough Tongue AI \u2014 the platform for tough conversations. Some, the AI takes: voice agents that qualify leads, demo, screen, and book. Others, you nail: realistic roleplay for negotiations, interviews, and coaching. Build agents, refine them from real transcripts, and analyze sessions.",
   "author": {
     "name": "Tough Tongue AI",
     "url": "https://app.toughtongueai.com"
@@ -14,8 +14,6 @@
     "voice-agents",
     "toughtongue",
     "ttai",
-    "outbound-calling",
-    "sip",
     "meeting-bots",
     "roleplay",
     "sales-training",
@@ -26,7 +24,7 @@
   "interface": {
     "displayName": "Tough Tongue AI",
     "shortDescription": "Automate or practice tough conversations",
-    "longDescription": "Gives your agent first-class access to Tough Tongue AI \u2014 the platform for handling tough conversations. Some, the AI takes: voice agents that answer and place phone calls, join Zoom or Google Meet, run product demos, screen candidates, and book meetings. Others, you nail: hyper-realistic roleplay that gets you ready for negotiations, interviews, and coaching conversations. Bundles the hosted MCP server with layered skills: ttai-agent (datastore map + scenario shape + MCP how-to), scenario-maker, session-analyst, and browser-demo-builder.",
+    "longDescription": "Gives your agent first-class access to Tough Tongue AI \u2014 the platform for handling tough conversations. Some, the AI takes: voice agents that join Zoom or Google Meet, qualify leads, run product demos, screen candidates, and book meetings. Others, you nail: hyper-realistic roleplay that gets you ready for negotiations, interviews, and coaching conversations. Bundles the hosted MCP server with layered skills: ttai-agent (datastore map + scenario shape + MCP how-to), scenario-maker, session-analyst, and browser-demo-builder.",
     "developerName": "Tough Tongue AI",
     "category": "Productivity",
     "capabilities": [

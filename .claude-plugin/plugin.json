@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "toughtongue",
-  "description": "Build, refine, and analyze Tough Tongue AI voice agents for tough conversations \u2014 agents that automate them (sales calls, lead qualification, demos, screening, booking) and agents that train you for the ones you handle yourself (negotiations, interviews, coaching). Create scenarios, place phone calls, schedule meeting bots, and analyze sessions.",
-  "version": "0.4.0",
+  "description": "Build, refine, and analyze Tough Tongue AI voice agents for tough conversations \u2014 agents that automate them (sales conversations, lead qualification, demos, screening, booking) and agents that train you for the ones you handle yourself (negotiations, interviews, coaching). Create scenarios, schedule meeting bots, and analyze sessions.",
+  "version": "0.4.1",
   "author": {
     "name": "Tough Tongue AI",
     "url": "https://app.toughtongueai.com"
@@ -10,13 +10,13 @@
   "homepage": "https://app.toughtongueai.com",
   "repository": "https://github.com/tough-tongue/toughtongue-skills",
   "license": "MIT",
+  "icon": "./assets/icon.svg",
+  "privacyPolicyUrl": "https://app.toughtongueai.com/privacy-policy/",
   "keywords": [
     "voice-ai",
     "voice-agents",
     "toughtongue",
     "ttai",
-    "outbound-calling",
-    "sip",
     "meeting-bots",
     "roleplay",
     "sales-training",

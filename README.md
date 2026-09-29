@@ -4,7 +4,7 @@
 
 Agent skills and MCP server for [Tough Tongue AI](https://app.toughtongueai.com),
 the platform for handling tough conversations. Some, the AI takes: voice
-agents that answer and place calls, qualify leads, run demos, screen
+agents that qualify leads, run demos, screen
 candidates, and book meetings. Others, you nail: hyper-realistic roleplay
 that gets you ready for negotiations, interviews, and coaching conversations.
 
@@ -59,7 +59,7 @@ conversation matches:
 | [browser-demo-builder](skills/browser-demo-builder) | "Record browser demo steps", …                                           | Pre-recorded browser demo steps via MCP.                                                  |
 
 **MCP server** — live actions in your Tough Tongue AI account. 27 tools over the
-public API: scenarios, sessions, analytics, organizations, SIP, meeting bots,
+public API: scenarios, sessions, analytics, organizations, meeting bots,
 and collections. Full catalog in [MCP.md](MCP.md).
 
 **Plugins** (Claude Code, Codex, Cursor) — bundle the skills **and** the MCP
@@ -473,7 +473,7 @@ with dynamic client registration; PAT bearer auth for headless setups).
 There is nothing to install and no local process to run. It exposes 27 tools
 over the public API: scenarios (create, update, generate, access tokens),
 sessions (list with evaluations, single and batch fetch, ingest,
-post-process), analytics and organizations, SIP phone calls, meeting bots,
+post-process), analytics and organizations, meeting bots,
 and collections.
 
 **See [MCP.md](MCP.md)** for the full tool catalog, per-client setup

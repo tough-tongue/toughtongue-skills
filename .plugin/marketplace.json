@@ -8,7 +8,7 @@
     {
       "name": "toughtongue",
       "source": "./",
-      "description": "Build, refine, and analyze Tough Tongue AI voice agents — automate tough conversations or practice them — through the Tough Tongue MCP server. Includes ttai-agent, scenario-maker, session-analyst, and browser-demo-builder.",
+      "description": "Build, refine, and analyze Tough Tongue AI voice agents for tough conversations — agents that automate them (sales calls, lead qualification, demos, screening, booking) and agents that train you for the ones you handle yourself (negotiations, interviews, coaching). Create scenarios, place phone calls, schedule meeting bots, and analyze sessions.",
       "category": "productivity"
     }
   ]

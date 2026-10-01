@@ -1,7 +1,7 @@
 {
   "name": "toughtongue",
-  "version": "0.4.1",
-  "description": "Skills and MCP server for Tough Tongue AI \u2014 the platform for tough conversations. Some, the AI takes: voice agents that call, demo, screen, and book. Others, you nail: realistic roleplay for negotiations, interviews, and coaching. Build agents, refine them from real transcripts, and analyze sessions.",
+  "version": "1.0.0",
+  "description": "Build, refine, and analyze Tough Tongue AI voice agents for tough conversations — agents that automate them (sales calls, lead qualification, demos, screening, booking) and agents that train you for the ones you handle yourself (negotiations, interviews, coaching). Create scenarios, place phone calls, schedule meeting bots, and analyze sessions.",
   "author": {
     "name": "Tough Tongue AI",
     "url": "https://app.toughtongueai.com"
@@ -15,31 +15,39 @@
     "toughtongue",
     "ttai",
     "outbound-calling",
+    "lead-qualification",
+    "product-demos",
+    "candidate-screening",
+    "meeting-booking",
     "sip",
     "meeting-bots",
     "roleplay",
     "sales-training",
-    "coaching"
+    "interview-practice",
+    "coaching",
+    "conversation-practice",
+    "session-analytics",
+    "organization-workspaces",
+    "browser-demos"
   ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Tough Tongue AI",
     "shortDescription": "Automate or practice tough conversations",
-    "longDescription": "Gives your agent first-class access to Tough Tongue AI \u2014 the platform for handling tough conversations. Some, the AI takes: voice agents that answer and place phone calls, join Zoom or Google Meet, run product demos, screen candidates, and book meetings. Others, you nail: hyper-realistic roleplay that gets you ready for negotiations, interviews, and coaching conversations. Bundles the hosted MCP server with layered skills: ttai-agent (datastore map + scenario shape + MCP how-to), scenario-maker, session-analyst, and browser-demo-builder.",
+    "longDescription": "Build, refine, and analyze Tough Tongue AI voice agents for tough conversations — agents that automate them (sales calls, lead qualification, demos, screening, booking) and agents that train you for the ones you handle yourself (negotiations, interviews, coaching). Create scenarios, place phone calls, schedule meeting bots, and analyze sessions.",
     "developerName": "Tough Tongue AI",
     "category": "Productivity",
-    "capabilities": [
-      "Read",
-      "Write"
-    ],
+    "capabilities": ["Read", "Write"],
     "websiteURL": "https://app.toughtongueai.com",
     "defaultPrompt": [
       "Get me started with Tough Tongue AI.",
-      "Create a Tough Tongue AI voice agent that calls inbound demo leads.",
-      "Create a Tough Tongue AI scenario to practice handling pricing objections.",
-      "Pull the last 50 sessions for my discovery-call scenario and list the top 5 improvement areas.",
-      "The onboarding agent ends calls too early \u2014 pull low-scoring sessions and fix the scenario."
+      "Show my Tough Tongue AI organizations, available capabilities, shared balance, and team usage.",
+      "Build a voice agent to qualify demo leads and book qualified meetings.",
+      "Create a practice Scenario for an enterprise pricing negotiation.",
+      "Create a product-demo Scenario and record deterministic browser steps.",
+      "For the Enterprise Discovery Call Scenario, analyze the last 50 sessions and make the smallest evidence-backed improvement.",
+      "Schedule a Tough Tongue AI meeting bot for a customer meeting using our existing demo Scenario."
     ]
   }
 }

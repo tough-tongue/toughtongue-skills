@@ -1,8 +1,8 @@
 {
   "name": "toughtongue",
   "displayName": "Tough Tongue AI",
-  "description": "Skills and MCP server for Tough Tongue AI \u2014 the platform for tough conversations. Some, the AI takes: voice agents that call, demo, screen, and book. Others, you nail: realistic roleplay for negotiations, interviews, and coaching. Build agents, refine them from real transcripts, and analyze sessions.",
-  "version": "0.4.1",
+  "description": "Build, refine, and analyze Tough Tongue AI voice agents for tough conversations — agents that automate them (sales calls, lead qualification, demos, screening, booking) and agents that train you for the ones you handle yourself (negotiations, interviews, coaching). Create scenarios, place phone calls, schedule meeting bots, and analyze sessions.",
+  "version": "1.0.0",
   "author": {
     "name": "Tough Tongue AI",
     "url": "https://app.toughtongueai.com"
@@ -16,10 +16,19 @@
     "toughtongue",
     "ttai",
     "outbound-calling",
+    "lead-qualification",
+    "product-demos",
+    "candidate-screening",
+    "meeting-booking",
     "sip",
     "meeting-bots",
     "roleplay",
     "sales-training",
-    "coaching"
+    "interview-practice",
+    "coaching",
+    "conversation-practice",
+    "session-analytics",
+    "organization-workspaces",
+    "browser-demos"
   ]
 }

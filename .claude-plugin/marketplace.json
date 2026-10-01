@@ -1,6 +1,6 @@
 {
   "name": "toughtongue-skills",
-  "description": "Skills and MCP server for Tough Tongue AI — the platform for tough conversations. Some, the AI takes: voice agents that call, demo, screen, and book. Others, you nail: realistic roleplay for negotiations, interviews, and coaching. Create agents, refine them from real transcripts, and analyze sessions from your coding agent.",
+  "description": "Build, refine, and analyze Tough Tongue AI voice agents for tough conversations — agents that automate them (sales calls, lead qualification, demos, screening, booking) and agents that train you for the ones you handle yourself (negotiations, interviews, coaching). Create scenarios, place phone calls, schedule meeting bots, and analyze sessions.",
   "owner": {
     "name": "tough-tongue",
     "url": "https://github.com/tough-tongue"
@@ -8,13 +8,28 @@
   "plugins": [
     {
       "name": "toughtongue",
-      "description": "Build, refine, and analyze Tough Tongue AI voice agents — automate tough conversations or practice them — through the Tough Tongue MCP server. Includes ttai-agent, scenario-maker, session-analyst, and browser-demo-builder.",
+      "description": "Build, refine, and analyze Tough Tongue AI voice agents for tough conversations — agents that automate them (sales calls, lead qualification, demos, screening, booking) and agents that train you for the ones you handle yourself (negotiations, interviews, coaching). Create scenarios, place phone calls, schedule meeting bots, and analyze sessions.",
       "source": {
         "source": "github",
         "repo": "tough-tongue/toughtongue-skills"
       },
       "category": "productivity",
-      "tags": ["voice", "agents", "ttai", "sales-training", "conversation-practice"]
+      "tags": [
+        "ttai",
+        "voice-agents",
+        "lead-qualification",
+        "product-demos",
+        "candidate-screening",
+        "meeting-bots",
+        "roleplay",
+        "sales-training",
+        "interview-practice",
+        "coaching",
+        "session-analytics",
+        "organization-workspaces",
+        "outbound-calling",
+        "browser-demos"
+      ]
     }
   ]
 }

@@ -7,12 +7,11 @@ plugin installed and an authenticated ttai MCP connection (OAuth login, or a
 `TTAI_PAT` bearer header on headless setups), then grade against
 `expected_behavior`.
 
-| File                                                   | Skill under test     |
-| ------------------------------------------------------ | -------------------- |
-| [ttai-agent.json](ttai-agent.json)                     | ttai-agent           |
-| [scenario-maker.json](scenario-maker.json)             | scenario-maker       |
-| [session-analyst.json](session-analyst.json)           | session-analyst      |
-| [browser-demo-builder.json](browser-demo-builder.json) | browser-demo-builder |
+| File                                                             | Skill under test          |
+| ---------------------------------------------------------------- | ------------------------- |
+| [ttai-agent.json](ttai-agent.json)                               | ttai-agent                |
+| [ttai-session-analyst.json](ttai-session-analyst.json)           | ttai-session-analyst      |
+| [ttai-browser-demo-builder.json](ttai-browser-demo-builder.json) | ttai-browser-demo-builder |
 
 Grading notes:
 

@@ -6,8 +6,9 @@ public and is installed directly into end users' agents — every word ships.
 ## Rules
 
 - **MCP tool names are a contract.** Skills may only reference tools that the
-  hosted MCP server exposes (full catalog in [MCP.md](MCP.md)). If the server
-  catalog changes, MCP.md and the skills change in the same PR.
+  hosted MCP server exposes (catalog in
+  `skills/ttai-agent/references/mcp/tools.md`). If the server
+  catalog changes, that file and the skills change in the same PR.
 - **Skills are MCP-first.** Every workflow ends in an MCP tool call
   (`create_scenario`, `update_scenario`, `list_sessions`, ...) — never in
   "write a file to disk" or references to internal Tough Tongue AI repos, paths,
@@ -31,32 +32,39 @@ public and is installed directly into end users' agents — every word ships.
 
 ## Structure
 
-Skills are layered. Load a lower layer when a higher one needs it — do not
-copy field tables or OAuth dumps into workflow skills.
+Every skill name starts with `ttai-`. One main skill plus specialists; each
+skill is self-contained and follows the Agent Skills standard
+(<https://agentskills.io/specification>).
 
-- Layer 0 — `skills/ttai-agent/` — **intermediate intelligence layer**.
-  It turns human intent into a scoped, capability-aware decision across the
-  Tough Tongue AI datastore: control entities, resources, scenario shape,
-  runtime channels, situation recipes (`kb/`), and MCP guidance
-  (`features/mcp/`). It is consumer-neutral: coding agents and web
-  conversational plugins share the same knowledge; their adapters execute.
-  Each subdirectory has an `index.md`.
-- Layer 1 — `scenario-maker`, `session-analyst`, `browser-demo-builder` —
- **when**. Workflows that load `ttai-agent`.
+- `skills/ttai-agent/` — **main skill**. Turns intent into a scoped,
+  capability-aware action: workspace scope, entities, Scenario
+  create/edit/repair, situation recipes, and the MCP tool map. Consumer-neutral:
+  coding agents and web conversational plugins share it.
+- `skills/ttai-session-analyst/` — session evidence → reports; transcript
+  ingestion.
+- `skills/ttai-browser-demo-builder/` — deterministic browser demo steps on a
+  Scenario's browser tool.
+- New skill only for a distinct job with its own vocabulary and triggers;
+  otherwise add a reference to `ttai-agent`.
+- **No cross-skill file links.** Never link `../<other-skill>/…` — a skill
+  installed alone (skills.sh, `npx skills add --skill`) gets dead links. Name
+  the sibling skill instead and inline the few facts the job needs.
 
 - `skills/<name>/SKILL.md` — frontmatter (`name`, `description`, `when_to_use`) + workflow.
   `name` + `description` + `when_to_use` are the Claude Code meta-prompt markers
   (combined trigger text capped at 1,536 characters). The description doubles as
   the trigger; front-load the key use case in the first sentence (Codex truncates
   descriptions under context pressure) and include the phrases users actually say.
-  Knowledge skills set `user-invocable: false` so Claude can auto-load them
-  without listing them in the slash menu.
-- Depth files — prefer `kb/` and `features/` trees with `index.md` per directory
-  (cap ~7 files per folder; nest when you outgrow that). Files over 100 lines
-  carry a Contents block at the top.
+  Descriptions are third person and precise: name the objects and tools the
+  skill acts on, the exact user phrases, and what it does NOT cover (with the
+  sibling skill that does). Broad descriptions make skills collide.
+- Depth files — `references/` (subfolders by domain allowed, ≤7 files each).
+  **Every reference file is linked directly from SKILL.md** — one level deep,
+  no `index.md` hub chains (agents only partially read chained files). Files
+  over 100 lines carry a Contents block at the top.
 - `skills/<name>/agents/openai.yaml` — Codex UI metadata + the ttai MCP
-  dependency declaration (omit `dependencies` on knowledge-only skills that
-  do not call tools — `ttai-agent` declares MCP because it teaches tool use).
+  dependency declaration (omit `dependencies` only on a skill that never
+  calls tools).
   Keep the MCP URL in sync with `.mcp.json`.
 - `skill-evals/` — 3 evaluation scenarios per skill; re-run before releases
   that touch a SKILL.md or reference file.
@@ -64,8 +72,7 @@ copy field tables or OAuth dumps into workflow skills.
 - `plugin.json` (repo root) — Agent Plugins 1.0.0 manifest
   (<https://agent-plugins.org>); the portable format read natively by Cursor,
   Codex, GitHub Copilot, Kiro, and VS Code. `$schema` and `name` are required.
-- `INSTALL.md` — pin a plugin, a skill, or a git ref in a coding agent.
-  [README.md](README.md) has the mermaid of how layers compose.
+  [README.md](README.md) has the mermaid of how the skills compose.
 - `.claude-plugin/`, `.codex-plugin/`, `.cursor-plugin/`, `.agents/plugins/` —
   platform manifests. Keep `version` in sync across all of them when releasing.
 - `.mcp.json` — Claude-native MCP config (`"type": "http"`).
@@ -85,6 +92,17 @@ copy field tables or OAuth dumps into workflow skills.
   it when copying a marketplace into `~/.claude/plugins/`, which would leak a
   string source back into Claude tooling (the Cowork sync bug above).
 
+## Descriptions
+
+Exactly two product descriptions exist. Change both together; never fork a
+third.
+
+- **Coding agents** — one string in every plugin and marketplace manifest:
+  `plugin.json`, `.claude-plugin/*`, `.codex-plugin/plugin.json`
+  (`description` and `interface.longDescription`), `.cursor-plugin/*`,
+  `.plugin/*`. Codex `interface.shortDescription` is the only short form.
+- **Web agents** — `server.json` (MCP registry, read by web connectors).
+
 ## Versioning
 
 Bump the version in all plugin manifests together (`plugin.json`,
@@ -100,7 +118,7 @@ update.
 1. `claude plugin validate .` — must pass; the community-marketplace review
    pipeline runs the same check on submission.
 2. Local smoke test, Claude Code: `claude --plugin-dir .` then invoke
-   `/toughtongue:scenario-maker` (and `/reload-plugins` after edits).
+   `/toughtongue:ttai-agent` (and `/reload-plugins` after edits).
 3. Local smoke test, Codex: `codex plugin marketplace add <checkout-path>`,
    `codex plugin add toughtongue@toughtongue`, restart, verify the ttai MCP
    tools and all the skills appear.

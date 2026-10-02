@@ -1,0 +1,12 @@
+interface:
+  display_name: "Session Analyst"
+  short_description: "Turn Tough Tongue AI sessions into team, Scenario, and coaching reports"
+  default_prompt: "Pull the last 50 sessions for my discovery-call scenario and list the top 5 improvement areas with transcript evidence."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "ttai"
+      description: "Tough Tongue AI public API MCP server"
+      transport: "streamable_http"
+      url: "https://api.toughtongueai.com/api/public/mcp"

@@ -1,0 +1,33 @@
+[
+  {
+    "skills": ["ttai-agent-apps"],
+    "query": "Build a checklist app my sales voice agent can tick off during a call, and give me the link.",
+    "expected_behavior": [
+      "Resolves workspace scope with ttai:list_organizations before ttai:create_app",
+      "Separates fixed render code (src/App.tsx) from one flat JSON data file the agent edits",
+      "Writes spec.json whose files array lists every written file, with editableGlobs limited to the data file",
+      "Re-reads with ttai:get_app_files and checks every files entry came back",
+      "Returns an editor link and a preview link from ttai:get_app_url and says the preview expires"
+    ]
+  },
+  {
+    "skills": ["ttai-agent-apps"],
+    "query": "Attach my 'deal-room' app to the Enterprise Discovery Call scenario.",
+    "expected_behavior": [
+      "Resolves the Scenario ID and reads its current tools_config before writing",
+      "Calls ttai:update_scenario with tools_config.tools.agent_desktop, copying the existing agent_desktop tool_settings keys because tool_settings is replaced whole",
+      "Sets tools_config.tools.agent_desktop.tool_settings.apps as a map keyed by app name ({\"deal-room\": true})",
+      "Adds app usage and edit rules to ai_instructions and says the change applies to new sessions only"
+    ]
+  },
+  {
+    "skills": ["ttai-agent-apps"],
+    "query": "Delete the old 'pricing-board' app and make the 'roadmap' app public.",
+    "expected_behavior": [
+      "Confirms with the user before ttai:delete_app and names Scenarios that still list the app",
+      "Confirms the audience before widening visibility to public via ttai:update_app",
+      "Uses app_id for both calls",
+      "Never prints a preview token outside the link handed to the user"
+    ]
+  }
+]

@@ -44,6 +44,8 @@ skill is self-contained and follows the Agent Skills standard
   ingestion.
 - `skills/ttai-browser-demo-builder/` — deterministic browser demo steps on a
   Scenario's browser tool.
+- `skills/ttai-agent-apps/` — Agent Desktop apps the voice agent renders and
+  edits during a session.
 - New skill only for a distinct job with its own vocabulary and triggers;
   otherwise add a reference to `ttai-agent`.
 - **No cross-skill file links.** Never link `../<other-skill>/…` — a skill
@@ -72,7 +74,7 @@ skill is self-contained and follows the Agent Skills standard
 - `plugin.json` (repo root) — Agent Plugins 1.0.0 manifest
   (<https://agent-plugins.org>); the portable format read natively by Cursor,
   Codex, GitHub Copilot, Kiro, and VS Code. `$schema` and `name` are required.
-  [README.md](README.md) has the mermaid of how the skills compose.
+- [README.md](README.md) — the user-facing install and getting-started page.
 - `.claude-plugin/`, `.codex-plugin/`, `.cursor-plugin/`, `.agents/plugins/` —
   platform manifests. Keep `version` in sync across all of them when releasing.
 - `.mcp.json` — Claude-native MCP config (`"type": "http"`).

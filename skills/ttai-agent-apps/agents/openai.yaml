@@ -1,0 +1,12 @@
+interface:
+  display_name: "Agent Apps"
+  short_description: "Build and publish apps your Tough Tongue AI voice agent can drive"
+  default_prompt: "Build a brainstorming board app my voice agent can edit during a call, and give me the preview link."
+
+dependencies:
+  tools:
+    - type: "mcp"
+      value: "ttai"
+      description: "Tough Tongue AI public API MCP server"
+      transport: "streamable_http"
+      url: "https://api.toughtongueai.com/api/public/mcp"

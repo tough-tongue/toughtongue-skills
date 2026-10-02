@@ -212,4 +212,4 @@ Each symptom lists its owner (where to fix), then the mechanism.
 - [workflow.md](workflow.md) — refine procedure
 - [model-selection.md](model-selection.md) — pipeline choice
 - [control.md](control.md) — behavior controls
-- [ai-instructions.md](ai-instructions.md) — prompt repairs
+- [ai-instructions.md](ai-instructions.md) — prompt refinements

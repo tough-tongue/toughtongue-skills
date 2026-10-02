@@ -40,6 +40,9 @@ Read tools first, then write tools; "none" means MCP has no tool of that kind.
 - **Collection** — read: `ttai:list_collections`, `ttai:get_collection`. Write:
   none.
 - **Browser** — read: none. Write: `ttai:authenticate_browser`.
+- **Agent Desktop app** — read: `ttai:list_apps`, `ttai:get_app`,
+  `ttai:get_app_files`, `ttai:get_app_url`. Write: `ttai:create_app`,
+  `ttai:update_app`, `ttai:write_app_files`, `ttai:delete_app`.
 
 Skip any tool prefixed `int_` or titled "Internal…": it is not part of the
 public API. Every account tool accepts an optional `org_id`; omit it for the
@@ -120,6 +123,9 @@ Each tool and why it needs confirmation:
 - `ttai:create_scenario_access_token` — grants access; an email can create or
   reuse a user record.
 
+Also confirm `ttai:delete_app` (Scenarios may still list the app) and
+`ttai:update_app` to `public` (opens the app to everyone).
+
 ## Updating a Scenario
 
 - `ttai:create_scenario` rejects `id`; requires `name` and `ai_instructions`.
@@ -155,6 +161,9 @@ Each tool and why it needs confirmation:
   `ttai://guide/mcp-agent` resource. Call it once at the first action in a
   conversation unless the guide is already in context. V3 detail lives in the
   `ttai://guide/v3-tools` resource.
+- On connect the server also sends MCP `instructions`: a short index of this
+  tool map. `tools/list` is ordered by importance (the guide first, `int_` tools
+  last).
 - `ttai:get_public_config` needs no login. System avatars are not a separate
   tool: `ttai:v3_list_resources` with resource type `avatar`, `type` `static`
   (default), `hybrid`, or `live`.

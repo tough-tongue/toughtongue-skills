@@ -142,6 +142,7 @@ Sibling skills:
 
 - `ttai-session-analyst` — population-wide trends, scorecards, team reports.
 - `ttai-browser-demo-builder` — recorded browser steps and selectors for demos.
+- `ttai-agent-apps` — Agent Desktop apps the voice agent shows and edits.
 
 ## Hard rules
 

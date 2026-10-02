@@ -90,7 +90,7 @@ Recorded browser steps → the `ttai-browser-demo-builder` skill.
 3. Read [runtime.md](runtime.md). Name one concrete cause that the evidence
    supports; separate what the Scenario prescribes from what happened. Do not
    layer more prose onto a weak prompt.
-4. Update the narrowest field that fixes it, then re-fetch.
+4. Update the narrowest field that improves it, then re-fetch.
 
 ## Report and hand off
 
@@ -106,6 +106,6 @@ configuration.
 
 ## Key Files
 
-- [runtime.md](runtime.md) — evidence-based repair facts
+- [runtime.md](runtime.md) — evidence for refining runtime behavior
 - [control.md](control.md) — control fields
 - [../mcp/tools.md](../mcp/tools.md) — create/update semantics

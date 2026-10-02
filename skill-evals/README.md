@@ -12,6 +12,7 @@ plugin installed and an authenticated ttai MCP connection (OAuth login, or a
 | [ttai-agent.json](ttai-agent.json)                               | ttai-agent                |
 | [ttai-session-analyst.json](ttai-session-analyst.json)           | ttai-session-analyst      |
 | [ttai-browser-demo-builder.json](ttai-browser-demo-builder.json) | ttai-browser-demo-builder |
+| [ttai-agent-apps.json](ttai-agent-apps.json)                     | ttai-agent-apps           |
 
 Grading notes:
 

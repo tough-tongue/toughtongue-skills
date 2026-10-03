@@ -6,6 +6,7 @@ How an Agent Desktop app package is laid out and described.
 
 - Package layout
 - `spec.json`
+- Controls
 - Code vs data
 - Worked example: idea board
 - Limits
@@ -34,17 +35,26 @@ host mounts.
 | `title`                     | Display title                                           |
 | `root`                      | `/<app_name>`                                           |
 | `entryFile`                 | `/<app_name>/src/App.tsx`                               |
-| `files`                     | **Required.** Every other package-relative path to load |
+| `files`                     | Every other package-relative path; synced on each write |
 | `plannedExtensions`         | `[]`                                                    |
 | `description`               | Markdown the agent reads: the shape of the data file    |
 | `filesystem.glob`           | `/<app_name>/**/*`                                      |
 | `filesystem.editableGlobs`  | The exact data file, e.g. `/<app_name>/data/board.json` |
 | `filesystem.preferredPaths` | The one file to rewrite most often                      |
 | `filesystem.coreFileGlobs`  | Files the agent must not touch (`src/**`)               |
-| `instructions`              | Short imperative rules for the voice agent              |
+| `instructions`              | Authoring notes, read on demand by the agent            |
+| `controls`                  | How to operate the app; injected into the prompt        |
+
+## Controls
+
+`controls` is the app's operating manual for the live agent. When a Scenario
+enables the app with `add_to_system_prompt: true`, every line lands in the
+system prompt under the app's title and tool prefix, so the agent knows how to
+drive it without calling anything first. `instructions` stay for authoring and
+are only read on demand.
 
 <details>
-<summary>Instruction lines that work</summary>
+<summary>Control lines that work</summary>
 
 - Name the file to edit and forbid everything else.
 - Describe each data operation in one line: set the topic, add an item, move an
@@ -95,6 +105,11 @@ Render code reads the data file and draws it; it never writes it.
     "To add an idea, append a card {id, text} to a column.",
     "To move an idea, remove it from one column and add it to another, keeping its id.",
     "Keep ids short and stable (c1, c2). Write the whole file each time."
+  ],
+  "controls": [
+    "Call idea_board_launch once when brainstorming starts.",
+    "Operate the board only by rewriting /idea-board/data/board.json with idea_board_write; send the whole file.",
+    "topic: the framing question. columns[].cards[]: {id, text}; move a card by changing its column, keep its id."
   ]
 }
 ```
@@ -142,7 +157,7 @@ export default function App() {
 
 ## Limits
 
-- One write: 1–200 files, each up to 1 MB. One read: up to 64 paths.
+- One write: 1–200 paths (files plus deletes). One read: up to 20 paths.
 - During a session the agent can write files up to 128 KB; keep data files to a
   few KB.
 - Paths use letters, digits, `.`, `_`, `-`, and `/`; any other character becomes

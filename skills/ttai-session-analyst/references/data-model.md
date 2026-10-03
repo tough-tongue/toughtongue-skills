@@ -10,77 +10,62 @@
 - Analytics rollup
 
 All account tools accept an optional `org_id` (the `id` from
-`ttai:list_organizations`). Omit it for personal scope. Date filters take an ISO
+`ttai:list_resources(organizations)`). Omit it for personal scope. Date filters take an ISO
 8601 date or timestamp. A date-only lower bound starts at 00:00:00 UTC and a
 date-only upper bound ends at 23:59:59.999999 UTC.
 
 ## Read tools and parameters
 
-Paging at a glance:
+Every read is `ttai:list_resources` or `ttai:get_resource`; type-specific
+parameters go in `filters`. Paging at a glance:
 
-| Tool                      | Paging | `limit`               |
-| ------------------------- | ------ | --------------------- |
-| `ttai:v3_list_sessions`   | cursor | 1–100, default 25     |
-| `ttai:list_sessions`      | page   | default 50, max 500   |
-| `ttai:get_sessions_batch` | none   | `session_ids` max 500 |
-| `ttai:get_session`        | none   | —                     |
-| `ttai:get_analytics`      | none   | —                     |
-| `ttai:list_sip_calls`     | page   | default 50, max 500   |
-| `ttai:list_meeting_bots`  | page   | default 50, max 500   |
+| Read                                   | Paging | `limit`           |
+| -------------------------------------- | ------ | ----------------- |
+| list `sessions` (typed)                | cursor | 1–100, default 25 |
+| list `sessions` with a legacy filter   | page   | 1–100, default 50 |
+| get `sessions`                         | none   | —                 |
+| get `usage`                            | none   | —                 |
+| list `bots`                            | cursor | 1–100, default 25 |
 
-**`ttai:v3_list_sessions`**
+**List `sessions` (typed)**
 
-- Parameters: `ids[]`, `scenario_ids[]`, `statuses[]`, `include_fields[]`,
-  `cursor`, `limit`, `include_total`.
-- Paging: cursor. `limit` 1–100, default 25. Follow `next_cursor`.
-- Newest first by `created_at`. `total` only with `include_total: true`. Typed
-  output.
+- Filters: `ids`, `scenario_ids`, `statuses`. Plus `include_fields`, `cursor`,
+  `limit`, `include_total`.
+- Newest first by `created_at`. `total` only with `include_total: true`.
 
-**`ttai:list_sessions`**
+**List `sessions` (legacy enriched)** — any of these filters selects it:
 
-- Parameters: `scenario_id`, `user_email` (comma-separated allowed),
-  `hasLearning` (`with` / `issue` / `ok` / `none`), `from_date`, `to_date`,
-  `is_org`, `page`, `limit`.
-- Paging: page. `page` from 1. `limit` default 50, max 500. `page_meta.total`.
+- Filters: `user_email` (comma-separated allowed), `hasLearning` (`with` /
+  `issue` / `ok` / `none`), `from_date`, `to_date`, `is_org`, `page`; the first
+  `scenario_ids` value is used as its Scenario filter.
+- Paging: `page` from 1; `page_meta.total`.
 - Dates filter `updated_at`. `is_org: true` returns org-wide data; needs
   `org_id` and an OWNER or EDIT org role, otherwise the call is rejected.
-  Returns JSON text.
 
-**`ttai:get_sessions_batch`**
+**Get `sessions`**
 
-- Parameters: `session_ids[]` (max 500). No paging.
-- Same shape as `ttai:list_sessions`. No transcript.
+- `id`, optional `include_fields` (`participant`, `recording`, `transcript`,
+  `evaluation`, `processing`).
 
-**`ttai:get_session`**
+**Get `usage`**
 
-- Parameters: `session_id`, `include_recording_url` (default `true`). No paging.
-- Full detail, including transcript.
-
-**`ttai:get_analytics`**
-
-- Parameters: `is_org_wide`, `start_date`, `end_date`. No paging.
+- Filters: `is_org_wide`, `start_date`, `end_date`.
 - Default window is the last 90 days. Org-wide view needs an EDIT or OWNER role.
 
-**`ttai:list_sip_calls`**
+**List `bots`** — meeting bots and phone calls in one view
 
-- Parameters: `call_type` (`sip_call`, `sip_inbound`, comma-separated),
-  `status`, `scenario_id`, `batch_id`, `from_date`, `to_date`, `page`, `limit`.
-- Paging: page. `limit` default 50, max 500.
-- Call records, not sessions.
-
-**`ttai:list_meeting_bots`**
-
-- Parameters: `status`, `scenario_id`, `from_date`, `to_date`, `page`, `limit`.
-- Paging: page. `limit` default 50, max 500.
+- Filters: `ids`, `scenario_ids`, `session_ids`, `batch_ids`, `statuses`,
+  `kinds` (`meeting`, `phone`), `phone_directions` (`inbound`, `outbound`),
+  `created_at_gte`, `created_at_lte`. `include_fields`: `meeting`, `failure`.
 - Bot records, not sessions.
 
-`ttai:v3_list_sessions` with `scenario_ids` covers other people's sessions only
-when the caller holds EDIT or higher on the Scenario, or org-wide EDIT in the
-selected organization. Otherwise it returns the caller's own sessions.
+The typed `sessions` list with `scenario_ids` covers other people's sessions
+only when the caller holds EDIT or higher on the Scenario, or org-wide EDIT in
+the selected organization. Otherwise it returns the caller's own sessions.
 
 ## Session fields by tool
 
-**`ttai:v3_list_sessions`.** Always returned: `id`, `scenario_id`,
+**Typed list and get.** Always returned: `id`, `scenario_id`,
 `scenario_version_id`, `status`, `created_at`, `updated_at`, `completed_at`.
 Opt-in via `include_fields`:
 
@@ -92,10 +77,10 @@ Opt-in via `include_fields`:
 - `recording` — `recording_present`.
 - `processing` — `post_session_status`.
 
-V3 does not return `analytics_url`, `duration`, `scenario_name`, or
+Typed reads do not return `analytics_url`, `duration`, `scenario_name`, or
 `extraction_results`.
 
-**`ttai:list_sessions` / `ttai:get_sessions_batch`.** `id`, `scenario_id`,
+**Legacy enriched list.** `id`, `scenario_id`,
 `scenario_name`, `created_at`, `completed_at`, `status`, `user_name`,
 `user_email`, `duration` (seconds), `analytics_url`, `recording_present`,
 `metadata`, `user_metadata`, `evaluation_results`, `improvement_results`,
@@ -103,12 +88,6 @@ V3 does not return `analytics_url`, `duration`, `scenario_name`, or
 `post_session_status`. Ignore the deprecated flat fields `evaluation_score`,
 `report_card`, `report_card_topics`, `duration_minutes`, and `evaluation_note`;
 read the nested `evaluation_results` instead.
-
-**`ttai:get_session`.** Session record plus `transcript`, `duration`,
-`post_session_status`, `extraction_results`, `scenario_name`, a
-`scenario_overview`, and a signed `recording_url` unless
-`include_recording_url: false`. No `analytics_url`; get links from
-`ttai:get_sessions_batch`.
 
 ## Evaluation shape and score scales
 
@@ -139,31 +118,28 @@ free-form `extraction_results` object on legacy reads.
 
 ## Status values
 
-- Session `status`: `active`, `completed`, `archived`, `terminated`.
-  `ttai:list_sessions`, `ttai:get_sessions_batch`, and `ttai:get_session` report
-  an `active` session older than 40 minutes as `terminated`.
-  `ttai:v3_list_sessions` returns and filters the stored status.
+- Session `status`: `active`, `completed`, `archived`, `terminated`. The
+  legacy list reports an `active` session older than 40 minutes as
+  `terminated`; typed reads return and filter the stored status.
 - `post_session_status.state`: `idle` (nothing running; results may or may not
   exist), `running` (processing holds the lock), `failed` (the last run errored;
   see `failed_reason`). `start_ts` marks the last run.
 
 ## Phone call and meeting-bot records
 
-`ttai:list_sip_calls` records: `id`, `status`, `scenario_id`, `session_id`,
-`phone_number`, `user_name`, `batch_id`, `scheduled_ts`, `error_message`,
-`call_failure_reason`. `ttai:list_meeting_bots` records: `id`, `status`,
-`scenario_id`, `session_id`, `meeting_url`, `meeting_provider`, `bot_name`,
-`scheduled_ts`, `bot_joined_at`, `error_message`.
+`bots` records: `id`, `kind` (`meeting` / `phone`), `phone_direction`,
+`scenario_id`, `scenario_version_id`, `session_id`, `status`, `batch_id`,
+`scheduled_ts`, `bot_joined_at`, `call_ended_at`, `created_at`, `updated_at`;
+`meeting_provider` and `bot_name` with `include_fields: ["meeting"]`;
+`failure_reason` (`busy`, `no_answer`, `voicemail`, …) with `["failure"]`.
+Phone numbers and meeting URLs are never returned.
 
-The `status` filter documents `pending`, `scheduled`, `in_call_recording`,
-`call_ended`, and `failed`. Records can also carry intermediate or terminal
-values such as `joining_call`, `in_waiting_room`, `in_call_not_recording`,
-`done`, and `terminated`. To score calls, collect their `session_id` values and
-read those sessions. Records without a `session_id` have no session to score.
+To score calls, collect their `session_id` values and read those sessions.
+Records without a `session_id` have no session to score.
 
 ## Analytics rollup
 
-`ttai:get_analytics` returns:
+`ttai:get_resource(usage)` returns:
 
 - `scenarios[]`: `name`, `session_count`, `total_duration_seconds`.
 - `org_dashboard` (org-wide only): `summary` (`total_sessions`,

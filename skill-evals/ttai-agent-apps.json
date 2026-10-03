@@ -3,11 +3,11 @@
     "skills": ["ttai-agent-apps"],
     "query": "Build a checklist app my sales voice agent can tick off during a call, and give me the link.",
     "expected_behavior": [
-      "Resolves workspace scope with ttai:list_organizations before ttai:create_app",
+      "Resolves workspace scope with ttai:list_resources (type organizations) before ttai:create_filebase with kind app",
       "Separates fixed render code (src/App.tsx) from one flat JSON data file the agent edits",
-      "Writes spec.json whose files array lists every written file, with editableGlobs limited to the data file",
-      "Re-reads with ttai:get_app_files and checks every files entry came back",
-      "Returns an editor link and a preview link from ttai:get_app_url and says the preview expires"
+      "Writes spec.json with editableGlobs limited to the data file and controls that name the file and its fields",
+      "Re-reads with ttai:get_resource (type filebases, paths) and checks the tree has every imported file",
+      "Returns a preview link from ttai:create_token with type filebase_view and says it expires"
     ]
   },
   {
@@ -16,17 +16,17 @@
     "expected_behavior": [
       "Resolves the Scenario ID and reads its current tools_config before writing",
       "Calls ttai:update_scenario with tools_config.tools.agent_desktop, copying the existing agent_desktop tool_settings keys because tool_settings is replaced whole",
-      "Sets tools_config.tools.agent_desktop.tool_settings.apps as a map keyed by app name ({\"deal-room\": true})",
-      "Adds app usage and edit rules to ai_instructions and says the change applies to new sessions only"
+      "Sets tool_settings.apps as a map keyed by app name ({\"deal-room\": true}) and add_to_system_prompt true so the app controls reach the prompt",
+      "Says the change applies to new sessions only"
     ]
   },
   {
     "skills": ["ttai-agent-apps"],
-    "query": "Delete the old 'pricing-board' app and make the 'roadmap' app public.",
+    "query": "Change the 'roadmap' app so the agent can highlight one item at a time.",
     "expected_behavior": [
-      "Confirms with the user before ttai:delete_app and names Scenarios that still list the app",
-      "Confirms the audience before widening visibility to public via ttai:update_app",
-      "Uses app_id for both calls",
+      "Finds the app with ttai:list_resources (type filebases, kind app) and reads spec.json and the data file before editing",
+      "Adds a highlight field to the data file and a controls line describing it, then writes both with ttai:write_filebase",
+      "Confirms before overwriting files of an app a Scenario already uses",
       "Never prints a preview token outside the link handed to the user"
     ]
   }

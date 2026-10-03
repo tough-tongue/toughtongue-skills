@@ -32,11 +32,12 @@ smallest matching change.
 
 1. Follow [../operating-model.md](../operating-model.md): guide tool once, then
    workspace. Pass `org_id` for organization work.
-2. Resolve the Scenario. A known ID → `ttai:v3_get_scenario_version`. A title
-   only → one `ttai:list_scenarios(search=...)`, then switch to V3 with the
-   returned ID. `ttai:v3_list_scenarios` is for inventory and counts, not title
+2. Resolve the Scenario. A known ID → `ttai:get_resource(scenarios)`. A title
+   only → one `ttai:list_resources(scenarios, query: "<title>")`, then continue
+   with the returned ID. `ttai:list_resources(scenarios)` is for inventory and counts, not title
    lookup.
-3. Load the live `ttai:create_scenario` / `ttai:update_scenario` input schema.
+3. Load the Scenario field schema once: `ttai:get_schema("scenario")`. `ttai:create_scenario` / `ttai:update_scenario` take one
+   `scenario` object with those fields.
    Never invent fields, model IDs, voice IDs, or linked-resource IDs.
 
 ## Create
@@ -68,24 +69,25 @@ Recorded browser steps → the `ttai-browser-demo-builder` skill.
 
 ## Edit
 
-1. Fetch the current Scenario with `ttai:v3_get_scenario_version`.
+1. Fetch the current Scenario with `ttai:get_resource(scenarios)`.
 2. Change only the requested fields. Most nested objects merge one level, but a
    tool's `tool_settings` and the whole `ai_model_config` are replaced: send the
    full current object plus your change. Full merge rules:
    [../mcp/tools.md](../mcp/tools.md#updating-a-scenario).
-3. Call `ttai:update_scenario` with `id` plus those fields. Pass
-   `save_as_version` (a 1–100 character label) to archive the prior state first
-   when the change is risky.
-4. Re-fetch with V3 and state exactly what changed.
+3. Call `ttai:update_scenario` with one `scenario` object: its `id` plus those
+   fields. Put `save_as_version` (a 1–100 character label) inside it to archive
+   the prior state first when the change is risky.
+4. Re-fetch with `ttai:get_resource(scenarios)` and state exactly what changed.
 
 ## Refine from evidence
 
 1. Fetch the Scenario; read the instructions and controls the complaint touches.
 2. Get evidence. Use a supplied transcript when present. Otherwise call
-   `ttai:v3_list_sessions` with `scenario_ids` and a small `limit`; add
+   `ttai:list_resources(sessions)` with `scenario_ids` and a small `limit`; add
    `include_fields: ["transcript"]` or `["evaluation"]` only for the selected
-   sessions. `ttai:get_session` gives one full detail. Legacy
-   `ttai:list_sessions` covers person, date, or learning filters and session
+   sessions. `ttai:get_resource(sessions)` gives one full detail. Legacy
+   filters (`user_email`, `from_date`, `to_date`, `hasLearning`) on
+   `ttai:list_resources(sessions)` cover person, date, or learning and return
    `duration`.
 3. Read [runtime.md](runtime.md). Name one concrete cause that the evidence
    supports; separate what the Scenario prescribes from what happened. Do not

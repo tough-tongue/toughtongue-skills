@@ -10,7 +10,7 @@ public and is installed directly into end users' agents — every word ships.
   `skills/ttai-agent/references/mcp/tools.md`). If the server
   catalog changes, that file and the skills change in the same PR.
 - **Skills are MCP-first.** Every workflow ends in an MCP tool call
-  (`create_scenario`, `update_scenario`, `list_sessions`, ...) — never in
+  (`create_scenario`, `update_scenario`, `list_resources(sessions)`, ...) — never in
   "write a file to disk" or references to internal Tough Tongue AI repos, paths,
   or CLIs.
 - **No secrets.** Authentication is OAuth-first: the shipped MCP configs
@@ -126,7 +126,7 @@ update.
    tools and all the skills appear.
 4. Verify auth flows: OAuth first — complete the browser login (Claude Code:
    `/mcp`; Codex: `codex mcp login ttai`), then "Call the ttai MCP tool
-   list_organizations" must succeed in both agents. Also spot-check the PAT
+   get_workspace_info" must succeed in both agents. Also spot-check the PAT
    fallback: a manual server config with the `TTAI_PAT` bearer header must
    still work.
 5. Local smoke test, `npx plugins` CLI: `npx plugins discover .` must show 1

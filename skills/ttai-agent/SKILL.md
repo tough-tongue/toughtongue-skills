@@ -40,7 +40,7 @@ tool results always win over this text.
 ## Mental model
 
 - **Workspace** — a personal account or an organization (`org_id` from
-  `ttai:list_organizations`).
+  `ttai:get_workspace_info` `organizations`).
 - **Scenario** — one agent definition: instructions, model stamp, controls,
   rubric.
 - **Run** — a session on the web link, an embed, a SIP call, or a meeting bot.
@@ -62,7 +62,7 @@ The core job. Full procedure:
   → one diagnosis → surgical update.
 
 Loop: resolve workspace → fetch current Scenario
-(`ttai:v3_get_scenario_version`) → load the matching recipe and Scenario
+(`ttai:get_resource(scenarios)`) → load the matching recipe and Scenario
 references → draft → load the live write schema → write → re-fetch → report the
 change, the run link `https://app.toughtongueai.com/run/<scenario_id>`, and that
 edits affect new sessions only.
@@ -149,11 +149,12 @@ Sibling skills:
 - MCP tools are the contract. Call only `ttai:` tools listed in
   [mcp/tools.md](references/mcp/tools.md) and present in the live `tools/list`.
 - At the first Tough Tongue AI action in a conversation, call
-  `ttai:callme_before_using_tough_tongue_mcp` unless its guide is already in
+  `ttai:read_guide` unless its guide is already in
   context.
 - Resolve workspace before a stateful call; pass the returned opaque `org_id`
   for organization work. Ask only when a write's scope is ambiguous.
-- Load the tool's input schema before writing. Never invent fields, model IDs,
+- Load the write schema before writing (Scenarios:
+  `ttai:get_schema("scenario")`). Never invent fields, model IDs,
   voice IDs, or linked-resource IDs.
 - `ttai:update_scenario` replaces what you send. A tool's `tool_settings` and
   the whole `ai_model_config` are replaced, not merged: read, merge, write the

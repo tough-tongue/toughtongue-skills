@@ -15,7 +15,7 @@
     "expected_behavior": [
       "Explains that it can work in an authorized organization workspace but cannot create organizations, administer members, change roles, or change plans",
       "Names organization-scoped Scenarios, sessions, SIP calls, meeting bots, collections, safe resources, shared balance, and effective entitlements",
-      "Calls ttai:list_organizations before an organization-scoped tool when live tools are available and passes the returned opaque id as org_id (never the slug)",
+      "Calls ttai:get_workspace_info before an organization-scoped tool when live tools are available and passes an opaque organizations[].id as org_id (never the slug)",
       "Keeps orientation read-only unless the user explicitly requests a stateful action"
     ]
   },
@@ -41,9 +41,9 @@
   },
   {
     "skills": ["ttai-agent"],
-    "query": "Call ttai:list_organizations and show me the result.",
+    "query": "Call ttai:get_workspace_info and show me the result.",
     "expected_behavior": [
-      "Calls ttai:list_organizations (or explains how to connect if tools are missing)",
+      "Calls ttai:get_workspace_info (or explains how to connect if tools are missing)",
       "On success, reports the personal workspace and organizations by name with the caller's role",
       "Does not author Scenario field tables in the same turn"
     ]
@@ -61,8 +61,8 @@
     "skills": ["ttai-agent"],
     "query": "I just connected Tough Tongue AI. What can I do here?",
     "expected_behavior": [
-      "Calls ttai:callme_before_using_tough_tongue_mcp before broad account inventory when it is available, otherwise reports the guide/catalog rollout mismatch",
-      "Verifies with ttai:list_organizations and takes a light inventory with small V3 lists",
+      "Calls ttai:read_guide before broad account inventory when it is available, otherwise reports the guide/catalog rollout mismatch",
+      "Verifies with ttai:get_workspace_info and takes a light inventory with small typed lists",
       "Keeps orientation read-only and does not create, update, call, schedule, or share anything"
     ]
   },
@@ -90,9 +90,9 @@
     "skills": ["ttai-agent"],
     "query": "What plan am I on, and can I make SIP calls?",
     "expected_behavior": [
-      "Uses ttai:v3_get_entitlements as the caller's effective capability source when available, otherwise reports that the deployed catalog lacks it",
+      "Uses ttai:get_workspace_info (sections plan) as the caller's effective capability source when available, otherwise reports that the deployed catalog lacks it",
       "Does not infer a plan from balance or from a Scenario",
-      "May use ttai:get_balance for available minutes when relevant",
+      "May use ttai:get_workspace_info (sections balance) for available minutes when relevant",
       "Treats the live server response as authoritative for SIP access rather than guessing a tier, and lists SIP trunks before suggesting a call"
     ]
   },
@@ -110,7 +110,7 @@
     "skills": ["ttai-agent"],
     "query": "Create a Tough Tongue AI scenario for my SDRs to practice cold-calling leads who filled out a demo form for our payroll software. The AI should play the caller.",
     "expected_behavior": [
-      "Calls ttai:callme_before_using_tough_tongue_mcp first when available and the guide is not already in context, then resolves whether to pass an org_id with ttai:list_organizations",
+      "Calls ttai:read_guide first when available and the guide is not already in context, then resolves whether to pass an org_id with ttai:get_workspace_info (organizations)",
       "Follows references/scenario/workflow.md: loads the cold-call recipe plus authoring, model-selection, control, and ai-instructions references",
       "Drafts from supplied lead facts with a two-beat directive opening and the recipe's three outcomes (CONVERTED / NURTURE / DEAD LEAD); prefers Landmass cascade and uses Ocean only when Cascade/Cartesia is unavailable; never invents a TTS voice ID",
       "Writes a rubric that evaluates the LEAD (the human), not the AI caller, and sends an explicit tools_config with end_session",
@@ -132,8 +132,8 @@
     "skills": ["ttai-agent"],
     "query": "Our onboarding scenario keeps ending calls before the goodbye. Scenario name is 'Customer Onboarding Walkthrough'. Find out why and fix it.",
     "expected_behavior": [
-      "Uses a current Scenario ID when available; otherwise resolves the title with one ttai:list_scenarios(search=...) call, then fetches full current detail with ttai:v3_get_scenario_version",
-      "Pulls compact session evidence via ttai:v3_list_sessions filtered by scenario_ids, then inspects selected transcripts before proposing any edit",
+      "Uses a current Scenario ID when available; otherwise resolves the title with one ttai:list_resources(scenarios, query: <title>) call, then fetches full current detail with ttai:get_resource(scenarios)",
+      "Pulls compact session evidence via ttai:list_resources(sessions) filtered by scenario_ids, then inspects selected transcripts before proposing any edit",
       "Loads references/scenario/runtime.md, diagnoses one root cause from the evidence, and distinguishes the prescribed behavior from what happened",
       "Applies a surgical edit via ttai:update_scenario sending only id plus the changed fields (full tool_settings if a tool's settings change)",
       "Reports diagnosis, change summary, and the new-sessions-only reminder"

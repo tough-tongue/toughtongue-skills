@@ -39,12 +39,12 @@ whole object: it is replaced, not merged.
 
 Analysis runs only when `session_analysis.is_auto_analysis` is true.
 
-- Compact: `ttai:v3_list_sessions` with `include_fields: ["evaluation"]`.
-- Full detail: `ttai:get_session` (`evaluation_results.final_score`,
+- Compact: `ttai:list_resources(sessions)` with `include_fields: ["evaluation"]`.
+- Full detail: `ttai:get_resource(sessions)` (`evaluation_results.final_score`,
   `evaluation_results.report_card`).
-- Aggregates: `ttai:get_analytics`.
+- Aggregates: `ttai:get_workspace_info(sections: [usage])`.
 - A rubric change applies to sessions scored afterwards. Past scored sessions
-  keep their results: `ttai:post_process_session` only fills missing results and
+  keep their results: `ttai:analyze_session` only fills missing results and
   never re-scores. Test a new rubric with a fresh session.
 
 ## Agent rules

@@ -49,14 +49,14 @@ packet across users, accounts, or organizations.
 
 Reuse verified context from the same user and scope; do not re-fetch each turn.
 At the first Tough Tongue AI action in a conversation, call
-`ttai:callme_before_using_tough_tongue_mcp` unless its guide is already in
+`ttai:read_guide` unless its guide is already in
 context.
 
-1. **Resolve scope.** No current scope → `ttai:list_organizations`. Pass the
-   returned opaque `id` as `org_id` (never a slug); omit it for personal. Ask
+1. **Resolve scope.** No current scope → `ttai:get_workspace_info`. Pass an
+   opaque `organizations[].id` as `org_id` (never a slug); omit it for personal. Ask
    only when personal vs organization is materially ambiguous for a write.
 2. **Resolve focus.** A Scenario ID is authoritative. A title → one
-   `ttai:list_scenarios(search=...)`, then `ttai:v3_get_scenario_version`.
+   `ttai:list_resources(scenarios, query: "<title>")`, then `ttai:get_resource(scenarios)`.
    Account-level requests have no focus.
 3. **Separate four facts.**
    - **Supported** — Tough Tongue AI has the entity or operation.
@@ -73,26 +73,28 @@ blocker, not a cue to retry with invented parameters.
 
 ## Account facts available through MCP
 
-- **Organization memberships** — `ttai:list_organizations`. Do not infer
-  permissions beyond the returned role.
-- **Minutes balance** — `ttai:get_balance`. Do not infer whether a balance
-  grants a feature.
-- **Effective capabilities** — `ttai:v3_get_entitlements`. Do not infer price,
-  wallet, payment provider, or billing history.
-- **User profile** — not exposed by MCP. Do not infer user ID, email, or other
-  identity data.
+All come from `ttai:get_workspace_info` sections:
 
-If `ttai:v3_get_entitlements` is absent from `tools/list`, say the deployment
+- **User profile** — `me`. Do not infer identity beyond it.
+- **Organization memberships** — `organizations`. Do not infer permissions
+  beyond the returned role.
+- **Minutes balance** — `balance` (org wallet + your quota when quotas are on).
+  Do not infer whether a balance grants a feature.
+- **Effective capabilities** — `plan`. Do not infer price, payment provider, or
+  billing history.
+- **Members, usage** — `members` (org only), `usage`.
+
+If `ttai:get_workspace_info` is absent from `tools/list`, say the deployment
 does not publish that fact. Never fabricate account data in an MCP-only client.
 
 ## First-run orientation
 
 For "get started", "is MCP working?", or "what can I do?", stay read-only:
 
-1. Call `ttai:callme_before_using_tough_tongue_mcp`. Missing tools or `401` →
+1. Call `ttai:read_guide`. Missing tools or `401` →
    [mcp/clients.md](mcp/clients.md); never ask for a token in chat.
-2. Call `ttai:list_organizations`.
-3. Take a light inventory: `ttai:v3_list_scenarios` and `ttai:v3_list_sessions`
+2. Call `ttai:get_workspace_info`.
+3. Take a light inventory: `ttai:list_resources(scenarios)` and `ttai:list_resources(sessions)`
    with small limits (`include_total: true` only when the count matters). Report
    only what the responses show.
 4. Route to the next job:
@@ -113,12 +115,12 @@ under discussion — a conversation concept, not a stored resource.
 Each focus lists its first read, then the usual next action:
 
 - **Scenario** — known ID or one title search → create, update, share, or run.
-- **Sessions for a Scenario** — `ttai:v3_list_sessions` → read evidence or
+- **Sessions for a Scenario** — `ttai:list_resources(sessions)` → read evidence or
   analyze.
-- **SIP call** — `ttai:list_sip_trunks`, `ttai:list_sip_calls` → place or
+- **SIP call** — `ttai:list_resources(sip-trunks)`, `ttai:list_resources(bots)` → place or
   inspect a call.
-- **Meeting bot** — `ttai:list_meeting_bots` → schedule or inspect.
-- **Account / workspace** — organizations and small V3 lists → recommend a
+- **Meeting bot** — `ttai:list_resources(bots)` → schedule or inspect.
+- **Account / workspace** — organizations and small typed lists → recommend a
   workflow.
 
 Do not change a focused Scenario while the request is only about learning from

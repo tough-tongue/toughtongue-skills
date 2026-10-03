@@ -7,8 +7,8 @@ calling.
 ## Contents
 
 - Confirm before acting
-- Fill missing analysis: `ttai:post_process_session`
-- Score an external call: `ttai:create_session`
+- Fill missing analysis: `ttai:analyze_session`
+- Score an external call: `ttai:upload_session`
 - Poll for results
 - Automated post-call coaching
 
@@ -16,17 +16,17 @@ calling.
 
 State the exact target and wait for an explicit yes:
 
-- `ttai:post_process_session`: the session IDs, their Scenario, and what is
+- `ttai:analyze_session`: the session IDs, their Scenario, and what is
   missing. Example: "Run analysis on 7 sessions of Scenario `<id>` that have no
   evaluation? This can fire the Scenario's post-session webhooks."
-- `ttai:create_session`: the Scenario ID, the participant name or email, and the
+- `ttai:upload_session`: the Scenario ID, the participant name or email, and the
   transcript or recording source. Recording URLs are fetched by the server, and
   an organization's session-completed webhook fires.
 
 Never infer consent from an earlier, broader request such as "build me a
 report".
 
-## Fill missing analysis: `ttai:post_process_session`
+## Fill missing analysis: `ttai:analyze_session`
 
 Arguments: `session_id`.
 
@@ -41,7 +41,7 @@ Arguments: `session_id`.
   `post_session_status.state` is `failed`.
 - Do not call it while the state is `running`, and do not loop it.
 
-## Score an external call: `ttai:create_session`
+## Score an external call: `ttai:upload_session`
 
 Arguments: `scenario_id` (required), plus `transcript` or `recording_url` (at
 least one; a recording URL overrides the transcript). Optional: `user_name`,
@@ -51,7 +51,7 @@ least one; a recording URL overrides the transcript). Optional: `user_name`,
 - Returns `session_id`, `analytics_url`, and `created_at`. The session is
   created as `completed`.
 - Analysis is queued automatically when the Scenario has analysis enabled. Do
-  not follow up with `ttai:post_process_session`; poll instead.
+  not follow up with `ttai:analyze_session`; poll instead.
 - Requires VIEW access to the Scenario. An error mentioning balance means the
   workspace balance is too low. Report it and stop.
 - The Scenario's rubric scores the call. Use a coaching Scenario whose rubric
@@ -60,13 +60,13 @@ least one; a recording URL overrides the transcript). Optional: `user_name`,
 
 ## Poll for results
 
-Poll with `ttai:v3_list_sessions` (`ids`,
-`include_fields: ["evaluation", "processing"]`) or `ttai:get_session`. Back off
+Poll with `ttai:list_resources(sessions)` (`ids`,
+`include_fields: ["evaluation", "processing"]`) or `ttai:get_resource(sessions)`. Back off
 between reads, starting at about 15 seconds, and stop after a few minutes.
 
 - **`state: running`** — in progress. Keep polling.
 - **`state: failed`** — the last run errored (`failed_reason`). Report it. Retry
-  once with `ttai:post_process_session` only if the user approves.
+  once with `ttai:analyze_session` only if the user approves.
 - **`state: idle` and `evaluation_results` present** — done. Build the report.
 - **`state: idle`, no `evaluation_results` after a few polls** — not configured,
   or nothing ran. Tell the user the Scenario may not have analysis enabled. Do
@@ -77,7 +77,7 @@ between reads, starting at about 15 seconds, and stop after a few minutes.
 For "every real sales call gets a coaching report" pipelines, such as one
 triggered by a call-recording platform's webhook:
 
-1. **Ingest.** `ttai:create_session` with the call's transcript or recording URL
+1. **Ingest.** `ttai:upload_session` with the call's transcript or recording URL
    against the coaching Scenario. Put the rep's email in `user_email` and the
    external call ID in `user_metadata`.
 2. **Poll** as described above.

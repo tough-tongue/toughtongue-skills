@@ -1,133 +1,134 @@
 # MCP tools
 
 The `ttai` MCP server (`https://api.toughtongueai.com/api/public/mcp`) is the
-action surface. Tools appear as `ttai:<name>` (some clients show
-`mcp__ttai__<name>`). The connected `tools/list` and each tool's input schema
-are authoritative; this file is the map.
+action surface: 15 tools, named `verb_resource`. Tools
+appear as `ttai:<name>` (some clients show `mcp__ttai__<name>`). The connected
+`tools/list` and each tool's input schema are authoritative; this file is the
+map.
 
 ## Contents
 
-- Catalog by resource
-- Read policy (V3 first)
+- Tools
+- Reading: resource types
+- Read recipes
 - Confirm before acting
 - Updating a Scenario
+- FileBases
 - Tool notes
 - Directory endpoint
 
-## Catalog by resource
+## Tools
 
-Read tools first, then write tools; "none" means MCP has no tool of that kind.
+Records are read through two tools; each write family keeps its own tools
+because risk hints are per tool.
 
-- **Orientation** — read: `ttai:callme_before_using_tough_tongue_mcp`,
-  `ttai:get_public_config`. Write: none.
-- **Account** — read: `ttai:list_organizations`, `ttai:v3_get_entitlements`,
-  `ttai:get_balance`, `ttai:get_analytics`. Write: none.
-- **Scenario** — read: `ttai:v3_list_scenarios`, `ttai:v3_get_scenario_version`,
-  `ttai:v3_list_scenario_versions`, `ttai:list_scenarios` (search),
-  `ttai:get_scenario` (legacy). Write: `ttai:create_scenario`,
-  `ttai:update_scenario`.
-- **Sharing** — read: none. Write: `ttai:create_scenario_access_token`,
-  `ttai:create_self_scenario_access_token`.
-- **Session** — read: `ttai:v3_list_sessions`, `ttai:list_sessions` (legacy
-  filters), `ttai:get_session`, `ttai:get_sessions_batch`. Write:
-  `ttai:create_session`, `ttai:post_process_session`.
-- **Resource Directory** — read: `ttai:v3_list_resource_types`,
-  `ttai:v3_list_resources`, `ttai:v3_get_resource`. Write: none.
-- **Phone (SIP)** — read: `ttai:list_sip_trunks`, `ttai:list_sip_calls`. Write:
-  `ttai:create_sip_call`, `ttai:create_sip_batch`, `ttai:delete_sip_call`.
-- **Meeting bot** — read: `ttai:list_meeting_bots`. Write:
-  `ttai:schedule_meeting_bot`, `ttai:delete_meeting_bot`.
-- **Collection** — read: `ttai:list_collections`, `ttai:get_collection`. Write:
-  none.
-- **Browser** — read: none. Write: `ttai:authenticate_browser`.
-- **Agent Desktop app** — read: `ttai:list_apps`, `ttai:get_app`,
-  `ttai:get_app_files`, `ttai:get_app_url`. Write: `ttai:create_app`,
-  `ttai:update_app`, `ttai:write_app_files`, `ttai:delete_app`.
+| Do               | Tools                                                    |
+| ---------------- | -------------------------------------------------------- |
+| Guide            | `ttai:read_guide`                                        |
+| Read records     | `ttai:list_resources`, `ttai:get_resource`               |
+| Read a schema    | `ttai:get_schema` (`"scenario"`)                         |
+| Scenarios        | `ttai:create_scenario`, `ttai:update_scenario`           |
+| Sessions         | `ttai:upload_session`, `ttai:analyze_session`            |
+| FileBases        | `ttai:create_filebase`, `ttai:write_filebase`                |
+| Bots             | `ttai:schedule_bot`, `ttai:cancel_bot` (meeting and phone) |
+| Access           | `ttai:create_token`, `ttai:authenticate_browser`         |
 
 Skip any tool prefixed `int_` or titled "Internal…": it is not part of the
-public API. Every account tool accepts an optional `org_id`; omit it for the
-personal workspace. Rate limit: 30 calls per minute per token; respect a live
+public API. Every tool except `ttai:read_guide` and `ttai:get_schema` accepts an optional `org_id`; omit it for the personal
+workspace. Rate limit: 30 calls per minute per token; respect a live
 rate-limit response.
 
-## Read policy (V3 first)
+## Reading: resource types
 
-V3 replaces older reads whenever its contract fits. If a named V3 tool is
-missing from `tools/list`, use the visible legacy fallback and report the
-mismatch; never invent a tool.
+`ttai:list_resources(type, query?, filters?, include_fields?, cursor?, limit?,
+include_total?)` lists; `ttai:get_resource(type, id?, filters?,
+include_fields?, paths?)` reads one record or a singleton. The server's MCP
+instructions name every type, and `ttai:read_guide` lists each type's filter
+names — read it when unsure. These skills write
+`ttai:list_resources(sessions)` as shorthand for `ttai:list_resources` with
+`type: "sessions"`; extra words in the parentheses name the argument to set.
 
-Each need maps to the tool to use:
+| Type                                   | Holds                                                    |
+| -------------------------------------- | -------------------------------------------------------- |
+| `organizations`                        | orgs you belong to; a returned `id` is your `org_id`     |
+| `scenarios` · `scenario-versions`      | agent definitions and their history                      |
+| `sessions`                             | runs and results; `include_fields: [transcript]` for text |
+| `bots`                                 | meeting bots and phone calls (`kinds`: meeting, phone)   |
+| `filebases`                            | app and knowledge FileBases (filter `kind`); `paths` returns file text |
+| `sip-trunks` · `collections`           | dial-out trunks, courses                                 |
+| `knowledge-bases` · `custom-functions` | legacy RAG bases, HTTP tools                             |
+| `avatar` · `user-preferences`          | system faces, your preferences                           |
+| `account` · `usage`                    | balance + entitlements, analytics (no `id`)              |
+| `platform`                             | public config (no `id`)                                  |
 
-- **Scenario inventory, filters, counts** → `ttai:v3_list_scenarios`.
-- **Known Scenario ID → content** → `ttai:v3_get_scenario_version` (omit
-  `version_id`/`version_name` for current).
-- **Scenario version history** (needs edit access) →
-  `ttai:v3_list_scenario_versions`.
-- **Scenario by title / free text** → one `ttai:list_scenarios(search=...)`,
-  then back to V3 with the ID.
-- **Session inventory, Scenario/status filters, counts** →
-  `ttai:v3_list_sessions`.
-- **Session by person (`user_email`), date, or learning result** →
-  `ttai:list_sessions` (`is_org: true` for org-wide admin view).
-- **Full transcript / detail** → `ttai:get_session`; several known IDs →
-  `ttai:get_sessions_batch`.
-- **Usage, durations, top Scenarios, member activity** → `ttai:get_analytics`.
-- **Custom Functions, Knowledge Bases, SIP trunks, avatars, user preferences** →
-  `ttai:v3_list_resource_types` → `ttai:v3_list_resources` /
-  `ttai:v3_get_resource`.
-
-Notes:
-
-- Exact count: the V3 list with `limit: 1, include_total: true`. Never page
-  through results to count. For an org-wide Session count pass `org_id`; do not
-  list every Scenario and echo its IDs.
-- V3 lists return cursor pages (`next_cursor`); default `limit` 25, max 100.
-- `ttai:v3_list_sessions` returns base records (ID, Scenario/version, status,
-  timestamps). Request `participant`, `recording`, `transcript`, `evaluation`,
-  or `processing` via `include_fields` only when needed.
-- Resource Directory records carry common metadata; `data` is empty until you
-  request that type's advertised `include_fields`. It never returns credentials.
-- `ttai:v3_get_scenario_version` omits linked-resource IDs
-  (`knowledge_base_ids`, `custom_function_ids`, `pre_connect`); the
-  create/update response returns the full authoring state.
+- `filters` is a map of the type's own filter names, e.g.
+  `{"scenario_ids": ["…"], "statuses": ["completed"]}`. One value where a list
+  is expected is accepted.
+- `query` is free text where the type supports it; on `scenarios` it is the
+  title search.
+- Typed lists return `{items, next_cursor, total?}`; default `limit` 25, max
+  100. Pass `next_cursor` back as `cursor`.
+- Directory types (`sip-trunks`, `knowledge-bases`, `custom-functions`,
+  `avatar`, `user-preferences`) return common metadata; `data` is empty until
+  you request that type's advertised `include_fields`. Credentials are never
+  returned.
 - Date filters accept ISO 8601 dates or timestamps; a date-only lower bound
   means 00:00 UTC, an upper bound 23:59:59 UTC. No timezone means UTC.
-- Legacy `ttai:get_scenario` exists only for clients that need its old shape.
-- Only the V3 reads and `ttai:list_organizations` publish an output schema; read
-  other results by the field names they return.
-- Metadata (`meta_*`) and operator-style date filters are not available through
-  MCP; `ttai:list_sessions` and `ttai:list_scenarios` ignore them.
+
+## Read recipes
+
+- **Exact count** → `list_resources` with `limit: 1, include_total: true`. Never
+  page through results to count. For an org-wide Session count pass `org_id`;
+  do not list every Scenario and echo its IDs.
+- **Scenario by title** → `list_resources(scenarios, query: "…")`, then
+  `get_resource(scenarios, id)`.
+- **Scenario history** (needs edit access) →
+  `list_resources(scenario-versions, filters: {scenario_id})`, then
+  `get_resource(scenarios, id, filters: {version_id})`. Omit the filter for
+  current.
+- **Sessions by person, date, or learning result** → `list_resources(sessions,
+  filters: {user_email | from_date | to_date | hasLearning | is_org | page})` —
+  these switch to the enriched legacy list (`is_org: true` for the org-wide
+  admin view).
+- **Transcript** → `get_resource(sessions, id, include_fields: [transcript])`.
+  Several known IDs → `list_resources(sessions, filters: {ids: […]},
+  include_fields: [...])`.
+- **Calls and bots** → `list_resources(bots, filters: {kinds: [phone]})`
+  (`include_fields: [failure]` for why a call failed).
+- **Usage, durations, top Scenarios, member activity** →
+  `get_resource(usage, filters: {is_org_wide, start_date, end_date})`.
+- **Balance and plan limits** → `get_resource(account)`.
 
 ## Confirm before acting
 
 State the exact target (phone number, meeting URL, Scenario ID, audience,
 timing) and get the user's go-ahead before any of these. Never dial or dispatch
 a bot from inferred data. The server's tool annotations flag the same risks
-(destructive: `ttai:update_scenario`, `ttai:delete_sip_call`,
-`ttai:delete_meeting_bot`; open world: every tool below except the access
-token); confirm even when a client hides them.
+(destructive: `update_scenario`, `write_filebase`, `cancel_bot`; open world:
+every tool below except `write_filebase` and `create_token`); confirm
+even when a client hides them.
 
-Each tool and why it needs confirmation:
-
-- `ttai:create_sip_call`, `ttai:create_sip_batch` — dials real phones; an
-  unscheduled call starts immediately.
-- `ttai:schedule_meeting_bot` — a visible bot joins a real meeting.
-- `ttai:delete_sip_call`, `ttai:delete_meeting_bot` — destructive; only before
-  the call/bot starts.
-- `ttai:update_scenario` — overwrites the fields you send.
-- `ttai:post_process_session` — fills only missing results (never re-scores);
-  may fire the Scenario's post-session hooks.
-- `ttai:create_session` — fetches a remote recording when `recording_url` is
+- `ttai:schedule_bot` — `kind: "phone"` dials real phones (one unscheduled
+  entry rings immediately); `kind: "meeting"` sends a visible bot into a real
+  meeting.
+- `ttai:cancel_bot` — destructive; cancels a call or meeting bot only before it
+  starts.
+- `ttai:update_scenario` — overwrites the fields you send; changes the live
+  agent.
+- `ttai:write_filebase` — replaces or deletes files in a FileBase.
+- `ttai:analyze_session` — fills only missing results (never re-scores); may
+  fire the Scenario's post-session hooks.
+- `ttai:upload_session` — fetches a remote recording when `recording_url` is
   given.
 - `ttai:authenticate_browser` — opens a live browser on the Scenario's saved
   login profile.
-- `ttai:create_scenario_access_token` — grants access; an email can create or
-  reuse a user record.
-
-Also confirm `ttai:delete_app` (Scenarios may still list the app) and
-`ttai:update_app` to `public` (opens the app to everyone).
+- `ttai:create_token` — grants access by link; a `scenario_access` email can
+  create or reuse a user record.
 
 ## Updating a Scenario
 
+- Fetch the field schema once: `ttai:get_schema("scenario")`. Both
+  write tools take one `scenario` object with those fields.
 - `ttai:create_scenario` rejects `id`; requires `name` and `ai_instructions`.
   Omitting `tools_config` installs a broad default tool set — send it
   explicitly.
@@ -146,6 +147,9 @@ Also confirm `ttai:delete_app` (Scenarios may still list the app) and
     `auto_update_config`, ID lists, `user_metadata`.
   - `save_as_version` (1–100 characters) archives the prior state under that
     label before applying the change.
+- `get_resource(scenarios, id)` omits linked-resource IDs
+  (`knowledge_base_ids`, `custom_function_ids`, `pre_connect`); the
+  create/update response returns the full authoring state.
 - Type rules: `default` is the normal agent; `super` needs `stages` with a
   non-empty first stage and flows, and a Landmass model; `quiz`, `coding`
   (`coding_question`), and `meet_assist` need their schema-defined
@@ -154,39 +158,69 @@ Also confirm `ttai:delete_app` (Scenarios may still list the app) and
   `multimodal_analysis` can return `403`.
 - Edits apply to new sessions only.
 
+## FileBases
+
+A FileBase is a folder of files with a `kind`: `app` (an Agent Desktop app) or
+`knowledge` (plain files an agent reads). Read them as type `filebases`.
+
+- `ttai:create_filebase(kind: app | knowledge, name, title, description?)` → an
+  empty FileBase in the current org or personal space. `name` is a slug, unique per space; for
+  an app it is the runtime name and the live agent's tool prefix.
+- `ttai:write_filebase(id, files, delete)` → whole-file upserts by relative path
+  (no leading `/`), then deletes, and returns the new `revision`. For apps,
+  `spec.json` `files` is kept equal to the tree automatically.
+- List: `list_resources(filebases, filters: {kind: app}, query?)`. Read before
+  rewriting: `get_resource(filebases, id, paths: [...])` (≤ 20 files) returns
+  `{filebase, files}`.
+- View link: `create_token({type: "filebase_view", filebase_id,
+  valid_for_hours})` (≤ 24 h) renders the FileBase without signing in (apps
+  today).
+- The ttai-agent-apps skill covers the app package and the `controls` contract.
+
 ## Tool notes
 
-- `ttai:callme_before_using_tough_tongue_mcp` ("Get Tough Tongue Usage Guide")
-  returns the server's usage guide, the same text as the
+- `ttai:read_guide` returns the server's usage guide, the same text as the
   `ttai://guide/mcp-agent` resource. Call it once at the first action in a
-  conversation unless the guide is already in context. V3 detail lives in the
-  `ttai://guide/v3-tools` resource.
+  conversation unless the guide is already in context.
 - On connect the server also sends MCP `instructions`: a short index of this
-  tool map. `tools/list` is ordered by importance (the guide first, `int_` tools
+  map. `tools/list` is ordered by importance (the guide first, `int_` tools
   last).
-- `ttai:get_public_config` needs no login. System avatars are not a separate
-  tool: `ttai:v3_list_resources` with resource type `avatar`, `type` `static`
-  (default), `hybrid`, or `live`.
-- `ttai:get_balance` returns personal minutes, or the organization's shared
-  balance plus the caller's quota when quotas are enabled.
-- `ttai:v3_get_entitlements` returns role (in an organization), plan tier
-  identity/status, and effective limits — no price, wallet, or billing history.
-- SIP: `ttai:create_sip_call` takes `scenario_id`, `sip_trunk_id`, E.164
-  `phone_number`, optional `scheduled_ts`, `dynamic_vars`, and
-  `scenario_version_id`. `ttai:create_sip_batch` queues many `entries`
-  asynchronously. Both need a SIP-enabled plan, enough balance, and an
-  `outgoing` trunk.
-- Meeting bots join Google Meet, Zoom, or Teams visibly. Required:
-  `scenario_id`, `meeting_url`, `meeting_provider`
-  (`google-meet`|`zoom`|`teams`), and an AI-identifying `bot_name`. Needs a paid
-  plan and edit access to the Scenario.
+- `get_resource(platform)` needs no special access. System avatars:
+  `list_resources(avatar, filters: {type: static | hybrid | live, provider})`.
+- `get_resource(account)` returns `balance` (personal minutes, or the
+  organization's shared balance plus the caller's quota when quotas are
+  enabled) and `entitlements` (role, plan tier identity/status, effective
+  limits — no price, wallet, or billing history).
+- `ttai:schedule_bot` takes one `bot` object with `kind`:
+  - `kind: "phone"` — `scenario_id`, `sip_trunk_id` (an outbound trunk from
+    `list_resources(sip-trunks)`), `entries` of E.164 `phone_number` + optional
+    `user_name` and `dynamic_vars`, optional `scheduled_ts` and
+    `scenario_version_id`. One entry dials directly; several form a batch the
+    dialer works through within minutes. Needs a SIP-enabled plan and enough
+    balance.
+  - `kind: "meeting"` — joins Google Meet, Zoom, or Teams visibly. Required:
+    `scenario_id`, `meeting_url`, `meeting_provider`
+    (`google-meet`|`zoom`|`teams`), and an AI-identifying `bot_name`. Needs a
+    paid plan and edit access to the Scenario.
+- `ttai:cancel_bot(id)` takes a bot id from `list_resources(bots)` and cancels
+  either kind.
 - `session_credentials: "bot_uc"` gives a call or bot run the deploying user's
   identity for the Scenario's MCP tools. Omit it unless requested.
-- `ttai:create_session` ingests an external transcript or `recording_url` as a
-  completed session and analyzes it per the Scenario's settings.
-- `ttai:post_process_session` queues analysis/extraction as configured on the
-  Scenario. Poll `ttai:get_session` until `post_session_status.state` leaves
-  `running` (`idle` = done, `failed` = error), then read the results.
+- `ttai:upload_session` is for automations that use Tough Tongue AI's analysis
+  and extraction on calls held elsewhere (dialer, Gong, Zoom): it uploads a
+  transcript or `recording_url` as a completed session, then the Scenario's
+  rubric and extraction variables run in the background. No live agent runs.
+- `ttai:analyze_session` queues analysis/extraction as configured on the
+  Scenario. Poll `get_resource(sessions, id, include_fields: [processing])`
+  until `post_session_status.state` leaves `running` (`idle` = done, `failed` =
+  error), then read the results.
+- `ttai:create_token` takes one `request` with a `type` and returns `{type,
+  token, expires_at, url}`:
+  - `type: "scenario_access"` — `scenario_id`, `valid_for_hours` (1–168),
+    optional `email` or `self_billed: true` (runs and bills as you; omit
+    `email`). `url` is an iframe embed.
+  - `type: "filebase_view"` — `filebase_id`, `valid_for_hours` (≤ 24). `url`
+    renders the FileBase.
 - `ttai:authenticate_browser` needs edit access and a Scenario whose `browser`
   tool is registered. It returns a single-use `embed_url` (about 20 minutes)
   where a human logs in on the Scenario's saved browser profile; logins persist
@@ -197,10 +231,10 @@ Also confirm `ttai:delete_app` (Scenarios may still list the app) and
 ## Directory endpoint
 
 `https://api.toughtongueai.com/api/public/mcp/directory` is a policy-limited
-surface for connector directories. It omits outbound SIP dialing
-(`ttai:create_sip_call`, `ttai:create_sip_batch`) but keeps other writes.
-Inspect `tools/list` before inferring what it can do. Place calls from a full
-MCP client.
+surface for connector directories. It has the same 15 tools, but its
+`ttai:schedule_bot` accepts only `kind: "meeting"` (no outbound dialing). Inspect
+`tools/list` before inferring what it can do. Place calls from a full MCP
+client.
 
 ## Key Files
 

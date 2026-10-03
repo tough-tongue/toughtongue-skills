@@ -6,8 +6,8 @@ description: >-
   practice roleplays, AI phone calls, and meeting-bot calls for a Scenario,
   person, or date range, then writes team performance, Scenario health, or
   individual coaching reports with action items. Can also ingest an external
-  call transcript or recording as a scored session (ttai:create_session) and
-  fill in missing analysis (ttai:post_process_session), each after the user
+  call transcript or recording as a scored session (ttai:upload_session) and
+  fill in missing analysis (ttai:analyze_session), each after the user
   confirms. Use when the user asks "how is my team doing?", "top improvement
   areas for scenario X", "lowest-scoring sessions", "coaching report for
   Priya", or "session trends this month". Not for changing a Scenario,
@@ -23,75 +23,79 @@ Pull sessions → aggregate per Scenario → write an evidence-backed report →
 optionally hand it to the user's deck, email, or docs tools.
 
 Practice runs, AI phone calls, and meeting-bot joins all land as **sessions**.
-Read-only by default. The only writes are `ttai:create_session` and
-`ttai:post_process_session`, and both need explicit confirmation.
+Read-only by default. The only writes are `ttai:upload_session` and
+`ttai:analyze_session`, and both need explicit confirmation.
 
 ## Hard rules
 
 - **Guide first.** In a fresh conversation, call
-  `ttai:callme_before_using_tough_tongue_mcp` unless its guide is in context.
+  `ttai:read_guide` unless its guide is in context.
   Some clients show tools as `mcp__ttai__<name>`. The `ttai-agent` skill holds
   the full tool catalog and entity model.
-- **Scope first.** For organization data, call `ttai:list_organizations` and
+- **Scope first.** For organization data, call `ttai:list_resources(organizations)` and
   pass the returned `id` as `org_id` on every call. Never pass a slug. Omit
   `org_id` for personal scope.
-- **V3 first.** Default to `ttai:v3_list_sessions`. Use legacy
-  `ttai:list_sessions` only when you need a person (`user_email`), a date
-  window, `hasLearning`, `duration`, or `analytics_url`.
-- **Count cheaply.** For a count, call `ttai:v3_list_sessions` with
+- **Typed list first.** Default to `ttai:list_resources` with type `sessions`.
+  Add a legacy filter (`user_email`, `from_date` / `to_date`, `hasLearning`,
+  `is_org`, `page`) only when you need a person, a date window, learning flags,
+  `duration`, or `analytics_url` — those switch to the enriched legacy list.
+- **Count cheaply.** For a count, call `ttai:list_resources(sessions)` with
   `limit: 1, include_total: true`. Never page through results just to count.
-- **Request only needed fields.** V3 returns IDs, status, and timestamps unless
+- **Request only needed fields.** The typed list returns IDs, status, and timestamps unless
   you ask for `participant`, `evaluation`, `transcript`, `recording`, or
   `processing` in `include_fields`.
-- **Transcripts come from two places only:** `ttai:v3_list_sessions` (`ids` +
-  `transcript`) or `ttai:get_session`. `ttai:list_sessions` and
-  `ttai:get_sessions_batch` never return transcripts.
+- **Transcripts** come only from `include_fields: ["transcript"]` on
+  `ttai:list_resources(sessions)` (with `filters: {ids}`) or
+  `ttai:get_resource(sessions)`. The legacy enriched list never returns them.
 - **One rubric per aggregate.** Report-card topics and weights come from each
   Scenario's rubric. Aggregate per Scenario. Compare Scenarios qualitatively.
-- **Confirm before writing.** Before `ttai:create_session` or
-  `ttai:post_process_session`, state the Scenario ID and session IDs (or
+- **Confirm before writing.** Before `ttai:upload_session` or
+  `ttai:analyze_session`, state the Scenario ID and session IDs (or
   transcript source) and wait for a yes. See
   [references/ingest-and-reprocess.md](references/ingest-and-reprocess.md).
 - **Scenario faults go to `ttai-agent`.** This skill diagnoses. It never edits a
   Scenario.
 - **Privacy.** Coaching reports name people. Confirm the audience before sending
-  per-person results to a group. Pass `include_recording_url: false` to
-  `ttai:get_session` unless the user needs the signed recording link.
+  per-person results to a group. Request `recording` in `include_fields` only
+  when the user needs it.
 
 ## Workflow
 
 ### 1. Scope
 
-1. Resolve the workspace: `ttai:list_organizations` → `org_id`, or personal.
+1. Resolve the workspace: `ttai:list_resources(organizations)` → `org_id`, or personal.
 2. Resolve the Scenario. Reuse an ID already in context. Otherwise make one
-   `ttai:list_scenarios` call with `search`, take the ID, and continue on V3.
+   `ttai:list_resources(scenarios, query)` call with the title, take the ID, and continue by ID.
 3. Pin down the population: Scenario(s), date window, people, and how many
    sessions. When the window is vague, use the last 30 days and say so.
 
 ### 2. Pull
 
-Pick the read path by filter. Parameters and limits:
+Every read below is `ttai:list_resources` or `ttai:get_resource` with type
+`sessions` unless named; filters go in `filters`. Parameters and limits:
 [references/data-model.md](references/data-model.md).
 
-- **Recent sessions for a Scenario** — `ttai:v3_list_sessions`: `scenario_ids`,
+- **Recent sessions for a Scenario** — list: `scenario_ids`,
   `include_fields: ["participant", "evaluation"]`, `limit` ≤ 100, follow
   `next_cursor`.
-- **Counts by status** — `ttai:v3_list_sessions`: `scenario_ids`, `statuses`,
+- **Counts by status** — list: `scenario_ids`, `statuses`,
   `limit: 1`, `include_total: true`.
-- **One person or a date window** — `ttai:list_sessions`: `scenario_id`,
-  `user_email`, `from_date` / `to_date`, `is_org: true` for org-wide, `page` /
-  `limit` ≤ 500.
-- **Scenario-learning flags** — `ttai:list_sessions`: `hasLearning: "issue"`.
-- **Transcripts for chosen sessions** — `ttai:v3_list_sessions`: `ids`,
+- **One person or a date window** — list (legacy): `scenario_ids` (first one
+  used), `user_email`, `from_date` / `to_date`, `is_org: true` for org-wide,
+  `page`, `limit` ≤ 500. Rows carry `analytics_url` and `duration`.
+- **Scenario-learning flags** — list (legacy): `hasLearning: "issue"`.
+- **Transcripts for chosen sessions** — list: `ids`,
   `include_fields: ["transcript", "evaluation"]`.
-- **Full detail for one session** — `ttai:get_session`: `session_id`,
-  `include_recording_url: false`.
-- **Review links for chosen sessions** — `ttai:get_sessions_batch`:
-  `session_ids` → `analytics_url`.
-- **Usage, minutes, member activity** — `ttai:get_analytics`:
+- **Full detail for one session** — get: `id`, `include_fields: ["participant",
+  "evaluation", "transcript"]`.
+- **Recording URL** — get: `id`, `include_fields: ["recording_url"]` returns the
+  enriched record (transcript, recording URL, scenario overview).
+- **Review links** — `analytics_url` comes on legacy-list rows; filter that
+  list by person or window and match IDs.
+- **Usage, minutes, member activity** — `ttai:get_resource(usage)`:
   `is_org_wide: true`, `start_date` / `end_date`.
-- **Phone call or bot outcomes** — `ttai:list_sip_calls` /
-  `ttai:list_meeting_bots` → `session_id` per record.
+- **Phone call or bot outcomes** — `ttai:list_resources(bots)` (`kinds`,
+  `include_fields: ["failure"]`) → `session_id` per record.
 
 Notes:
 
@@ -139,8 +143,8 @@ sessions worth a human review.
 
 ### 5. Fill gaps or ingest (only on request)
 
-Missing analysis → confirm IDs, `ttai:post_process_session` per session, poll.
-External call → confirm Scenario and source, `ttai:create_session`. Steps,
+Missing analysis → confirm IDs, `ttai:analyze_session` per session, poll.
+External call → confirm Scenario and source, `ttai:upload_session`. Steps,
 polling, and failure handling:
 [references/ingest-and-reprocess.md](references/ingest-and-reprocess.md).
 
@@ -152,20 +156,20 @@ per slide or section, evidence quote included.
 ## Recipes
 
 - **"Top 5 improvement areas for Scenario X, last 50 sessions."**
-  `ttai:v3_list_sessions` (`scenario_ids`, `limit: 50`,
+  `ttai:list_resources(sessions)` (`scenario_ids`, `limit: 50`,
   `include_fields: ["evaluation"]`) → per-topic averages and weakness themes →
   pull transcripts for 1–2 sessions per theme → Team performance report.
 - **"The 5 lowest-scoring sessions and what went wrong."** Collect the
-  population (V3 with `evaluation`, or legacy for a date window) → sort by
-  `final_score` ascending → take 5 → transcripts via V3 `ids` → separate
+  population (typed list with `evaluation`, or legacy for a date window) → sort by
+  `final_score` ascending → take 5 → transcripts via `ids` → separate
   Scenario faults from user-skill gaps → Scenario faults go to the `ttai-agent`
   skill with the diagnosis and transcript quotes.
-- **"How did priya@example.com do this month?"** `ttai:list_sessions`
+- **"How did priya@example.com do this month?"** `ttai:list_resources(sessions)`
   (`user_email`, `from_date` = first of month, `is_org: true` in an org) →
   per-topic averages and trend → Individual coaching report with actions drawn
   from `improvement_results.action_items`.
-- **"Is this Scenario working?"** Status counts via V3 `include_total` (count
-  old `active` sessions as abandoned) → `ttai:list_sessions` with
+- **"Is this Scenario working?"** Status counts via `include_total` (count
+  old `active` sessions as abandoned) → `ttai:list_resources(sessions)` with
   `hasLearning: "issue"` for flagged transcripts → Scenario health report.
 
 ## Pitfalls
@@ -173,12 +177,12 @@ per slide or section, evidence quote included.
 - **Status ≠ processing.** Session `status`: `active`, `completed`, `archived`,
   `terminated` (use for completion rates). `post_session_status.state`: `idle`,
   `running`, `failed`.
-- **Stale `active`.** Legacy reads and `ttai:get_session` report an `active`
-  session older than 40 minutes as `terminated`. V3 returns the stored status,
-  so abandoned sessions can still read `active` there.
+- **Stale `active`.** The legacy list reports an `active` session older than 40
+  minutes as `terminated`. Typed reads return the stored status, so abandoned
+  sessions can still read `active` there.
 - **Math on numbers.** Use `score` and `final_score`; `score_str` and
   `overall_score` are display text.
-- **V3 scope.** `ttai:v3_list_sessions` returns other people's sessions only
+- **Typed-list scope.** `ttai:list_resources(sessions)` returns other people's sessions only
   when the caller holds EDIT or higher on the Scenario (pass `scenario_ids`) or
   in the selected organization. Otherwise it returns only the caller's own. An
   empty page can mean missing permission.
@@ -192,5 +196,5 @@ per slide or section, evidence quote included.
 - [references/report-templates.md](references/report-templates.md): team,
   Scenario health, and coaching report formats
 - [references/ingest-and-reprocess.md](references/ingest-and-reprocess.md):
-  `ttai:create_session` ingest, `ttai:post_process_session` backfill,
+  `ttai:upload_session` ingest, `ttai:analyze_session` backfill,
   confirmation and polling

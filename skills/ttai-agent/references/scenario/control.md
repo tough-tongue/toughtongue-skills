@@ -121,7 +121,7 @@ retired `prefix`.
   Match `transcribe_config.language` when set.
 - `start_sound`: `countdown_blip` (default), `ringtone`, `click`, `none`.
 
-Faces come from `ttai:v3_list_resources` with resource type `avatar` (`type`
+Faces come from `ttai:list_resources` with resource type `avatar` (`type`
 `static` default, `hybrid`, or `live`); request `include_fields` `url` and
 `avatar_id`. Keep `voice` and `language_code` when you set one.
 
@@ -228,7 +228,7 @@ the live schema.
 
 `knowledge_base_ids`, `custom_function_ids`, `pre_connect`, and `mcp_server_ids`
 (`catalog:<id>` or `custom:<id>`) attach existing resources. Discover safe IDs
-with `ttai:v3_list_resource_types` → `ttai:v3_list_resources`, or use IDs from a
+with `ttai:list_resources` (types in `ttai:read_guide`), or use IDs from a
 trusted workspace call. The server rejects IDs outside the workspace. MCP
 neither creates these resources nor reveals their sensitive configuration.
 

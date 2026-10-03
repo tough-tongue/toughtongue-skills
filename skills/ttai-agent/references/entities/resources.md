@@ -15,24 +15,24 @@ and sharing model.
 
 Each resource: what it is, then what MCP can do with it.
 
-- **Scenario** — one voice (or text) agent definition, versioned. MCP: V3 list /
-  detail / versions; create / update.
+- **Scenario** — one voice (or text) agent definition, versioned. MCP: list / get /
+  versions (`resource_*`); create / update (`scenario_*`).
 - **Collection (course)** — named group of Scenarios, a library or course. MCP:
   list / get only; create and edit in the web app.
 
 ## Runs and results
 
-- **Session** — one run: transcript, evaluation, extraction, recording. MCP: V3
-  list; legacy list / get / batch; create (ingest); post-process.
+- **Session** — one run: transcript, evaluation, extraction, recording. MCP: list / get
+  (`resource_*`, legacy filters for person and date); create (ingest); analyze.
 - **Analytics** — aggregates over sessions: usage, durations, top Scenarios,
-  members. MCP: `ttai:get_analytics`.
+  members. MCP: `ttai:get_resource(usage)`.
 
 How runs start: [scenario-engine.md](scenario-engine.md).
 
 ## Operational attachments
 
 - **SIP trunk** — customer-owned phone line, inbound or outbound. MCP:
-  `ttai:list_sip_trunks`; safe metadata in the Resource Directory.
+  `ttai:list_resources(sip-trunks)`; safe metadata in the Resource Directory.
 - **SIP call** — one phone call (trunk + Scenario + E.164 number). MCP: list /
   create / batch / delete before start.
 - **Meeting bot** — joins Google Meet, Zoom, or Teams as the Scenario. MCP: list
@@ -50,10 +50,10 @@ How runs start: [scenario-engine.md](scenario-engine.md).
 - **Avatar** — system face: static, hybrid, or live. MCP: Resource Directory
   type `avatar`.
 
-Generic discovery starts with `ttai:v3_list_resource_types`: it lists types
-(`avatar`, Custom Functions, Knowledge Bases, SIP trunks, user preferences),
-their safe optional fields, and the matching `ttai:v3_list_resources` /
-`ttai:v3_get_resource` calls.
+Generic discovery uses `ttai:list_resources` / `ttai:get_resource` with types
+such as `avatar`, `custom-functions`, `knowledge-bases`, `sip-trunks`, and
+`user-preferences`. `ttai:read_guide` lists each type's filters and safe
+optional fields.
 
 ## Sensitive boundary
 
@@ -61,7 +61,7 @@ The Resource Directory returns purpose-built safe metadata, never credentials,
 endpoint URLs, document chunks, or arbitrary model fields. It is not generic
 CRUD: MCP cannot create Knowledge Bases, Custom Functions, SIP trunks, or MCP
 servers. Attach only IDs returned by a trusted workspace call, after loading the
-`ttai:create_scenario` / `ttai:update_scenario` schema
+Scenario schema (`ttai:get_schema("scenario")`)
 ([../scenario/control.md](../scenario/control.md#linked-resources)).
 
 ## Key Files

@@ -57,12 +57,12 @@ read-merge-write → verify. Output: named steps the voice agent replays with
 
 ## Phase 0 — Scope and target
 
-- Workspace: reuse a verified org; otherwise call `ttai:list_organizations` and
+- Workspace: reuse a verified org; otherwise call `ttai:get_workspace_info` (`organizations`) and
   pass `org_id` on every call for an organization-owned Scenario. Omit `org_id`
   for personal Scenarios. Never pass a slug.
-- Scenario: reuse a known ID; otherwise `ttai:list_scenarios(search=...)`. A
+- Scenario: reuse a known ID; otherwise `ttai:list_resources(scenarios, query: "<title>")`. A
   title is not an ID.
-- Read it: `ttai:v3_get_scenario_version(scenario_id)`. Confirm
+- Read it: `ttai:get_resource(scenarios, id)`. Confirm
   `tools_config.tools.browser.should_register` is `true` and note `initialUrl`,
   `contextId`, and existing `steps`.
 - No Scenario yet, or the browser tool is off? Hand off to the `ttai-agent`
@@ -135,12 +135,13 @@ Step design:
 
 ## Phase 4 — Read, merge, write
 
-1. Re-read with `ttai:v3_get_scenario_version` right before writing (the login
+1. Re-read with `ttai:get_resource(scenarios)` right before writing (the login
    may have changed since Phase 0).
 2. Copy `tool_settings` whole. Add or replace only your step keys. Keep
    `contextId`, `initialUrl`, and unrelated steps byte-for-byte.
-3. `ttai:update_scenario` with `id`, `tools_config.tools.browser.tool_settings`
-   (complete), and `ai_instructions` if changed.
+3. `ttai:update_scenario` with one `scenario` object: `id`,
+   `tools_config.tools.browser.tool_settings` (complete), and `ai_instructions`
+   if changed.
 
 ## Phase 5 — Verify
 

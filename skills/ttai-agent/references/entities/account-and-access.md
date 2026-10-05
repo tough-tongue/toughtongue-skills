@@ -1,8 +1,8 @@
 # Account and access
 
 Who you are, which workspace you act in, what your plan allows, and who can see
-and run a Scenario. MCP selects workspaces and reads account facts; it does not
-provision users, organizations, members, or plans.
+and run a Scenario. MCP reads the workspace with `ttai:get_workspace_info`; it
+does not provision users, organizations, members, quotas, or plans.
 
 ## Contents
 
@@ -15,19 +15,23 @@ provision users, organizations, members, or plans.
 ## User and workspaces
 
 The signed-in human behind OAuth (or a `TTAI_PAT` in headless setups) owns a
-**personal** workspace and may belong to **organizations**. MCP exposes no
-profile tool: never infer a user ID, email, or plan from successful login.
+**personal** workspace and may belong to **organizations**. Read both with
+`ttai:get_workspace_info` (default sections `me`, `organizations`, `plan`,
+`balance`); never infer a user ID, email, or plan from successful login.
 
 - **Personal** — omit `org_id`.
-- **Organization** — pass the opaque `id` from `ttai:list_organizations` as
-  `org_id`.
+- **Organization** — pass an opaque `organizations[].id` from
+  `ttai:get_workspace_info` as `org_id`.
 
 Notes:
 
 - Scenarios, sessions, calls, and bots created with `org_id` belong to that
   organization. No MCP tool moves resources between workspaces.
-- `ttai:list_organizations` returns each organization's `id`, `name`, `slug`,
-  and the caller's `role`. Never send the slug as `org_id`.
+- `organizations` lists each membership's `id`, `name`, `slug`, the caller's
+  `role`, and `quota_enabled`. Never send the slug as `org_id`.
+- Roles: `view` < `edit` (Admin in the app) < `owner`; `no_access` = end users.
+- `members` (org only, `query` filters name/email) lists people, roles, and
+  `quota_available`.
 - Inviting members, changing roles, creating organizations, and plan changes
   happen in the web app at
   [app.toughtongueai.com](https://app.toughtongueai.com).
@@ -36,16 +40,21 @@ Notes:
 
 ## Plan, balance, and entitlements
 
-- **Minutes balance** — `ttai:get_balance`. Personal balance, or the org's
-  shared balance plus the caller's quota when quotas are on.
-- **Effective plan and limits** — `ttai:v3_get_entitlements`. Role (in an org),
-  tier identity/status, limits; no price or billing history.
+- **Minutes balance** — `get_workspace_info` section `balance`. Personal wallet,
+  or the org wallet plus the caller's quota when quotas are on.
+- **Effective plan and limits** — section `plan`. Tier identity/status, limits;
+  no price or billing history.
+- **Usage** — section `usage` (`start_date` / `end_date`); org editors also get
+  a daily series and per-member totals.
+- **Quotas** — on: an org session needs minutes in the org wallet AND the
+  member's quota. Off: org wallet only. Owners toggle quotas and grant quota
+  minutes in the web app; no MCP tool changes them.
 
 Notes:
 
 - Query balance only when the operation may consume it; it is informational.
 - Plans gate some features (for example Scenario count, Ocean models, multimodal
-  analysis). Check `ttai:v3_get_entitlements` or let the server answer; never
+  analysis). Check `get_workspace_info` section `plan` or let the server answer; never
   guess a tier from a balance or a Scenario.
 
 ## Scenario visibility
@@ -64,14 +73,16 @@ use the same Scenario ID and visibility rules.
 ## Scenario Access Tokens (SAT)
 
 Short-lived bearer tokens for a private Scenario or an embed. `valid_for_hours`
-is 1–168 (default 1). The response carries `access_token`, `expires_at`, and a
-sample `iframe_src`.
+is 1–168 (default 1). The response carries `type`, `token`, `expires_at`, and
+`url` (an iframe embed).
 
-Each tool and who runs the Scenario with its token:
+`ttai:create_token` takes one `request` with `type: "scenario_access"`
+(`scenario_id`, `valid_for_hours`, optional `email`) and decides who runs the
+Scenario with the token. (`type: "filebase_view"` instead links a FileBase; see
+the MCP tools reference.)
 
-- `ttai:create_scenario_access_token` — no `email`: an anonymous runner. With
-  `email`: a specific runner (see below).
-- `ttai:create_self_scenario_access_token` — the caller; usage bills to the
+- No `email`: an anonymous runner. With `email`: a specific runner (see below).
+- `self_billed: true` (no `email`): the caller runs it; usage bills to the
   caller.
 
 Notes:
@@ -85,7 +96,8 @@ Notes:
 
 ## Agent checklist
 
-1. Resolve workspace (`ttai:list_organizations` → `org_id` or personal).
+1. Resolve workspace (`ttai:get_workspace_info` → `organizations[].id` as
+   `org_id`, or personal).
 2. Ambiguous team vs personal before a write → ask.
 3. Before sharing a private Scenario, mint a SAT or confirm `is_public`.
 4. Never invent organization IDs, tokens, or plan facts.

@@ -3,20 +3,20 @@
     "skills": ["ttai-session-analyst"],
     "query": "For our 'Enterprise Discovery Call' scenario, pull the last 50 sessions and tell me the top 5 improvement areas for the team.",
     "expected_behavior": [
-      "Calls ttai:callme_before_using_tough_tongue_mcp first when its guide is not already in context, then resolves organization scope with ttai:list_organizations and passes the returned id as org_id (never a slug)",
-      "Resolves the Scenario title with one ttai:list_scenarios search call (or reuses a known ID), then reads sessions with ttai:v3_list_sessions using scenario_ids, limit 50 (max 100 per page), and include_fields containing evaluation",
+      "Calls ttai:read_guide first when its guide is not already in context, then resolves organization scope with ttai:get_workspace_info and passes an organizations[].id as org_id (never a slug)",
+      "Resolves the Scenario title with one ttai:list_resources(scenarios, query) search call (or reuses a known ID), then reads sessions with ttai:list_resources(sessions) using scenario_ids, limit 50 (max 100 per page), and include_fields containing evaluation",
       "Averages report_card score per topic (0-10) within this one Scenario, shows each topic's weight, and clusters weaknesses / improvement_areas text into behavior-named themes",
       "Excludes sessions without evaluation_results.final_score from score math and reports how many were excluded",
-      "Backs each top improvement area with a transcript quote fetched for selected IDs via ttai:v3_list_sessions (ids + transcript) or ttai:get_session",
-      "Produces the Team performance report structure and does not call ttai:create_session or ttai:post_process_session"
+      "Backs each top improvement area with a transcript quote fetched for selected IDs via ttai:list_resources(sessions) (ids + transcript) or ttai:get_resource(sessions)",
+      "Produces the Team performance report structure and does not call ttai:upload_session or ttai:analyze_session"
     ]
   },
   {
     "skills": ["ttai-session-analyst"],
     "query": "Pull the 5 lowest-scoring sessions for our onboarding scenario and figure out what went wrong.",
     "expected_behavior": [
-      "Collects the population with evaluation data (ttai:v3_list_sessions with include_fields evaluation, or ttai:list_sessions for a date window), sorts by evaluation_results.final_score ascending, and takes the bottom 5",
-      "Fetches transcripts only for those 5 IDs via ttai:v3_list_sessions (ids + transcript) or ttai:get_session; does not expect transcripts from ttai:list_sessions or ttai:get_sessions_batch",
+      "Collects the population with evaluation data (ttai:list_resources(sessions) with include_fields evaluation, or ttai:list_resources(sessions) for a date window), sorts by evaluation_results.final_score ascending, and takes the bottom 5",
+      "Fetches transcripts only for those 5 IDs via ttai:list_resources(sessions, filters {ids}, include_fields [\"transcript\"]) or ttai:get_resource(sessions, include_fields [\"transcript\"]); does not expect transcripts from list rows without that projection or from person/date (legacy) lists",
       "Separates Scenario faults (AI behavior, rubric mismatch) from participant skill gaps, citing transcript evidence for each",
       "Recommends handing Scenario faults to the ttai-agent skill instead of editing the Scenario itself; never calls ttai:update_scenario"
     ]
@@ -25,7 +25,7 @@
     "skills": ["ttai-session-analyst"],
     "query": "How did priya@example.com do on her practice sessions this month? Put together a coaching report.",
     "expected_behavior": [
-      "Uses ttai:list_sessions with user_email and from_date set to the first day of the current month (is_org true with org_id when working in an organization)",
+      "Uses ttai:list_resources(sessions) with user_email and from_date set to the first day of the current month (is_org true with org_id when working in an organization)",
       "Computes per-topic averages and a score trend across her analyzed sessions, keeping different Scenarios' rubrics separate",
       "Uses the Individual coaching report template with at most 3 focus areas and actions drawn from improvement_results.action_items",
       "States a small-sample caveat when fewer than about 10 analyzed sessions exist"
@@ -35,9 +35,9 @@
     "skills": ["ttai-session-analyst"],
     "query": "Half the sessions on our cold-call scenario this week have no scores. Fix that and give me the team summary.",
     "expected_behavior": [
-      "Identifies the unscored sessions by reading evaluation and processing fields (ttai:v3_list_sessions include_fields evaluation and processing) before any write",
-      "Before calling ttai:post_process_session, lists the exact session IDs and Scenario ID, notes it may fire the Scenario's post-session webhooks, and waits for explicit user confirmation",
-      "Skips sessions whose post_session_status.state is running and does not loop retries; explains that post_process_session only fills missing results and does not regrade scored sessions",
+      "Identifies the unscored sessions by reading evaluation and processing fields (ttai:list_resources(sessions) include_fields evaluation and processing) before any write",
+      "Before calling ttai:analyze_session, lists the exact session IDs and Scenario ID, notes it may fire the Scenario's post-session webhooks, and waits for explicit user confirmation",
+      "Skips sessions whose post_session_status.state is running and does not loop retries; explains that analyze_session only fills missing results and does not regrade scored sessions",
       "Polls with bounded backoff until state is idle with evaluation_results (or failed), then reports any sessions still unscored and builds the summary from analyzed sessions only"
     ]
   }

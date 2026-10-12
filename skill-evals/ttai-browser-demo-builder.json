@@ -3,7 +3,7 @@
     "skills": ["ttai-browser-demo-builder"],
     "query": "Here's the recording note from the Workflows tab for my 'Acme Platform Demo' scenario. Turn it into browser steps.\n\n1. `click` — Clicked Reports\n   - Target: a \"Reports\" \n   - Selector: `nav > a:nth-child(3)`\n   - XPath: `/html[1]/body[1]/div[1]/nav[1]/a[3]`\n   - Alternative candidates:\n     - text: `Reports` (74%)\n     - xpath: `/html[1]/body[1]/div[1]/nav[1]/a[3]` (42%)\n2. `navigation` — Reached Reports\n   - Page: `https://app.acme.com/reports`\n3. `input` — Typed into Filter\n   - Target: input (placeholder: Filter reports)\n   - Value: Q3\n4. `input` — Typed into Filter\n   - Target: input (placeholder: Filter reports)\n   - Value: Q3 revenue\n5. `keydown` — Pressed Enter\n   - Key: `Enter`\n6. `scroll` — Scrolled page\n7. `click` — Clicked Export\n   - Target: button \"Export\" (aria-label: Export report)\n   - XPath: `/html[1]/body[1]/div[1]/main[1]/div[2]/button[2]`",
     "expected_behavior": [
-      "Resolves the Scenario with ttai:list_scenarios(search=...) and reads it with ttai:v3_get_scenario_version before writing, confirming the browser tool is enabled",
+      "Resolves the Scenario with ttai:list_resources(scenarios, query: <title>) and reads it with ttai:get_resource(scenarios) before writing, confirming the browser tool is enabled",
       "Treats the note as evidence: merges the two inputs into one fill with 'Q3 revenue', turns Enter into press [\"Enter\"], drops the scroll event, and starts a new step at the navigation",
       "Rewrites every selector as text-, placeholder-, or aria-label-anchored XPath (e.g. //input[@placeholder='Filter reports'], //button[@aria-label='Export report']) and ships no positional /html[1]/... path or CSS selector",
       "Writes the complete tool_settings via ttai:update_scenario with the existing initialUrl, contextId, and unrelated steps carried over unchanged",
@@ -15,7 +15,7 @@
     "query": "My demo scenario already has a saved login for app.acme.com. Just add one step called open_billing that clicks the Billing link in the sidebar. Only send the steps field so you don't touch anything else.",
     "expected_behavior": [
       "Explains that ttai:update_scenario replaces the browser tool's tool_settings as a whole, so sending only steps would delete contextId (the saved login) and initialUrl",
-      "Reads the current Scenario with ttai:v3_get_scenario_version (passing org_id when the Scenario is org-owned) and merges open_billing into the existing steps",
+      "Reads the current Scenario with ttai:get_resource(scenarios) (passing org_id when the Scenario is org-owned) and merges open_billing into the existing steps",
       "Sends the complete tool_settings with contextId and initialUrl copied unchanged, and never invents or edits contextId",
       "Uses a stable XPath such as xpath=//nav//a[contains(text(),'Billing')] with a standalone action description",
       "Re-reads afterwards and confirms contextId is identical to the value before the write"

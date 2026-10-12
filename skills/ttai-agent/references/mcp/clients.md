@@ -214,14 +214,14 @@ refresh. Writes prompt for confirmation; deep research is read-only.
   `codex mcp login ttai`, Cursor Settings > MCP. PAT: fix `TTAI_PAT`.
 - **Edit not live in a call** — Scenario edits apply to new sessions only.
 - **Works personally, not by org** — pass `org_id` from
-  `ttai:list_organizations`.
+  `ttai:get_workspace_info` (`organizations[].id`).
 - **mcp-remote internal error** — `rm -rf ~/.mcp-auth`, reconnect, update Node
   to current LTS.
 - **Rate limited** — 30 calls/minute per token; wait, then retry; request only
   the page you need.
 
-Smoke test: `ttai:callme_before_using_tough_tongue_mcp`, then
-`ttai:list_organizations`.
+Smoke test: `ttai:read_guide`, then
+`ttai:get_workspace_info`.
 
 Never ask the user to paste a token into chat. On `401`, finish OAuth for that
 client; `TTAI_PAT` is only for headless or CI processes.

@@ -78,7 +78,7 @@ each action, so a `scrollTo` before a click is dead weight — delete it.
 whole object. Sending `{"steps": {...}}` alone deletes `contextId` (the saved
 login) and `initialUrl`.
 
-1. Read: `ttai:v3_get_scenario_version(scenario_id)` (pass `org_id` for org
+1. Read: `ttai:get_resource(scenarios, id)` (pass `org_id` for org
    Scenarios). Take `tools_config.tools.browser.tool_settings` verbatim.
 2. Merge in memory: set or replace only your step keys under `steps`. Keep every
    other key and step unchanged.
@@ -86,7 +86,7 @@ login) and `initialUrl`.
 
 ```json
 {
-  "scenario_data": {
+  "scenario": {
     "id": "<SCENARIO_ID>",
     "tools_config": {
       "tools": {

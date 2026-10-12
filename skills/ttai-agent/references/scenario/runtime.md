@@ -131,8 +131,8 @@ unavailable.
 - `trigger: "on_demand"` (at most one message) registers `ask_conductor`: the
   agent calls it to get a fresh directive built from the live transcript.
 - If wrap-up fires mid-conversation, the timer is too low for the real call
-  length distribution — check average `duration` across recent sessions (legacy
-  `ttai:list_sessions` returns `duration`; `ttai:get_analytics` gives
+  length distribution — check average `duration` across recent sessions (`ttai:list_resources(sessions)`
+  with a person or date filter returns `duration`; `ttai:get_workspace_info(sections: [usage])` gives
   aggregates) before picking a new value.
 - `strategy.max_duration_seconds` also flows through the conductor: a wrap-up
   directive 30 s before the cap, then a hard disconnect.

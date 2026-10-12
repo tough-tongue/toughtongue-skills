@@ -6,6 +6,7 @@ How an Agent Desktop app package is laid out and described.
 
 - Package layout
 - `spec.json`
+- Controls
 - Code vs data
 - Worked example: idea board
 - Limits
@@ -14,37 +15,46 @@ How an Agent Desktop app package is laid out and described.
 
 ```text
 <app_name>/
-├── spec.json        # manifest the host and the agent read
+├── README.md        # entry point: what the app shows, which file to edit
+├── spec.json        # manifest; server-kept, you add controls
 ├── src/
 │   └── App.tsx      # fixed render code; default-exports the root component
 └── data/
     └── board.json   # the control panel the agent edits
 ```
 
-Tool calls use package-relative paths (`src/App.tsx`). Only the `root`,
-`entryFile`, and globs inside `spec.json` carry the `/<app_name>` prefix the
-host mounts.
+Tool calls use package-relative paths (`src/App.tsx`). Only `root` and the
+globs inside `spec.json` carry the `/<app_name>` prefix the host mounts. The
+live agent reads `README.md` with `desktop_info("<app_name>")`.
 
 ## `spec.json`
 
-| Field                       | Meaning                                                 |
-| --------------------------- | ------------------------------------------------------- |
-| `appName`                   | Same as the catalog `app_name` (the catalog name wins)  |
-| `version`                   | `1`                                                     |
-| `title`                     | Display title                                           |
-| `root`                      | `/<app_name>`                                           |
-| `entryFile`                 | `/<app_name>/src/App.tsx`                               |
-| `files`                     | **Required.** Every other package-relative path to load |
-| `plannedExtensions`         | `[]`                                                    |
-| `description`               | Markdown the agent reads: the shape of the data file    |
-| `filesystem.glob`           | `/<app_name>/**/*`                                      |
-| `filesystem.editableGlobs`  | The exact data file, e.g. `/<app_name>/data/board.json` |
-| `filesystem.preferredPaths` | The one file to rewrite most often                      |
-| `filesystem.coreFileGlobs`  | Files the agent must not touch (`src/**`)               |
-| `instructions`              | Short imperative rules for the voice agent              |
+The server rewrites `spec.json` on every write. Send only the keys you author;
+the rest are set or defaulted.
+
+| Field                       | Source                                                       |
+| --------------------------- | ------------------------------------------------------------ |
+| `appName`, `version`        | Server: the FileBase `name`, `1`                             |
+| `files`                     | Server: the package tree, synced on each write               |
+| `title`, `description`      | Defaulted from the FileBase; override only to differ         |
+| `root`                      | Defaulted to `/<app_name>`                                   |
+| `filesystem.glob`           | Defaulted to `/<app_name>/**/*`                              |
+| `filesystem.editableGlobs`  | Default: the whole app. Set the exact data file              |
+| `filesystem.preferredPaths` | The one file to rewrite most often                           |
+| `filesystem.coreFileGlobs`  | Files the agent must not touch (`/<app_name>/src/**/*`)      |
+| `instructions`              | Authoring notes, read on demand by the agent                 |
+| `controls`                  | How to operate the app; injected into the prompt             |
+
+## Controls
+
+`controls` is the app's operating manual for the live agent. When a Scenario
+enables the app with `add_to_system_prompt: true`, every line lands in the
+system prompt under the app's title and tool prefix, so the agent knows how to
+drive it without calling anything first. `instructions` stay for authoring and
+are only read on demand.
 
 <details>
-<summary>Instruction lines that work</summary>
+<summary>Control lines that work</summary>
 
 - Name the file to edit and forbid everything else.
 - Describe each data operation in one line: set the topic, add an item, move an
@@ -71,20 +81,21 @@ Render code reads the data file and draws it; it never writes it.
 ## Worked example: idea board
 
 <details>
-<summary>spec.json, data/board.json, and src/App.tsx</summary>
+<summary>README.md, spec.json, data/board.json, and src/App.tsx</summary>
+
+```markdown
+# Idea Board
+
+Columns of idea cards. Edit only `data/board.json`: `topic` plus
+`columns[].cards[]` of `{id, text}`. Never touch `src/`.
+```
+
+The authored `spec.json`; the server adds `appName`, `version`, `files`,
+`title`, `description`, and `root`:
 
 ```json
 {
-  "appName": "idea-board",
-  "version": 1,
-  "title": "Idea Board",
-  "root": "/idea-board",
-  "entryFile": "/idea-board/src/App.tsx",
-  "files": ["src/App.tsx", "data/board.json"],
-  "plannedExtensions": [],
-  "description": "# Idea Board\n\nColumns of idea cards. Edit only data/board.json.",
   "filesystem": {
-    "glob": "/idea-board/**/*",
     "editableGlobs": ["/idea-board/data/board.json"],
     "preferredPaths": ["/idea-board/data/board.json"],
     "coreFileGlobs": ["/idea-board/src/**/*"]
@@ -95,6 +106,11 @@ Render code reads the data file and draws it; it never writes it.
     "To add an idea, append a card {id, text} to a column.",
     "To move an idea, remove it from one column and add it to another, keeping its id.",
     "Keep ids short and stable (c1, c2). Write the whole file each time."
+  ],
+  "controls": [
+    "Call idea_board_launch once when brainstorming starts.",
+    "Operate the board only by rewriting /idea-board/data/board.json with idea_board_write; send the whole file.",
+    "topic: the framing question. columns[].cards[]: {id, text}; move a card by changing its column, keep its id."
   ]
 }
 ```
@@ -142,7 +158,7 @@ export default function App() {
 
 ## Limits
 
-- One write: 1–200 files, each up to 1 MB. One read: up to 64 paths.
+- One write: 1–200 paths (files plus deletes). One read: up to 20 paths.
 - During a session the agent can write files up to 128 KB; keep data files to a
   few KB.
 - Paths use letters, digits, `.`, `_`, `-`, and `/`; any other character becomes

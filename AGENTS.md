@@ -184,8 +184,28 @@ codes at <https://developers.openai.com/plugins/deploy/submission-errors>.
   the same PR as a catalog change. Rewrite `publication.release_notes` every
   release. Reviewer credentials and the demo video URL go in the portal, never
   in this repo.
+- The listing predates this repo's packaging, so OpenAI knows the plugin as
+  `app-6a60a89a6bec81918b6155f03f66681a`, not `toughtongue`, and rejects an
+  update whose `name` differs. Keep `toughtongue` in the repo (it is the
+  install name everywhere else) and set the OpenAI name only in the ZIP. The
+  portal also caps `<plugin name>:<skill name>` at 64 characters, so skill
+  names stay at 27 characters or fewer.
 - Build the ZIP from a committed tree:
-  `git archive --format=zip --prefix=toughtongue/ -o toughtongue-<version>.zip HEAD plugin.json mcp.json .mcp.json .codex-plugin skills assets README.md LICENSE`
+
+  ```sh
+  out=$(mktemp -d)
+  git archive HEAD plugin.json mcp.json .mcp.json .codex-plugin skills assets README.md LICENSE | tar -x -C "$out"
+  python3 - "$out" <<'EOF'
+  import json, sys
+  for f in ("plugin.json", ".codex-plugin/plugin.json"):
+      path = f"{sys.argv[1]}/{f}"
+      manifest = json.load(open(path))
+      manifest["name"] = "app-6a60a89a6bec81918b6155f03f66681a"
+      json.dump(manifest, open(path, "w"), indent=2, ensure_ascii=False)
+  EOF
+  (cd "$out" && zip -qr - .) > "toughtongue-openai-$(git describe --always).zip"
+  ```
+
 - Upload it under Plugins → Tough Tongue AI → **Upload plugin to make
   changes**. The `version` must differ from the published one, and only one
   review can be active per plugin: wait for or cancel a pending review first.

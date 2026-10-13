@@ -34,10 +34,10 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Tough Tongue AI",
-    "shortDescription": "AI voice agents and roleplay",
+    "shortDescription": "Automate and practice calls",
     "longDescription": "Build, refine, and analyze Tough Tongue AI voice agents for tough conversations — agents that automate them (sales calls, lead qualification, demos, screening, booking) and agents that train you for the ones you handle yourself (negotiations, interviews, coaching). Create scenarios, place phone calls, schedule meeting bots, and analyze sessions.",
     "developerName": "Tough Tongue AI",
-    "category": "Productivity",
+    "category": "Business & Operations",
     "capabilities": ["Read", "Write"],
     "websiteURL": "https://app.toughtongueai.com",
     "supportURL": "https://app.toughtongueai.com/docs/mcp",
@@ -102,9 +102,11 @@
             }
           ]
         },
-        "commerce": false
+        "commerce": false,
+        "commerce_description": "The plugin does not process purchases or payments."
       },
       "publication": {
+        "countries": [],
         "release_notes": "2.0.1: Bundles four skills with the Tough Tongue AI MCP server: ttai-agent (create, edit, and refine Scenarios; workspaces, calls, and meeting bots), ttai-session-analyst (session reports), ttai-browser-demo-builder (deterministic browser demo steps), and ttai-agent-apps (Agent Desktop apps). Skills follow the current tool catalog: workspace reads through get_workspace_info, record reads through list_resources and get_resource, and one bot family (schedule_bot, cancel_bot) for meeting bots and phone calls. Listing: support, privacy, and terms links, icon, and three starter prompts."
       }
     }

@@ -135,19 +135,22 @@ update.
 6. After push: in Claude Desktop/Cowork, Add marketplace → Sync must still
    succeed (regression check for the string-source sync bug).
 7. Bump `version` in all four plugin manifests; tag the release.
+8. If skills or listing metadata changed, upload a new ZIP to the OpenAI Plugin
+   Directory (below).
 
 ### Submission assets
 
 Reused across every channel below — do not go hunting for these again:
 
-| Asset                  | URL                                             |
-| ---------------------- | ----------------------------------------------- |
-| Privacy policy         | <https://app.toughtongueai.com/privacy-policy/> |
-| Terms of service       | <https://app.toughtongueai.com/terms/>          |
-| Public MCP docs        | <https://app.toughtongueai.com/docs/mcp>        |
-| PAT / developer portal | <https://app.toughtongueai.com/developer>       |
+| Asset                     | URL                                             |
+| ------------------------- | ----------------------------------------------- |
+| Privacy policy            | <https://app.toughtongueai.com/privacy-policy/> |
+| Terms of service          | <https://app.toughtongueai.com/terms/>          |
+| Public MCP docs / support | <https://app.toughtongueai.com/docs/mcp>        |
+| PAT / developer portal    | <https://app.toughtongueai.com/developer>       |
 
-The paths are `/privacy-policy/` and `/terms/`; `/privacy` and `/tos` 404.
+The paths are `/privacy-policy/` and `/terms/`; `/privacy`, `/tos`, and
+`/support` 404.
 
 ### Distribution channels
 
@@ -157,7 +160,35 @@ The paths are `/privacy-policy/` and `/terms/`; `/privacy` and `/tos` 404.
 | Claude community marketplace (`@claude-community`)       | Submit at <https://platform.claude.com/plugins/submit> (Console, works for individual authors) or <https://claude.ai/admin-settings/directory/submissions/plugins/new> (Team/Enterprise). Review pins a commit SHA in `anthropics/claude-plugins-community`; CI auto-bumps on new pushes; catalog syncs nightly                                                                                         | Submit once              |
 | Codex (GitHub marketplace)                               | This repo's `.agents/plugins/marketplace.json`; users run `codex plugin marketplace add tough-tongue/toughtongue-skills`. Codex also reads `.claude-plugin/marketplace.json` for compatibility                                                                                                                                                                                                          | Live on push             |
 | Claude Connectors Directory (the in-app connectors list) | Submits the _hosted MCP server_ (`https://api.toughtongueai.com/api/public/mcp`), not this repo, via <https://claude.ai/admin-settings/directory/submissions/new>. Requires a Team or Enterprise Claude org with directory-management access. Server already meets the technical bar: streamable HTTP, OAuth 2.1 with dynamic client registration, PKCE S256, correct 401 `resource_metadata` discovery | Not submitted            |
-| Codex official Plugin Directory                          | Publishing is "coming soon" per OpenAI docs — no self-serve yet. Interim: share to a ChatGPT workspace via Codex app → Plugins → Created by you → Share                                                                                                                                                                                                                                                 | Watch docs               |
+| OpenAI Plugin Directory (ChatGPT + Codex)                | One listing shared by ChatGPT and Codex. Upload a ZIP of this repo to the existing plugin at <https://platform.openai.com/plugins>; hosted MCP tool changes are picked up by OpenAI's daily server scans without a ZIP. See [OpenAI Plugin Directory](#openai-plugin-directory)                                                                                                                         | Live; ZIP per release    |
 | `npx plugins add` (cross-agent installer)                | The `plugins` npm CLI (vercel-labs/plugins) reads this repo's `.plugin/marketplace.json` and installs into every detected agent: Claude Code, Cursor, Codex, Grok Build, Kimi Code, GitHub Copilot CLI, VS Code. Users run `npx plugins add tough-tongue/toughtongue-skills`                                                                                                                            | Live on push             |
 | Agent Plugins 1.0.0 (native clients)                     | Root `plugin.json` + `skills/` + `mcp.json` per <https://agent-plugins.org>; loaded directly by clients that support the standard (Cursor, Codex, GitHub Copilot, Kiro, VS Code)                                                                                                                                                                                                                        | Live on push             |
 | skills.sh                                                | Indexes public GitHub repos with `skills/`                                                                                                                                                                                                                                                                                                                                                              | Live once repo is public |
+
+### OpenAI Plugin Directory
+
+Docs: <https://developers.openai.com/plugins/deploy/submission> and the error
+codes at <https://developers.openai.com/plugins/deploy/submission-errors>.
+
+- Listing, review, and release metadata live in `.codex-plugin/plugin.json`:
+  `interface`, plus `extensions.com.openai.review` and `.publication`. Never
+  add `extensions.com.openai` to root `plugin.json`: OpenAI then ignores the
+  Codex manifest entirely (the two are not merged).
+- The portal is stricter than the Codex CLI: `displayName` and
+  `shortDescription` at most 30 characters; at most 3 `defaultPrompt` entries
+  of at most 128 characters; HTTPS website, support, privacy, and terms URLs;
+  square `composerIcon` and `logo`; `agents/openai.yaml` dependencies under
+  `tools` only; no hooks and no `.app.json`.
+- The review test cases (5 positive, 3 negative) name MCP tools in
+  `tools_triggered`, so they fall under the tool-name contract: update them in
+  the same PR as a catalog change. Rewrite `publication.release_notes` every
+  release. Reviewer credentials and the demo video URL go in the portal, never
+  in this repo.
+- Build the ZIP from a committed tree:
+  `git archive --format=zip --prefix=toughtongue/ -o toughtongue-<version>.zip HEAD plugin.json mcp.json .mcp.json .codex-plugin skills assets README.md LICENSE`
+- Upload it under Plugins → Tough Tongue AI → **Upload plugin to make
+  changes**. The `version` must differ from the published one, and only one
+  review can be active per plugin: wait for or cancel a pending review first.
+  Resolve the **Metadata & Skills** findings (skill scans take up to 2 hours),
+  **Rescan** under **MCPs**, check **Review details**, **Submit for review**,
+  then **Publish** once approved.

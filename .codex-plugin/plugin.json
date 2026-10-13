@@ -1,6 +1,6 @@
 {
   "name": "toughtongue",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Build, refine, and analyze Tough Tongue AI voice agents for tough conversations — agents that automate them (sales calls, lead qualification, demos, screening, booking) and agents that train you for the ones you handle yourself (negotiations, interviews, coaching). Create scenarios, place phone calls, schedule meeting bots, and analyze sessions.",
   "author": {
     "name": "Tough Tongue AI",
@@ -34,20 +34,79 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Tough Tongue AI",
-    "shortDescription": "Automate or practice tough conversations",
+    "shortDescription": "AI voice agents and roleplay",
     "longDescription": "Build, refine, and analyze Tough Tongue AI voice agents for tough conversations — agents that automate them (sales calls, lead qualification, demos, screening, booking) and agents that train you for the ones you handle yourself (negotiations, interviews, coaching). Create scenarios, place phone calls, schedule meeting bots, and analyze sessions.",
     "developerName": "Tough Tongue AI",
     "category": "Productivity",
     "capabilities": ["Read", "Write"],
     "websiteURL": "https://app.toughtongueai.com",
+    "supportURL": "https://app.toughtongueai.com/docs/mcp",
+    "privacyPolicyURL": "https://app.toughtongueai.com/privacy-policy/",
+    "termsOfServiceURL": "https://app.toughtongueai.com/terms/",
     "defaultPrompt": [
       "Get me started with Tough Tongue AI.",
-      "Show my Tough Tongue AI organizations, available capabilities, shared balance, and team usage.",
       "Build a voice agent to qualify demo leads and book qualified meetings.",
-      "Create a practice Scenario for an enterprise pricing negotiation.",
-      "Create a product-demo Scenario and record deterministic browser steps.",
-      "For the Enterprise Discovery Call Scenario, analyze the last 50 sessions and make the smallest evidence-backed improvement.",
-      "Schedule a Tough Tongue AI meeting bot for a customer meeting using our existing demo Scenario."
-    ]
+      "Create a practice Scenario for an enterprise pricing negotiation."
+    ],
+    "composerIcon": "./assets/icon.png",
+    "logo": "./assets/icon.png"
+  },
+  "extensions": {
+    "com.openai": {
+      "review": {
+        "test_cases": {
+          "positive": [
+            {
+              "description": "Onboarding: identify the connected account and its workspaces",
+              "prompt": "Get me started with Tough Tongue AI.",
+              "tools_triggered": "read_guide, get_workspace_info",
+              "expected_behavior": "Reads the guide, then reports the signed-in account, its personal workspace and any organizations, the plan, and the balance, and suggests a first task. Nothing is created or changed."
+            },
+            {
+              "description": "Create a practice roleplay Scenario",
+              "prompt": "Create a practice scenario where I negotiate an enterprise software renewal with a procurement manager who wants a 20% discount.",
+              "tools_triggered": "get_schema, create_scenario",
+              "expected_behavior": "Creates one new Scenario in the personal workspace with a procurement-manager persona pushing for a discount, and returns its title, ID, and a link to start practicing."
+            },
+            {
+              "description": "List Scenarios in the workspace",
+              "prompt": "List my Tough Tongue AI scenarios.",
+              "tools_triggered": "list_resources",
+              "expected_behavior": "Returns the Scenarios in the personal workspace with titles and IDs, including the renewal negotiation Scenario from the previous case. Nothing is changed."
+            },
+            {
+              "description": "Refine an existing Scenario after confirmation",
+              "prompt": "In my enterprise renewal negotiation scenario, make the procurement manager push back harder on price before conceding anything.",
+              "tools_triggered": "list_resources, get_resource, update_scenario",
+              "expected_behavior": "Finds the renewal negotiation Scenario, states the instruction change it will make, and after the user confirms updates only that Scenario, then summarizes what changed."
+            },
+            {
+              "description": "Report session results",
+              "prompt": "How many practice sessions has my workspace run, and how did the most recent ones score?",
+              "tools_triggered": "list_resources",
+              "expected_behavior": "Returns the session count and the scores of the most recent sessions with their Scenario names, or says plainly that the workspace has no sessions yet. Nothing is changed."
+            }
+          ],
+          "negative": [
+            {
+              "description": "Phone call without a confirmed target and Scenario: the plugin must not dial a real phone from a bare request; it asks which Scenario to use and confirms the number and timing before scheduling anything.",
+              "prompt": "Call +1 415 555 0100 right now and pitch our product."
+            },
+            {
+              "description": "Unsupported bulk deletion: no tool deletes Scenarios, so the plugin explains it cannot do this and changes nothing.",
+              "prompt": "Delete all of my Tough Tongue AI scenarios."
+            },
+            {
+              "description": "Access outside the connected account: the plugin only reads workspaces the signed-in user belongs to and declines to fetch another company's data.",
+              "prompt": "Show me the session transcripts from another company's Tough Tongue AI workspace."
+            }
+          ]
+        },
+        "commerce": false
+      },
+      "publication": {
+        "release_notes": "2.0.1: Bundles four skills with the Tough Tongue AI MCP server: ttai-agent (create, edit, and refine Scenarios; workspaces, calls, and meeting bots), ttai-session-analyst (session reports), ttai-browser-demo-builder (deterministic browser demo steps), and ttai-agent-apps (Agent Desktop apps). Skills follow the current tool catalog: workspace reads through get_workspace_info, record reads through list_resources and get_resource, and one bot family (schedule_bot, cancel_bot) for meeting bots and phone calls. Listing: support, privacy, and terms links, icon, and three starter prompts."
+      }
+    }
   }
 }

@@ -11,26 +11,12 @@ your personal or organization workspace.
 ## How it works
 
 ```mermaid
-%%{init: {"flowchart": {"wrappingWidth": 400}}}%%
 flowchart LR
-  agent["🤖 Your AI agent<br/>Claude · Cursor<br/>Codex · ChatGPT"]
-  you(["You"]) -->|ask| agent
-  agent -->|know-how| skills["Tough Tongue skills"]
-  agent <-->|act · read| mcp["Tough Tongue MCP"]
-  mcp <--> ws
-  subgraph ws["Your Tough Tongue AI workspace"]
-    direction LR
-    orch["`🎭 **Agent orchestration**
-    voice agents · roleplays
-    📞 phone calls · 🎥 Google Meet · Zoom
-    🌐 web links · ⚙️ scheduled calls`"]
-    sess["`💬 **Sessions**
-    transcripts · 📊 scores
-    coaching reports`"]
-    integ["`🔔 **Integrations**
-    webhooks · custom functions
-    MCP servers · knowledge bases`"]
-  end
+  you(["<b>You</b>"]) --> agent("<b>Your coding agent</b><br/><small>with these skills</small>")
+  agent --> mcp("<b>MCP server</b><br/><small>by Tough Tongue AI</small>")
+  mcp --> ws("<b>Your workspace</b><br/><small>voice agents, roleplays,<br/>and their sessions</small>")
+  classDef default fill:transparent,stroke:#8b949e,stroke-width:1px
+  linkStyle default stroke-width:1.5px
 ```
 
 Armed with these skills, your coding agent becomes a workspace commander for

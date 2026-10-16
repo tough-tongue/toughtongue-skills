@@ -164,7 +164,8 @@ Faces come from `ttai:list_resources` with resource type `avatar` (`type`
   `contextId` is set by the platform.
 - `google_slides` — slide demo; settings `embedUrl` (published embed link).
 - `knowledge_base_search` — only when `knowledge_base_ids` attaches a Knowledge
-  Base.
+  Base (legacy RAG). Knowledge FileBases need no `tools_config` entry: linking
+  `knowledge_filebase_ids` gives the agent `getKnowledgeBite`.
 - `collect_data` — phone: record structured answers.
 - `cold_transfer` — phone: transfer to `tool_settings.transfer_to`.
 
@@ -226,7 +227,9 @@ the live schema.
 
 ## Linked resources
 
-`knowledge_base_ids`, `custom_function_ids`, `pre_connect`, and `mcp_server_ids`
+`knowledge_base_ids` (legacy RAG), `knowledge_filebase_ids` (knowledge
+FileBases; the agent reads them with `getKnowledgeBite`),
+`custom_function_ids`, `pre_connect`, and `mcp_server_ids`
 (`catalog:<id>` or `custom:<id>`) attach existing resources. Discover safe IDs
 with `ttai:list_resources` (types in `ttai:read_guide`), or use IDs from a
 trusted workspace call. The server rejects IDs outside the workspace. MCP

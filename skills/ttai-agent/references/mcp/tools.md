@@ -167,7 +167,8 @@ even when a client hides them.
   - `save_as_version` (1–100 characters) archives the prior state under that
     label before applying the change.
 - `get_resource(scenarios, id)` omits linked-resource IDs
-  (`knowledge_base_ids`, `custom_function_ids`, `pre_connect`); the
+  (`knowledge_base_ids`, `knowledge_filebase_ids`, `custom_function_ids`,
+  `pre_connect`); the
   create/update response returns the full authoring state.
 - Type rules: `default` is the normal agent; `super` needs `stages` with a
   non-empty first stage and flows, and a Landmass model; `quiz`, `coding`
@@ -188,8 +189,8 @@ A FileBase is a folder of files with a `kind`: `app` (an Agent Desktop app) or
 - `ttai:write_filebase(id, files, delete)` → whole-file upserts by relative path
   (no leading `/`), then deletes. Returns the new `revision` and `missing`:
   convention files the tree still lacks (`README.md`; `src/App.tsx` for an
-  app). Write the root `README.md` in the first call; it is the entry point
-  agents read.
+  app; `index.md` for knowledge). Write the entry file in the first call: root
+  `README.md` for an app, `index.md` for knowledge.
 - App `spec.json` is server-kept: every write sets `appName`, `version`, and
   `files`, and defaults the rest from the FileBase. Write it only to add
   `controls`, `instructions`, or `filesystem` overrides.
@@ -200,6 +201,26 @@ A FileBase is a folder of files with a `kind`: `app` (an Agent Desktop app) or
   valid_for_hours})` (≤ 24 h) opens an app FileBase without signing in.
   Knowledge FileBases are refused.
 - The ttai-agent-apps skill covers the app package and the `controls` contract.
+
+### Knowledge FileBases
+
+Two knowledge products exist; do not mix them up. Legacy RAG
+(`knowledge-bases`, `knowledge_base_ids`, tool `knowledgeBaseRag`) is created
+in the web app only. A knowledge FileBase (this section) is agent-writable.
+
+- Entry file is root `index.md`, not `README.md`: what is inside plus links to
+  every other file. Ideal under 1 KB, fine up to 4 KB, bad above. No
+  `spec.json` or `src/App.tsx`.
+- Workflow: the user attaches PDFs or docs in the thread → distill them into
+  focused markdown files plus `index.md` → `create_filebase(kind: knowledge)`
+  → `write_filebase` (index first) → link the id with
+  `knowledge_filebase_ids: ["<id>"]` on `create_scenario` / `update_scenario`.
+  Confirm before the scenario update.
+- Runtime: the agent gets the base's name and title in its prompt and one tool,
+  `getKnowledgeBite(filepath, start?, lines?)`. `filepath` is `<base name>/<path>`
+  (a bare name reads `index.md`); windows default to 200 lines, max 2000.
+- Featured knowledge bases (e.g. `tough-tongue`) can be linked to any
+  scenario: find them with `list_resources(filebases, filters: {kind: knowledge})`.
 
 ## Tool notes
 

@@ -138,5 +138,15 @@
       "Applies a surgical edit via ttai:update_scenario sending only id plus the changed fields (full tool_settings if a tool's settings change)",
       "Reports diagnosis, change summary, and the new-sessions-only reminder"
     ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "I attached two PDFs with our product FAQ. Make my scenario answer from them.",
+    "expected_behavior": [
+      "Distills the attached PDFs into focused markdown files plus a root index.md (what is inside, links to every other file; under ~4 KB), not README.md",
+      "Calls ttai:create_filebase(kind: knowledge) then ttai:write_filebase with index.md first; does not use legacy knowledge-bases or knowledge_base_ids",
+      "Links the FileBase id via knowledge_filebase_ids on ttai:update_scenario after confirming with the user",
+      "Explains the agent reads it with getKnowledgeBite(filepath, start?, lines?) as <base name>/<path>"
+    ]
   }
 ]

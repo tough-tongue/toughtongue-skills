@@ -190,16 +190,18 @@ A FileBase is a folder of files with a `kind`: `app` (an Agent Desktop app) or
   convention files the tree still lacks (`README.md`; `src/App.tsx` for an
   app). Write the root `README.md` in the first call; it is the entry point
   agents read.
-- App `spec.json` is server-kept: every write sets `appName`, `version`, and
-  `files`, and defaults the rest from the FileBase. Write it only to add
-  `controls`, `instructions`, or `filesystem` overrides.
+- An app is `README.md` (the agent's manual: `# Title`, one-line description,
+  `## Data`, `## Controls`, `## Rules`) + `src/App.tsx` + optional `package.json`,
+  `src/**`, `data/**`. There is no `spec.json`: a write that includes one gets a
+  `warning`. For an app, create / write / get also return `view_url` (20 min):
+  open it in a browser to check the app runs.
 - List: `list_resources(filebases, filters: {kind: app}, query?)`. Read before
   rewriting: `get_resource(filebases, id, paths: [...])` (≤ 20 files) returns
   `{filebase, files}`.
 - View link: `create_token({type: "filebase_view", filebase_id,
   valid_for_hours})` (≤ 24 h) opens an app FileBase without signing in.
   Knowledge FileBases are refused.
-- The ttai-agent-apps skill covers the app package and the `controls` contract.
+- The ttai-agent-apps skill covers the app package and the README contract.
 
 ## Tool notes
 

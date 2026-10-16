@@ -1,118 +1,117 @@
 # App structure
 
-How an Agent Desktop app package is laid out and described.
+How an Agent Desktop app package is laid out, what each file must hold, and how
+its README briefs the live agent. How the app reads its data and updates on
+screen: [runtime.md](runtime.md).
 
 ## Contents
 
 - Package layout
-- `spec.json`
-- Controls
-- Code vs data
+- Files
+- README.md
 - Worked example: idea board
-- Limits
 
 ## Package layout
 
 ```text
 <app_name>/
-├── README.md        # entry point: what the app shows, which file to edit
-├── spec.json        # manifest; server-kept, you add controls
+├── README.md        # the agent's manual; read with desktop_info
+├── package.json     # optional: extra packages from the allowlist
 ├── src/
 │   └── App.tsx      # fixed render code; default-exports the root component
 └── data/
-    └── board.json   # the control panel the agent edits
+    └── board.json   # the file the live agent rewrites
 ```
 
-Tool calls use package-relative paths (`src/App.tsx`). Only `root` and the
-globs inside `spec.json` carry the `/<app_name>` prefix the host mounts. The
-live agent reads `README.md` with `desktop_info("<app_name>")`.
+There is no manifest: the backend lists the package's files. Tool calls use
+package-relative paths (`src/App.tsx`). The app root is always `/<app_name>`;
+the live agent's tools address `/<app_name>/data/…` and write only there.
 
-## `spec.json`
+## Files
 
-The server rewrites `spec.json` on every write. Send only the keys you author;
-the rest are set or defaulted.
+| File           | Required         | Rule                                                                                                                                                                      |
+| -------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/App.tsx`  | yes              | Default-exports a React 18 component that takes no props. Other `src/**` modules are free. The live agent never edits `src/`.                                             |
+| `data/**`      | for agent writes | The only paths the live agent can write (`<root>/data/`). Read only through `import files from "./desktop-files"`. Keep each file a few KB.                               |
+| `README.md`    | yes              | The agent's manual: data contract, controls, rules (see below). The live agent reads it with `desktop_info("<app_name>")`; it is not in the system prompt.                |
+| `package.json` | no               | `dependencies` from this allowlist only: `yaml`, `marked`, `mermaid`, `dompurify`, `lucide-react`. React 18 is forced; any other package is dropped and its import fails. |
 
-| Field                       | Source                                                       |
-| --------------------------- | ------------------------------------------------------------ |
-| `appName`, `version`        | Server: the FileBase `name`, `1`                             |
-| `files`                     | Server: the package tree, synced on each write               |
-| `title`, `description`      | Defaulted from the FileBase; override only to differ         |
-| `root`                      | Defaulted to `/<app_name>`                                   |
-| `filesystem.glob`           | Defaulted to `/<app_name>/**/*`                              |
-| `filesystem.editableGlobs`  | Default: the whole app. Set the exact data file              |
-| `filesystem.preferredPaths` | The one file to rewrite most often                           |
-| `filesystem.coreFileGlobs`  | Files the agent must not touch (`/<app_name>/src/**/*`)      |
-| `instructions`              | Authoring notes, read on demand by the agent                 |
-| `controls`                  | How to operate the app; injected into the prompt             |
+- No `spec.json`: it is not read, and a write that includes one gets a `warning`.
+- Reserved paths: the runtime supplies `src/index.tsx` (mounts `App`),
+  `src/desktop-files.ts` (the data API), `src/desktop-data.json`, and
+  `index.html`, and rebuilds `package.json`. An app's own file at one of these
+  paths is replaced.
+- Every file is stored as text. No images or fonts as files: inline SVG, data
+  URIs, or a CSS `@import`.
+
+## README.md
+
+The agent's manual, and the only place agent guidance lives. Sections, in order:
+
+```markdown
+# Title
+One-line description.
+
+## Data
+The `data/` files and the shape of each.
 
 ## Controls
+Which file to write to drive the running app, and how.
 
-`controls` is the app's operating manual for the live agent. When a Scenario
-enables the app with `add_to_system_prompt: true`, every line lands in the
-system prompt under the app's title and tool prefix, so the agent knows how to
-drive it without calling anything first. `instructions` stay for authoring and
-are only read on demand.
+## Rules
+What the agent must never do.
+```
+
+- The agent's prompt carries the app's title, root and description (from
+  `create_filebase`). The README is not in the prompt: the agent reads it with
+  `desktop_info("<app_name>")`, which returns the README and the file list.
+- The agent reads the data files it is about to change, then writes whole files
+  under `<root>/data/`. It never edits `src/`.
+- There is no `spec.json` and no manifest: the backend lists the files, and the
+  root is `/<app_name>`. A write that includes `spec.json` returns a `warning`
+  ("spec.json is not read; put agent guidance in README.md"); move the guidance
+  into the README and `delete: ["spec.json"]`.
 
 <details>
-<summary>Control lines that work</summary>
+<summary>Control and rule lines that work</summary>
 
 - Name the file to edit and forbid everything else.
 - Describe each data operation in one line: set the topic, add an item, move an
   item (keep its id).
 - Say how ids are formed (short, stable) and that the whole file is rewritten
   each time.
+- Say "write the file, then speak", so the screen changes as the agent says it.
+- If anything is clickable, say the agent never sees clicks and must ask the
+  learner what they picked.
 - Keep each line imperative and under ~20 words.
 
 </details>
 
-## Code vs data
-
-- **Code** (`src/**`): fixed render logic in a sandboxed React 18 runtime.
-  `src/App.tsx` default-exports the root component. Only `react` and `react-dom`
-  are available; the runtime supplies its own `package.json`. Code changes take
-  effect in new sessions.
-- **Data** (one file under `data/`): one small, flat JSON file that `App.tsx`
-  imports (`import board from "../data/board.json"`). The agent rewrites the
-  whole file, so keep the shape trivial: a title plus a list of items with `id`
-  and text. Avoid nesting beyond two levels.
-
-Render code reads the data file and draws it; it never writes it.
-
 ## Worked example: idea board
 
 <details>
-<summary>README.md, spec.json, data/board.json, and src/App.tsx</summary>
+<summary>README.md, data/board.json, and src/App.tsx</summary>
 
 ```markdown
 # Idea Board
 
-Columns of idea cards. Edit only `data/board.json`: `topic` plus
-`columns[].cards[]` of `{id, text}`. Never touch `src/`.
-```
+Columns of idea cards the agent fills while brainstorming.
 
-The authored `spec.json`; the server adds `appName`, `version`, `files`,
-`title`, `description`, and `root`:
+## Data
 
-```json
-{
-  "filesystem": {
-    "editableGlobs": ["/idea-board/data/board.json"],
-    "preferredPaths": ["/idea-board/data/board.json"],
-    "coreFileGlobs": ["/idea-board/src/**/*"]
-  },
-  "instructions": [
-    "Edit ONLY /idea-board/data/board.json; never touch src/.",
-    "To change the framing question, set the top-level topic.",
-    "To add an idea, append a card {id, text} to a column.",
-    "To move an idea, remove it from one column and add it to another, keeping its id.",
-    "Keep ids short and stable (c1, c2). Write the whole file each time."
-  ],
-  "controls": [
-    "Call idea_board_launch once when brainstorming starts.",
-    "Operate the board only by rewriting /idea-board/data/board.json with idea_board_write; send the whole file.",
-    "topic: the framing question. columns[].cards[]: {id, text}; move a card by changing its column, keep its id."
-  ]
-}
+`data/board.json`: `topic` (the framing question) and `columns[]` of
+`{id, title, cards[]}`; a card is `{id, text}`.
+
+## Controls
+
+- Call `idea_board_launch` once when brainstorming starts.
+- Drive the board only by rewriting `/idea-board/data/board.json` with `idea_board_write`: send the whole file, then speak.
+- Add a card to a column's `cards`; move a card by changing its column, keep its id.
+
+## Rules
+
+- Never touch `src/`.
+- Keep ids short and stable (c1, c2). Write the whole file each time.
 ```
 
 ```json
@@ -135,17 +134,46 @@ The authored `spec.json`; the server adds `appName`, `version`, `files`,
 ```
 
 ```tsx
-import board from "../data/board.json";
+import files from "./desktop-files";
+
+type Card = { id: string; text: string };
+type Board = {
+  topic?: string;
+  columns?: { id: string; title: string; cards: Card[] }[];
+};
+
+// Missing, half-written or wrongly shaped JSON reads as an empty board.
+function readBoard(): Board {
+  let raw: unknown;
+  try {
+    raw = JSON.parse(files["data/board.json"] ?? "{}");
+  } catch {
+    return {};
+  }
+  const board = raw as Board | null;
+  if (!Array.isArray(board?.columns)) return {};
+  const columns = board.columns.map((col) => ({
+    ...col,
+    cards: Array.isArray(col?.cards) ? col.cards : [],
+  }));
+  return { topic: board.topic, columns };
+}
 
 export default function App() {
+  // Read on every render: an agent write re-renders this component in place.
+  const board = readBoard();
+  const page = { fontFamily: "system-ui", padding: 24 };
+  if (!board.columns) return <p style={page}>Waiting for the agent…</p>;
   return (
-    <div style={{ fontFamily: "system-ui", padding: 24 }}>
+    <div style={page}>
       <h1>{board.topic}</h1>
-      <div style={{ display: "flex", gap: 16 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
         {board.columns.map((col) => (
           <section key={col.id}>
             <h2>{col.title}</h2>
-            {col.cards.map((card) => <p key={card.id}>{card.text}</p>)}
+            {col.cards.map((card) => (
+              <p key={card.id}>{card.text}</p>
+            ))}
           </section>
         ))}
       </div>
@@ -155,14 +183,3 @@ export default function App() {
 ```
 
 </details>
-
-## Limits
-
-- One write: 1–200 paths (files plus deletes). One read: up to 20 paths.
-- During a session the agent can write files up to 128 KB; keep data files to a
-  few KB.
-- Paths use letters, digits, `.`, `_`, `-`, and `/`; any other character becomes
-  `_`.
-- App names: lowercase letters, digits, and hyphens; 2–64 characters; starting
-  with a letter or digit.
-- Plain-text storage: no secrets or personal data.

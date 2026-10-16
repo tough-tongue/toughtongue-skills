@@ -5,9 +5,9 @@
     "expected_behavior": [
       "Resolves workspace scope with ttai:get_workspace_info (organizations) before ttai:create_filebase with kind app",
       "Separates fixed render code (src/App.tsx) from one flat JSON data file the agent edits",
-      "Writes README.md in the first ttai:write_filebase call and authors only spec.json controls, instructions, and filesystem (editableGlobs limited to the data file); the result's missing list is empty",
-      "Re-reads with ttai:get_resource (type filebases, paths) and checks the tree has every imported file",
-      "Returns a preview link from ttai:create_token with type filebase_view and says it expires"
+      "Writes README.md in the first ttai:write_filebase call (# Title, a one-line description, ## Data, ## Controls, ## Rules) and no spec.json; the result's missing list is empty and its warning is empty",
+      "Re-reads with ttai:get_resource (type filebases, paths) and checks the file listing has every imported file",
+      "Opens the result's view_url (or, when absent, a ttai:create_token filebase_view link) to confirm the app renders, and says the link expires"
     ]
   },
   {
@@ -16,7 +16,7 @@
     "expected_behavior": [
       "Resolves the Scenario ID and reads its current tools_config before writing",
       "Calls ttai:update_scenario with tools_config.tools.agent_desktop, copying the existing agent_desktop tool_settings keys because tool_settings is replaced whole",
-      "Sets tool_settings.apps as a map keyed by app name ({\"deal-room\": true}) and add_to_system_prompt true so the app controls reach the prompt",
+      "Sets tool_settings.apps as a map keyed by app name ({\"deal-room\": true}) and add_to_system_prompt true so the app reaches the prompt",
       "Says the change applies to new sessions only"
     ]
   },
@@ -24,10 +24,32 @@
     "skills": ["ttai-agent-apps"],
     "query": "Change the 'roadmap' app so the agent can highlight one item at a time.",
     "expected_behavior": [
-      "Finds the app with ttai:list_resources (type filebases, kind app) and reads spec.json and the data file before editing",
-      "Adds a highlight field to the data file and a controls line describing it, then writes both with ttai:write_filebase",
+      "Finds the app with ttai:list_resources (type filebases, kind app) and reads its README.md and the data file before editing",
+      "Adds a highlight field to the data file and a README ## Data / ## Controls line describing it, then writes both with ttai:write_filebase; adds no spec.json",
       "Confirms before overwriting files of an app a Scenario already uses",
       "Never prints a preview token outside the link handed to the user"
+    ]
+  },
+  {
+    "skills": ["ttai-agent-apps"],
+    "query": "Build a scoreboard app my quiz voice agent updates after every answer: team names, scores, and the current question number.",
+    "expected_behavior": [
+      "Reads references/app-structure.md and references/runtime.md before the first ttai:write_filebase",
+      "Puts the scoreboard state in one flat JSON file under data/ (for example data/score.json) and documents its fields in README.md",
+      "src/App.tsx reads it with import files from \"./desktop-files\" and parses files[\"data/…\"] inside the component on every render, with a waiting state for missing or invalid JSON",
+      "No src/ file imports from data/ (no \"../data/…\" module import); package.json, if written, lists only allowlisted packages",
+      "README ## Controls tell the agent to rewrite the whole data file with the app's _write tool before speaking"
+    ]
+  },
+  {
+    "skills": ["ttai-agent-apps"],
+    "query": "Build a flashcard app my language tutor agent flips through, then check that it actually works.",
+    "expected_behavior": [
+      "Writes no spec.json; README.md has # Title, a one-line description, ## Data (the data/ files and their shapes), ## Controls (which file to write to drive the app) and ## Rules",
+      "Gives the title and description to ttai:create_filebase; the live agent writes only whole files under data/",
+      "After ttai:write_filebase, opens the result's view_url in a browser to confirm the app compiles and renders; with &debug=1 reads compile errors (file:line) and whether an agent write patched in place or recompiled",
+      "If the result carries no view_url (older server), falls back to ttai:create_token with type filebase_view",
+      "If the write result has a warning such as 'spec.json is not read', moves that guidance into README.md and deletes spec.json"
     ]
   }
 ]

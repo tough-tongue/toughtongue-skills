@@ -164,14 +164,17 @@ Faces come from `ttai:list_resources` with resource type `avatar` (`type`
   `contextId` is set by the platform.
 - `google_slides` — slide demo; settings `embedUrl` (published embed link).
 - `knowledge_base_search` — only when `knowledge_base_ids` attaches a Knowledge
-  Base.
+  Base (legacy RAG). Knowledge FileBases need no `tools_config` entry: linking
+  `knowledge_filebase_ids` gives the agent `getKnowledgeBite` and
+  `listKnowledgeBites`.
 - `collect_data` — phone: record structured answers.
 - `cold_transfer` — phone: transfer to `tool_settings.transfer_to`.
 
 Phone (SIP) runs only server-side tools: `end_session`, `knowledge_base_search`,
 `collect_data`, `cold_transfer`, `ask_conductor` when an on-demand conductor
-message exists, and attached Custom Functions and MCP servers. Visual tools are
-unavailable on phone — never prescribe them there.
+message exists, `getKnowledgeBite` and `listKnowledgeBites` when
+`knowledge_filebase_ids` is set, and attached Custom Functions and MCP servers.
+Visual tools are unavailable on phone — never prescribe them there.
 
 | Tool                    | Cold call | Sales | Coaching          |
 | ----------------------- | --------- | ----- | ----------------- |
@@ -226,11 +229,16 @@ the live schema.
 
 ## Linked resources
 
-`knowledge_base_ids`, `custom_function_ids`, `pre_connect`, and `mcp_server_ids`
+`knowledge_base_ids` (legacy RAG), `knowledge_filebase_ids` (knowledge
+FileBases, see [tools.md](../mcp/tools.md#knowledge-filebases)),
+`custom_function_ids`, `pre_connect`, and `mcp_server_ids`
 (`catalog:<id>` or `custom:<id>`) attach existing resources. Discover safe IDs
 with `ttai:list_resources` (types in `ttai:read_guide`), or use IDs from a
-trusted workspace call. The server rejects IDs outside the workspace. MCP
-neither creates these resources nor reveals their sensitive configuration.
+trusted workspace call. The server rejects IDs the caller cannot see in the
+workspace (knowledge FileBases also allow public and featured ones). An ID list
+you send replaces the stored list. MCP creates only knowledge FileBases
+(`ttai:create_filebase`), not the other kinds, and never reveals their
+sensitive configuration.
 
 ## Key Files
 

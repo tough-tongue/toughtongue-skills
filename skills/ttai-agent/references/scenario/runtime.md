@@ -88,7 +88,9 @@ Every entry in `tools_config.tools.<tool_id>` has two booleans:
 - **Tool set** — browser: full catalog (card, mcq, browser, slides, ...). Phone
   (SIP): server-side only — `end_session`, `knowledge_base_search`,
   `collect_data`, `cold_transfer`, `ask_conductor` if an on-demand conductor
-  message is set, and attached Custom Functions and MCP servers.
+  message is set, `getKnowledgeBite` and `listKnowledgeBites` if
+  `knowledge_filebase_ids` is set, and attached Custom Functions and MCP
+  servers.
 - **Visual tools (card/mcq/slides)** — browser: work. Phone (SIP): silently
   unavailable — don't prescribe them for phone scenarios.
 

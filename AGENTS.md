@@ -68,7 +68,7 @@ skill is self-contained and follows the Agent Skills standard
   dependency declaration (omit `dependencies` only on a skill that never
   calls tools).
   Keep the MCP URL in sync with `.mcp.json`.
-- `skill-evals/` — 3 evaluation scenarios per skill; re-run before releases
+- `skill-evals/` — at least 3 evaluation scenarios per skill; re-run before releases
   that touch a SKILL.md or reference file.
 - MCP tool references in skills use the qualified `ttai:tool_name` form.
 - `plugin.json` (repo root) — Agent Plugins 1.0.0 manifest

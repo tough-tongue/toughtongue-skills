@@ -167,8 +167,8 @@ even when a client hides them.
   - `save_as_version` (1–100 characters) archives the prior state under that
     label before applying the change.
 - `get_resource(scenarios, id)` omits linked-resource IDs
-  (`knowledge_base_ids`, `custom_function_ids`, `pre_connect`); the
-  create/update response returns the full authoring state.
+  (`knowledge_base_ids`, `knowledge_filebase_ids`, `custom_function_ids`,
+  `pre_connect`); the create/update response returns the full authoring state.
 - Type rules: `default` is the normal agent; `super` needs `stages` with a
   non-empty first stage and flows, and a Landmass model; `quiz`, `coding`
   (`coding_question`), and `meet_assist` need their schema-defined
@@ -182,24 +182,52 @@ even when a client hides them.
 A FileBase is a folder of files with a `kind`: `app` (an Agent Desktop app) or
 `knowledge` (plain files an agent reads). Read them as type `filebases`.
 
-- `ttai:create_filebase(kind: app | knowledge, name, title, description?)` → an
-  empty FileBase in the current org or personal space. `name` is a slug, unique per space; for
-  an app it is the runtime name and the live agent's tool prefix.
+- `ttai:create_filebase(kind: app | knowledge, name, title, description?, visibility?)`
+  → an empty FileBase in the current org or personal space. `name` is a slug,
+  fixed at create, unique per space.
+- Access: an org FileBase is visible to every member; its creator and role
+  EDIT+ edit it. `visibility: "private"` keeps it to its creator; set it at
+  create (no MCP tool changes it). Featured FileBases are read-only (`403`).
+  List rows carry `visibility`, `featured`, `org_id` and `editable`; check
+  `editable` before writing.
 - `ttai:write_filebase(id, files, delete)` → whole-file upserts by relative path
-  (no leading `/`), then deletes. Returns the new `revision` and `missing`:
-  convention files the tree still lacks (`README.md`; `src/App.tsx` for an
-  app). Write the root `README.md` in the first call; it is the entry point
-  agents read.
-- App `spec.json` is server-kept: every write sets `appName`, `version`, and
-  `files`, and defaults the rest from the FileBase. Write it only to add
-  `controls`, `instructions`, or `filesystem` overrides.
-- List: `list_resources(filebases, filters: {kind: app}, query?)`. Read before
+  (no leading `/`), then deletes. The receipt has `kind`, `written`,
+  `deleted`, `files` (the tree after), `revision`, an advisory `warning`, and
+  `missing`: convention files still to add. Write the entry file in the first
+  call: `README.md` for an app, `index.md` for knowledge.
+- List: `list_resources(filebases, filters: {kind}, query?)`. Read before
   rewriting: `get_resource(filebases, id, paths: [...])` (≤ 20 files) returns
   `{filebase, files}`.
-- View link: `create_token({type: "filebase_view", filebase_id,
-  valid_for_hours})` (≤ 24 h) opens an app FileBase without signing in.
-  Knowledge FileBases are refused.
-- The ttai-agent-apps skill covers the app package and the `controls` contract.
+- Apps: `README.md` (the agent's manual), `src/App.tsx`, and `data/**` the
+  live agent rewrites; no `spec.json`. Results carry `view_url`, the preview
+  page. Attach with the Scenario's `agent_desktop` tool. The ttai-agent-apps
+  skill covers building, checking, and attaching apps.
+
+### Knowledge FileBases
+
+Not the legacy Knowledge Base (`knowledge-bases`, `knowledge_base_ids`, tool
+`knowledge_base_search`), which is created in the web app only.
+
+- Entry: root `index.md`, not `README.md`: what the base covers and which file
+  answers what, linking every other file. Keep it under 4 KB; a short index is
+  inlined in the agent's prompt.
+- Workflow: the user attaches PDFs or docs → distill them into focused
+  markdown files plus `index.md` → `create_filebase(kind: knowledge)` →
+  `write_filebase` (index first) → confirm, then link the id on the Scenario.
+- Link: `knowledge_filebase_ids` on `create_scenario` / `update_scenario`
+  replaces the whole list, and a Scenario read omits it. Keep the ids the last
+  create/update response showed. Current list unknown → say linking replaces
+  any attached knowledge and get a go-ahead. Each id must be visible to you
+  (yours, your org's, public, or featured; else `400`). Find featured bases
+  with `list_resources(filebases, filters: {kind: knowledge})`.
+- Sharing: the Scenario link is the grant. Anyone who can run the Scenario has
+  the agent read the base, whatever its visibility. No `view_url` or
+  `filebase_view` link.
+- Runtime: no `tools_config` entry needed. The prompt names each linked base;
+  the agent gets two tools:
+  - `getKnowledgeBite(filepath, start?, lines?)` reads a line window of
+    `<base name>/<path>`; a bare base name reads `index.md`.
+  - `listKnowledgeBites(base)` lists the base's files with sizes.
 
 ## Tool notes
 
@@ -243,8 +271,8 @@ A FileBase is a folder of files with a `kind`: `app` (an Agent Desktop app) or
   - `type: "scenario_access"` — `scenario_id`, `valid_for_hours` (1–168),
     optional `email` or `self_billed: true` (runs and bills as you; omit
     `email`). `url` is an iframe embed.
-  - `type: "filebase_view"` — an app `filebase_id`, `valid_for_hours` (≤ 24).
-    `url` opens the app view.
+  - `type: "filebase_view"` — an app `filebase_id`, `valid_for_hours`
+    (≤ 24). `url` opens the app without a sign-in.
 - `ttai:authenticate_browser(req)` needs edit access and a Scenario whose `browser`
   tool is registered. It returns a single-use `embed_url` (about 20 minutes)
   where a human logs in on the Scenario's saved browser profile; logins persist

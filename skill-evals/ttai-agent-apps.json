@@ -4,10 +4,10 @@
     "query": "Build a checklist app my sales voice agent can tick off during a call, and give me the link.",
     "expected_behavior": [
       "Resolves workspace scope with ttai:get_workspace_info (organizations) before ttai:create_filebase with kind app",
-      "Separates fixed render code (src/App.tsx) from one flat JSON data file the agent edits",
-      "Writes README.md in the first ttai:write_filebase call and authors only spec.json controls, instructions, and filesystem (editableGlobs limited to the data file); the result's missing list is empty",
+      "Separates fixed render code (src/App.tsx) from one flat JSON data file under data/ that the agent edits",
+      "Writes README.md in the first ttai:write_filebase call (# Title, a one-line description, ## Data, ## Controls, ## Rules); the receipt's missing list is empty",
       "Re-reads with ttai:get_resource (type filebases, paths) and checks the tree has every imported file",
-      "Returns a preview link from ttai:create_token with type filebase_view and says it expires"
+      "Opens the result's view_url to confirm the app renders, and hands the user that link (a ttai:create_token filebase_view link only when view_url is absent or the user wants to share it)"
     ]
   },
   {
@@ -16,18 +16,52 @@
     "expected_behavior": [
       "Resolves the Scenario ID and reads its current tools_config before writing",
       "Calls ttai:update_scenario with tools_config.tools.agent_desktop, copying the existing agent_desktop tool_settings keys because tool_settings is replaced whole",
-      "Sets tool_settings.apps as a map keyed by app name ({\"deal-room\": true}) and add_to_system_prompt true so the app controls reach the prompt",
-      "Says the change applies to new sessions only"
+      "Sets tool_settings.apps as a map keyed by app name ({\"deal-room\": true}) and add_to_system_prompt true so the prompt lists the app",
+      "Confirms before the update and says the change applies to new sessions only"
     ]
   },
   {
     "skills": ["ttai-agent-apps"],
     "query": "Change the 'roadmap' app so the agent can highlight one item at a time.",
     "expected_behavior": [
-      "Finds the app with ttai:list_resources (type filebases, kind app) and reads spec.json and the data file before editing",
-      "Adds a highlight field to the data file and a controls line describing it, then writes both with ttai:write_filebase",
+      "Finds the app with ttai:list_resources (type filebases, kind app) and reads its README.md and the data file before editing",
+      "Adds a highlight field to the data file and a README ## Data / ## Controls line describing it, then writes both with ttai:write_filebase",
       "Confirms before overwriting files of an app a Scenario already uses",
+      "If the write is refused, says only the creator or an org editor (role EDIT+) can edit the app, and that featured apps are read-only",
       "Never prints a preview token outside the link handed to the user"
+    ]
+  },
+  {
+    "skills": ["ttai-agent-apps"],
+    "query": "Build a scoreboard app my quiz voice agent updates after every answer: team names, scores, and the current question number.",
+    "expected_behavior": [
+      "Reads references/app-structure.md and references/runtime.md before the first ttai:write_filebase",
+      "Puts the scoreboard state in one flat JSON file under data/ (for example data/score.json) and documents its fields in README.md ## Data",
+      "src/App.tsx reads it with import files from \"./desktop-files\" and parses files[\"data/…\"] inside the component on every render, with a waiting state for missing or invalid JSON",
+      "No src/ file imports from data/ (no \"../data/…\" module import); package.json, if written, lists only allowlisted packages",
+      "README ## Controls tell the agent to rewrite the whole data file with desktop_write before speaking"
+    ]
+  },
+  {
+    "skills": ["ttai-agent-apps"],
+    "query": "Build a flashcard app my language tutor agent flips through, then check that it actually works.",
+    "expected_behavior": [
+      "Writes README.md with # Title, a one-line description, ## Data (the data/ files and their shapes), ## Controls (how the agent drives the app) and ## Rules; the title and description go to ttai:create_filebase",
+      "Writes no manifest and no other agent-guidance file; the live agent writes only whole files under data/",
+      "After ttai:write_filebase, opens the result's view_url in a browser to confirm the app compiles and renders",
+      "With ?debug=1 reads the Events: compile errors (path:line:col), and whether an agent data write patched in place (sync) or recompiled",
+      "If the result carries no view_url, falls back to ttai:create_token with type filebase_view"
+    ]
+  },
+  {
+    "skills": ["ttai-agent-apps"],
+    "query": "Build a quiz-night app where the learner taps an answer and my voice agent reacts out loud. Keep it visible only to me.",
+    "expected_behavior": [
+      "Passes org_id from ttai:get_workspace_info when working in an organization and visibility private to ttai:create_filebase",
+      "src/App.tsx imports emit from \"./desktop-events\" (never written as a file) and emits an event with a name and small JSON data on the learner's tap, with reply true so the agent is asked to answer",
+      "Emits only from the click handler, never from an effect on files or a data patch; binds no Space or Enter key and blurs the button after the click",
+      "README ## Controls list the event with its data and what the agent does, and say to write the next question to the data file after reacting",
+      "Says that attaching the app to a Scenario is how others run it, and confirms before ttai:update_scenario"
     ]
   }
 ]

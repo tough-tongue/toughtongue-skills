@@ -78,8 +78,8 @@ is 1–168 (default 1). The response carries `type`, `token`, `expires_at`, and
 
 `ttai:create_token` takes one `request` with `type: "scenario_access"`
 (`scenario_id`, `valid_for_hours`, optional `email`) and decides who runs the
-Scenario with the token. (`type: "filebase_view"` instead links a FileBase; see
-the MCP tools reference.)
+Scenario with the token. (`type: "filebase_view"` instead links an app
+FileBase; see the MCP tools reference.)
 
 - No `email`: an anonymous runner. With `email`: a specific runner (see below).
 - `self_billed: true` (no `email`): the caller runs it; usage bills to the

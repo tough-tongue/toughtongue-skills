@@ -23,7 +23,8 @@ Each resource: what it is, then what MCP can do with it.
 - **FileBase** — a folder of files: an Agent Desktop app (kind `app`) or
   agentic knowledge (kind `knowledge`). MCP: type `filebases`;
   `ttai:create_filebase` / `ttai:write_filebase`. Apps: the `ttai-agent-apps`
-  skill.
+  skill. Knowledge: attach by ID in `knowledge_filebase_ids`; see
+  [../mcp/tools.md](../mcp/tools.md#knowledge-filebases).
 
 ## Runs and results
 
@@ -48,8 +49,9 @@ How runs start: [scenario-engine.md](scenario-engine.md).
   `ttai:create_token` (`scenario_access`), for a runner or for yourself.
 - **Custom Function** — HTTP function a Scenario can call. MCP: type
   `custom-functions`; attach by ID.
-- **Knowledge Base** — legacy indexed documents a Scenario can search. MCP:
-  type `knowledge-bases`; attach by ID.
+- **Knowledge Base** — legacy RAG: uploaded documents the agent searches with
+  `knowledge_base_search`. MCP: type `knowledge-bases`; attach by ID in
+  `knowledge_base_ids`. Not a knowledge FileBase.
 - **Voice-agent MCP server** — external tools the agent can call mid-session.
   MCP: attach existing IDs via `mcp_server_ids`.
 - **Avatar** — system face: static, hybrid, or live. MCP: type `avatar`.

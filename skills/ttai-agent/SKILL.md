@@ -8,9 +8,10 @@ description: >-
   and rubrik through ttai:create_scenario and ttai:update_scenario. Also
   resolves the personal or organization workspace, checks plan and balance,
   places or cancels SIP calls, schedules or cancels meeting bots, mints
-  private Scenario links, and troubleshoots ttai MCP sign-in. Use when the
-  user wants a voice agent or practice Scenario created or improved ("create
-  a voice agent", "the agent ends calls too early", "make it sound more
+  private Scenario links, grounds a Scenario in the user's documents with
+  knowledge FileBases, and troubleshoots ttai MCP sign-in. Use when the user
+  wants a voice agent or practice Scenario created or improved ("create a
+  voice agent", "the agent ends calls too early", "make it sound more
   natural"), a call placed, a meeting bot sent, or a Tough Tongue AI account
   question answered. Not for reports across many sessions
   (ttai-session-analyst) or browser demo steps (ttai-browser-demo-builder).
@@ -102,6 +103,9 @@ the job, the file, and when to read it.
   family, pipeline, voice.
 - **Set controls** — [scenario/control.md](references/scenario/control.md).
   `strategy`, `appearance`, `tools_config`, analysis, links.
+- **Answer from the user's documents** —
+  [mcp/tools.md](references/mcp/tools.md#knowledge-filebases). PDFs or docs →
+  knowledge FileBase → `knowledge_filebase_ids`.
 - **Write the rubric** — [scenario/rubric.md](references/scenario/rubric.md).
   `rubrik`, `processed_rubrik`, who is scored.
 - **Diagnose runtime behavior** —

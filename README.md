@@ -7,12 +7,19 @@ workspace. Build voice agents that call, demo, screen, and book. Build
 roleplays that get you ready for negotiations, interviews, and coaching
 conversations. Then improve both from what happened on real calls.
 
-Works in Claude Code, Cursor, Codex, Copilot, VS Code, claude.ai, and ChatGPT.
+Works in ChatGPT, Claude, Claude Code, Cursor, Codex, Copilot, and VS Code.
+
+<!-- Walkthrough video: open this file in GitHub's web editor and drop the
+     .mp4 on the line below; GitHub inserts a URL that renders as a player. -->
 
 ## Install
 
-One command sets up every coding agent on your machine (Claude Code, Cursor,
-Codex, Copilot CLI, VS Code):
+**ChatGPT or Claude (fastest):** install the official Tough Tongue AI plugin
+from the [MCP page](https://app.toughtongueai.com/docs/mcp). One click, sign in
+once, no terminal.
+
+**Coding agents:** one command sets up every one on your machine (Claude Code,
+Cursor, Codex, Copilot CLI, VS Code):
 
 ```bash
 npx plugins add tough-tongue/toughtongue-skills
@@ -21,10 +28,24 @@ npx plugins add tough-tongue/toughtongue-skills
 Restart your agent. The first Tough Tongue AI action opens a browser sign-in;
 approve it once. No API key needed.
 
-No terminal? **claude.ai and Claude Desktop**: Settings > Connectors > Add
-custom connector, name it `Tough Tongue AI`, paste
+<details>
+<summary>claude.ai and Claude Desktop, latest version</summary>
+
+The official plugin can run behind this repo while a new version is in
+review (see [FAQ](#faq)). To connect to the live server directly: Settings >
+Connectors > Add custom connector, name it `Tough Tongue AI`, paste
 `https://api.toughtongueai.com/api/public/mcp`, and approve the sign-in.
-**ChatGPT**: Settings > Apps, find **Tough Tongue AI**, and connect.
+
+</details>
+
+<details>
+<summary>ChatGPT, latest version</summary>
+
+Business, Enterprise, and Edu workspaces can publish their own copy of the
+app from the live server instead of waiting on the directory. Steps:
+[clients.md](skills/ttai-agent/references/mcp/clients.md#web-connectors).
+
+</details>
 
 <details>
 <summary>Claude Code</summary>
@@ -161,8 +182,9 @@ flowchart LR
   linkStyle default stroke-width:1.5px
 ```
 
-Four skills tell your agent how to do the work. The hosted MCP server lets it
-act in your personal or organization workspace. The plugin installs both.
+Four skills tell your agent how to do the work. The hosted MCP server (15
+tools) lets it act in your personal or organization workspace. The plugin
+installs both.
 
 - [ttai-agent](skills/ttai-agent): create, edit, and refine Scenarios;
   workspaces, phone calls, meeting bots, and sharing.
@@ -196,20 +218,72 @@ codex plugin add toughtongue@toughtongue
 
 </details>
 
-<details>
-<summary>Troubleshooting</summary>
+## FAQ
 
-- **Sign-in or 401 errors**: finish the browser sign-in. Claude Code: `/mcp`.
-  Codex: `codex mcp login ttai`. Cursor: Settings > MCP.
-- **A Tough Tongue AI tool is missing**: start a new chat; if it persists,
-  remove and re-add the MCP server.
-- **The agent explains but can't act**: the skills are installed but the MCP
-  server is not. Add it for your client
-  ([clients.md](skills/ttai-agent/references/mcp/clients.md)).
-- **A Scenario change doesn't show in a running call**: edits apply to new
-  sessions.
-- **Reinstall (Claude Code)**: `/plugin marketplace remove toughtongue-skills`,
-  then add the marketplace and install again.
+<details>
+<summary>Which install should I pick?</summary>
+
+Work in ChatGPT or Claude chat: the official plugin. Work in Claude Code,
+Cursor, or Codex: the coding-agent plugin. Both can be connected at the same
+time; they talk to the same workspace.
+
+</details>
+
+<details>
+<summary>The ChatGPT or Claude plugin is missing something this repo has. Why?</summary>
+
+Each new version of a directory plugin goes through OpenAI's or Anthropic's
+review before it goes live, so the listed plugin can run weeks behind this
+repo. The coding-agent plugin and a custom connector pull from this repo and
+the live server, so they are always current. The directory build also
+schedules meeting bots but does not place outbound phone calls; use a custom
+connector or a coding agent for calls.
+
+</details>
+
+<details>
+<summary>Do I need an API key?</summary>
+
+No. Every interactive client signs in through the browser once. A personal
+access token is only for headless use such as CI (see below).
+
+</details>
+
+<details>
+<summary>Sign-in or 401 errors</summary>
+
+Finish the browser sign-in. Claude Code: `/mcp`. Codex:
+`codex mcp login ttai`. Cursor: Settings > MCP.
+
+</details>
+
+<details>
+<summary>A Tough Tongue AI tool is missing</summary>
+
+Start a new chat; if it persists, remove and re-add the MCP server.
+
+</details>
+
+<details>
+<summary>The agent explains but can't act</summary>
+
+The skills are installed but the MCP server is not. Add it for your client
+([clients.md](skills/ttai-agent/references/mcp/clients.md)).
+
+</details>
+
+<details>
+<summary>A Scenario change doesn't show in a running call</summary>
+
+Edits apply to new sessions.
+
+</details>
+
+<details>
+<summary>Reinstall the plugin (Claude Code)</summary>
+
+`/plugin marketplace remove toughtongue-skills`, then add the marketplace and
+install again.
 
 </details>
 

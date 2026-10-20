@@ -9,7 +9,7 @@ conversations. Then improve both from what happened on real calls.
 
 Works in ChatGPT, Claude, Claude Code, Cursor, Codex, Copilot, and VS Code.
 
-https://github.com/user-attachments/assets/b7d2feff-b6aa-49e0-8ebc-066cf7090dc8
+https://github.com/user-attachments/assets/f0baa311-b453-4c96-b716-5c1e024552e7
 
 ## Install
 

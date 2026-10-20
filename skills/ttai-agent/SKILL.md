@@ -97,7 +97,10 @@ the job, the file, and when to read it.
   content.
 - **Write `ai_instructions`** —
   [scenario/ai-instructions.md](references/scenario/ai-instructions.md). Prompt
-  shape, opening, variables.
+  shape, opening, spoken-line rules.
+- **Personalize or branch a Scenario with variables** —
+  [scenario/dynamic-variables.md](references/scenario/dynamic-variables.md).
+  `{{ var }}` defaults, `case`/`if` variants, allow-lists, per-run facts.
 - **Pick `ai_model_config`** —
   [scenario/model-selection.md](references/scenario/model-selection.md). Model
   family, pipeline, voice.

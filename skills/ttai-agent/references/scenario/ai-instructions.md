@@ -11,6 +11,7 @@ Write it with `ttai:create_scenario` / `ttai:update_scenario`
 
 - What it is
 - Required shape
+- Spoken lines
 - Fundamental sections (not situation-specific)
 - Voice rules that always apply
 - Dynamic variables
@@ -34,21 +35,35 @@ outperform a long prompt with duplicated instructions.
 - Write as **speech**, not as a document — this is spoken aloud.
 - **One question per turn.** Never stack questions.
 - Name the party's role clearly: who the AI is, who the human is.
-- **Two beats then wait.** Identity / reason / permission → STOP → branch on the
-  reply. Do not collapse the opening into one breath.
+- **Two beats then wait** (AI-led openings: caller, coach, interviewer, demo).
+  Identity / reason / permission → STOP → branch on the reply. Do not collapse
+  the opening into one breath. A roleplay counterpart never introduces itself:
+  its opener is one bare line (see the sales-roleplay recipe).
 - **Follow the thread.** If they say something interesting, pursue it — do not
   jump phases robotically.
 - **Silence can be the job.** Meeting observers and notetakers stay quiet until
   addressed. Do not fill pauses.
-- Every `{{ var }}` has a missing-value fallback in the same file ("If
-  `lead_name` is blank, open with …"). An unset variable renders as empty text,
-  so the line around it breaks.
+- Every `{{ var }}` has a missing-value fallback: a `default:` filter or an
+  `{% if var != blank %}` branch ([dynamic-variables.md](dynamic-variables.md)).
+  An unset variable renders as empty text, so a bare line around it breaks.
 
-Do **not** put a quoted opening line anywhere. Runtime greets with "your opening
-line" from FLOW when `skip_auto_start` is false. Write Beat 1 as a directive in
-FLOW ("Start with: … Then STOP and wait."). Quoted openings are delivered
-robotically and restart on interruption. There is no
-`strategy.welcome_instructions` field — do not send one.
+## Spoken lines
+
+- **Suggested phrasing goes in plain text.** No quotation marks, no code
+  fences, marked `tone only`. The model rephrases a plain, labelled example;
+  it recites a quoted or fenced one word for word, every session, and restarts
+  it when interrupted.
+- **Quote only what must be exact**, marked `word for word, because …` (a
+  compliance disclosure, a client's tested script, a probe the rubric keys
+  on). An unlabelled quote is read as verbatim; treat it as a bug.
+- **Never quote the opening line.** Runtime greets with "your opening line"
+  from FLOW when `skip_auto_start` is false. Write Beat 1 as a directive
+  ("Start with: … Then STOP and wait."). Quoted openings restart on
+  interruption. There is no `strategy.welcome_instructions` field — do not
+  send one.
+- **Anti-robotic rule.** Never repeat the same sentence twice; vary
+  acknowledgments. Put one concrete varied-acknowledgment example in STYLE,
+  labelled tone only — not a paragraph of examples.
 
 ## Fundamental sections
 
@@ -78,8 +93,8 @@ Never reveal you are an AI unless asked. Never speak tool names. Never
 invent facts that contradict CONTEXT.
 
 ## STYLE
-Spoken cadence. Short sentences. Fragments fine. What "good" sounds like
-in one good/bad pair.
+Spoken cadence. Short sentences. Fragments fine. Never repeat the same
+sentence twice; vary acknowledgments. One good/bad pair, labelled tone only.
 ```
 
 Situation files add domain sections (outcomes, objections, rubric target) on top
@@ -103,8 +118,11 @@ structure; that contract supplies its content.
 ## Dynamic variables
 
 `{{ var_name }}` is filled per run: `?t_var_name=` on the run link (the web app
-otherwise prompts the user), or `dynamic_vars` on calls and meeting bots.
-Document the fallback next to the first use. Prefer `appearance.voice` for
+otherwise prompts the user), or `dynamic_vars` on calls and meeting bots. The
+field runs full Liquid, so a missing value takes a `default:` filter or an
+`{% if %}` block, and one Scenario can branch on a variable (persona level,
+language, offer). Patterns, limits, and a worked example:
+[dynamic-variables.md](dynamic-variables.md). Prefer `appearance.voice` for
 Realtime. Cascade `tts_voice_id` lives in
 [model-selection.md](model-selection.md).
 
@@ -112,6 +130,7 @@ Realtime. Cascade `tts_voice_id` lives in
 
 - Model / voice stamp — [model-selection.md](model-selection.md)
 - Strategy, tools, appearance — [control.md](control.md)
+- Variables and branching — [dynamic-variables.md](dynamic-variables.md)
 - Cold call / SDR — [../recipes/cold-call.md](../recipes/cold-call.md)
 - Sales roleplay — [../recipes/sales-roleplay.md](../recipes/sales-roleplay.md)
 - Coaching — [../recipes/coaching.md](../recipes/coaching.md)
@@ -129,3 +148,4 @@ Realtime. Cascade `tts_voice_id` lives in
 - [model-selection.md](model-selection.md) — model stamps
 - [control.md](control.md) — strategy and tools
 - [workflow.md](workflow.md) — create/update procedure
+- [dynamic-variables.md](dynamic-variables.md) — variables and branching

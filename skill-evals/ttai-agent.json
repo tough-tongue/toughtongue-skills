@@ -149,5 +149,38 @@
       "Links the FileBase id via knowledge_filebase_ids on ttai:update_scenario after confirming with the user",
       "Explains the agent gets getKnowledgeBite(filepath, start?, lines?) as <base name>/<path> and listKnowledgeBites(base), and that anyone who can run the scenario can have the agent read the base"
     ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Create a practice scenario where my reps cold-call a small-business owner who filled out a form last month. The AI plays the owner.",
+    "expected_behavior": [
+      "Classifies the scenario as sales roleplay (the human is the caller) and loads references/recipes/sales-roleplay.md, not the cold-call recipe",
+      "Gives the prospect one bare first line (\"Hello, who is this?\") marked word for word, with no self-introduction, reason for the call, or permission ask; keeps skip_auto_start true",
+      "Sets force_agent_to_speak false so the silence nudge stays in character, and adds a pitch-reception phase (two or three how-does-it-work questions) before the first objection",
+      "Leaves no unlabelled quoted dialogue in ai_instructions: example phrases are plain text marked tone only, and only word-for-word lines are quoted",
+      "Writes a rubric that evaluates the REP and calls ttai:create_scenario with an explicit tools_config including end_session"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Our cold-call agent sounds robotic and says the same 'Totally get it' line on every call. Scenario name is 'Payroll Demo Follow-up'. Fix it.",
+    "expected_behavior": [
+      "Resolves the Scenario by title with one ttai:list_resources(scenarios, query) call, then fetches it with ttai:get_resource(scenarios)",
+      "Diagnoses unlabelled quoted lines in ai_instructions as the cause, per references/scenario/ai-instructions.md (Spoken lines) and runtime.md",
+      "Strips the quotation marks and code fences from the branch and objection lines, keeps the wording and marks it tone only, and adds the anti-robotic STYLE rule (never repeat the same sentence; one varied-acknowledgment example, not a paragraph)",
+      "Does not add a paragraph of sample lines or switch system_instructions_template as a side effect",
+      "Applies a surgical ttai:update_scenario with id plus ai_instructions only, and reminds that edits affect new sessions only"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "I want one scenario that can play either a trusting first-time buyer or a researched sceptic, chosen when the rep starts the run.",
+    "expected_behavior": [
+      "Loads references/scenario/dynamic-variables.md and proposes one Scenario with a {% case level %} block on a variable (with a default), not two Scenarios",
+      "Explains how the value arrives: ?t_level= on the run link or dynamic_vars on calls and bots, and that the web run page asks for any referenced variable that is missing",
+      "States the two Liquid limits: values arrive as strings (convert with plus: 0 before a numeric comparison) and any Liquid error falls the text back to the raw template",
+      "Keeps the persona differences in character detail and resistance, with no unlabelled quoted dialogue",
+      "Creates via ttai:create_scenario and returns run links for both variants"
+    ]
   }
 ]

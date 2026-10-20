@@ -137,6 +137,9 @@ Use the matching template in
 - **Team performance:** "how is my team doing?"
 - **Scenario health:** "is this Scenario working?"
 - **Individual coaching:** one person, at most three focus areas
+- **Pattern map:** "what do prospects actually say?" — counterpart moves, red
+  flags, and persona pools from transcripts, handed to `ttai-agent` for a
+  Scenario build
 
 Every report states the population and window, the score summary, the top 3–5
 improvement areas with evidence, concrete actions, and `analytics_url` links for
@@ -195,7 +198,7 @@ per slide or section, evidence quote included.
 - [references/data-model.md](references/data-model.md): tools, parameters,
   limits, response fields, score scales, status values
 - [references/report-templates.md](references/report-templates.md): team,
-  Scenario health, and coaching report formats
+  Scenario health, coaching, and pattern-map formats
 - [references/ingest-and-reprocess.md](references/ingest-and-reprocess.md):
   `ttai:upload_session` ingest, `ttai:analyze_session` backfill,
   confirmation and polling

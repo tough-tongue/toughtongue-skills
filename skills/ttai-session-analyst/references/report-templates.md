@@ -8,6 +8,7 @@ Scores are on the 0–10 scale of `final_score` and `report_card[].score`.
 - Team performance report
 - Scenario health report
 - Individual coaching report
+- Pattern map (from call transcripts)
 
 ## Team Performance Report
 
@@ -115,3 +116,44 @@ ignoring answers; `learning_results` flags the same issue repeatedly.
 ```
 
 Keep it to one page. Three focus areas at most; more is a list, not coaching.
+
+## Pattern Map
+
+Use when the user wants a practice Scenario built from real calls ("what do
+prospects actually say?"). Pull transcripts for the population, fill this map,
+and hand it to the `ttai-agent` skill, which turns it into objections, persona
+pools, and rubric gates. A pattern makes the cut when it appears in at least
+three sessions; quote the best line heard, marked tone only, never as a script.
+
+```markdown
+# [Scenario or call type]: Pattern Map
+
+**Corpus**: [N] sessions, [from] – [to], [who the humans were]
+
+## Stages
+
+| # | Stage | What good looks like (session) | Common miss (session) |
+| - | ----- | ------------------------------ | --------------------- |
+
+## Counterpart moves (3+ sessions each)
+
+1. **"[what they say]"** — [n] sessions ([ids]). Beat it by: [the move]. Best
+   line heard (tone only): "[quote]" ([session])
+
+## Red flags (cap the score when present)
+
+| Pattern | Sessions | Example line |
+| ------- | -------- | ------------ |
+
+## Persona pools
+
+- **Level 1 ([n] sessions)**: [who they are, what they ask, what stops them].
+  Rotate: [2–3 profiles]. Moves pool: [numbers from the list above]
+- **Level 2 ([n] sessions)**: [the researched, guarded version]
+
+## Rubric seeds
+
+- Score the human per stage; weight the stages where sessions were won or lost
+- Red flags cap the score even when the outcome was good
+- Facts the human states must match [source]; an unsourced one costs points
+```

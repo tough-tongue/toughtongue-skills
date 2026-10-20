@@ -130,6 +130,9 @@ controllable TTS (Cartesia) + explicit STT/LLM. Load
 Overrides:
 
 - Cold call → Ocean only if Cascade / Cartesia is unavailable.
+- Cold call that is a long conversation with many back-and-forths → Cascade is
+  still the default; ask the user whether to try voice-to-voice (Landmass
+  `gemini-stable` or Galaxy). Results vary by team, so it is their call.
 - Coaching → Galaxy if Ocean is unavailable.
 - Sales also needs `skip_auto_start: true` (see [control.md](control.md)).
 

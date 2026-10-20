@@ -202,8 +202,10 @@ Each symptom lists its owner (where to fix), then the mechanism.
   add "If `firstname` is blank, open without a name."
 - **"Wrong accent / language drift"** — `appearance.language_code` +
   `transcribe_config`: both must match the locale.
-- **"AI sounds robotic"** — `ai_instructions` style rules: add ONE concrete
-  varied-acknowledgment example, not a paragraph.
+- **"AI sounds robotic"** — `ai_instructions` STYLE: apply the anti-robotic
+  rule in [ai-instructions.md](ai-instructions.md#spoken-lines) (vary
+  acknowledgments, ONE concrete example, not a paragraph) and remove unlabelled
+  quoted lines.
 - **"AI says 'end_session' / 'tool' aloud"** — GUARDRAILS section: single NEVER
   bullet.
 - **"Agent doesn't speak first"** — `strategy.skip_auto_start`: should be

@@ -87,9 +87,12 @@ flow: `name`, `instructions`; stage: `name`, `instructions`, `goal`, `role`).
 
 **Silence:** `silence_threshold` in ms (minimum 3000); `end_session: true` hangs
 up, `false` keeps the call alive; `force_agent_to_speak: true` injects a fixed
-check-in, `false` lets a small model decide. Practice default: 5000–8000,
-`end_session: false`, `force_agent_to_speak: true`. Observers and facilitators
-may want silence to stay silent — see the meeting recipe.
+check-in, `false` lets a small model write the nudge. Practice default:
+5000–8000, `end_session: false`. Roleplay counterparts (prospect, interviewer)
+use `force_agent_to_speak: false` so the nudge stays in character; AI-led
+callers use `true`, and outbound calls run lower thresholds (3000–5000) than
+other scenarios. Observers and facilitators may want silence to stay silent —
+see the meeting recipe.
 
 **Conductor messages:** `trigger` `"time"` (needs `time_seconds`) or
 `"on_demand"` (at most one; the agent calls it as a tool when it needs
@@ -98,11 +101,11 @@ re-alignment). `content_mode` `"instruction"` (verbatim, default) or `"thought"`
 `{{ transcript }}`). `end_turn: true` interrupts current speech. Do not send the
 retired `prefix`.
 
-| Situation      | `skip_auto_start` | Wrap-up timer | Opening                   |
-| -------------- | ----------------- | ------------- | ------------------------- |
-| Cold call      | `false`           | 300–450 s     | FLOW Beat 1 directive     |
-| Sales roleplay | `true`            | 600–900 s     | Prospect answers the call |
-| Coaching       | `false`           | 900–1200 s    | FLOW greeting + intro     |
+| Situation      | `skip_auto_start` | Silence nudge   | Wrap-up timer | Opening                                        |
+| -------------- | ----------------- | --------------- | ------------- | ---------------------------------------------- |
+| Cold call      | `false`           | fixed (`true`)  | 300–450 s     | FLOW Beat 1 directive                          |
+| Sales roleplay | `true`            | model (`false`) | 600–900 s     | Rep opens; prospect replies with one bare line |
+| Coaching       | `false`           | fixed (`true`)  | 900–1200 s    | FLOW greeting + intro                          |
 
 ## appearance
 
@@ -222,10 +225,11 @@ outbound calls: `enabled`, `voicemail.action` `leave_message`|`hangup`,
 ## Dynamic variables and auto-updates
 
 `{{ var }}` in instructions is filled per run: `?t_var=` on the run link,
-`dynamic_vars` on calls and bots. Every variable needs a missing-value fallback
-in `ai_instructions`. `auto_update_config.placeholders` fills `[[ key ]]`
-placeholders from a web search or URLs on a cache schedule; configure only from
-the live schema.
+`dynamic_vars` on calls and bots. The field runs full Liquid (`default:`
+filters, `{% if %}` and `{% case %}` branches); patterns and limits in
+[dynamic-variables.md](dynamic-variables.md). `auto_update_config.placeholders`
+fills `[[ key ]]` placeholders from a web search or URLs on a cache schedule;
+configure only from the live schema.
 
 ## Linked resources
 
@@ -243,3 +247,4 @@ send replaces the stored list. Of these, MCP creates only knowledge FileBases
 - [model-selection.md](model-selection.md) — `ai_model_config`
 - [ai-instructions.md](ai-instructions.md) — instruction shape
 - [runtime.md](runtime.md) — how controls behave at runtime
+- [dynamic-variables.md](dynamic-variables.md) — variables and branching

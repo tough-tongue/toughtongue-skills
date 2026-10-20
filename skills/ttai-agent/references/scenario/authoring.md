@@ -110,6 +110,13 @@ and rubric must evaluate the same person and outcome.
 - Refine from session evidence. Change the narrowest FLOW, guardrail, tool rule,
   or rubric criterion that explains the failure; do not keep layering more prose
   onto a weak scenario.
+- Refine from a pattern map, not one call. With transcripts or lost-deal notes
+  in hand, keep a counterpart move only when it appears in three or more
+  sessions, record the one best line that beat it (tone only), list the pushy
+  patterns as a red-flag gate that caps the score, and group counterparts into
+  persona pools by level (a trusting first-timer, a researched sceptic). The
+  map feeds the objections, the persona rotation, and the rubric.
+  Population-wide maps are the `ttai-session-analyst` skill's job.
 
 ## Corpus hygiene
 

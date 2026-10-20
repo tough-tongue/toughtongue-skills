@@ -9,8 +9,10 @@ conversations. Then improve both from what happened on real calls.
 
 Works in ChatGPT, Claude, Claude Code, Cursor, Codex, Copilot, and VS Code.
 
-<!-- Walkthrough video: open this file in GitHub's web editor and drop the
-     .mp4 on the line below; GitHub inserts a URL that renders as a player. -->
+[![Watch: MCP rebuilt from scratch. Leaner, token efficient, faster.](assets/mcp-walkthrough-cover.webp)](https://youtu.be/-8lZP3t1JIU)
+
+<!-- Native player: open this file in GitHub's web editor and drop the .mp4
+     on the line below the cover; GitHub inserts a URL that renders inline. -->
 
 ## Install
 

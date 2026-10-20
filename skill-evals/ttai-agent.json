@@ -157,7 +157,7 @@
       "Classifies the scenario as sales roleplay (the human is the caller) and loads references/recipes/sales-roleplay.md, not the cold-call recipe",
       "Gives the prospect one bare first line (\"Hello, who is this?\") marked word for word, with no self-introduction, reason for the call, or permission ask; keeps skip_auto_start true",
       "Sets force_agent_to_speak false so the silence nudge stays in character, and adds a pitch-reception phase (two or three how-does-it-work questions) before the first objection",
-      "Leaves no unlabelled quoted dialogue in ai_instructions: every quoted line is marked tone only or word for word, and the remaining moves are described",
+      "Leaves no unlabelled quoted dialogue in ai_instructions: example phrases are plain text marked tone only, and only word-for-word lines are quoted",
       "Writes a rubric that evaluates the REP and calls ttai:create_scenario with an explicit tools_config including end_session"
     ]
   },
@@ -167,7 +167,7 @@
     "expected_behavior": [
       "Resolves the Scenario by title with one ttai:list_resources(scenarios, query) call, then fetches it with ttai:get_resource(scenarios)",
       "Diagnoses unlabelled quoted lines in ai_instructions as the cause, per references/scenario/ai-instructions.md (Spoken lines) and runtime.md",
-      "Rewrites the quoted branches and objection replies as described moves or tone-only labelled examples, and adds the anti-robotic STYLE rule (never repeat the same sentence; one varied-acknowledgment example, not a paragraph)",
+      "Strips the quotation marks and code fences from the branch and objection lines, keeps the wording and marks it tone only, and adds the anti-robotic STYLE rule (never repeat the same sentence; one varied-acknowledgment example, not a paragraph)",
       "Does not add a paragraph of sample lines or switch system_instructions_template as a side effect",
       "Applies a surgical ttai:update_scenario with id plus ai_instructions only, and reminds that edits affect new sessions only"
     ]

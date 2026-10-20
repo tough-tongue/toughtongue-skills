@@ -85,8 +85,8 @@ call.
 
 Max 3 short sentences. State who you are, why you're calling, then STOP.
 
-- Open with the greeting and the name check (when a name is available) —
-  nothing before it.
+- Open with the greeting and the name check — suggested text: Hi [first_name]
+  (when name available) — nothing before it.
 - Keep it ultra-short — the shorter the better for TTS delivery.
 - **NEVER quote Beat 1.** Quotes make the agent deliver it robotically, and if
   interrupted it restarts the quoted block. Write a directive in FLOW. There is
@@ -105,15 +105,15 @@ about [topic]. Ask if they have 30 seconds. Then STOP and wait.
 
 ### Beat 2: Response Branching (its own turn — never combined with Beat 1)
 
-Write all four branches as moves, not lines:
+Script all four branches:
 
-- **YES / WARM** — thank them, set the expectation (a few quick questions,
-  about two minutes) → discovery.
-- **NO / NOT INTERESTED** — accept it in one line and thank them → follow the
-  `end_session` turn rule.
-- **BUSY** — acknowledge, offer two minutes now or a callback, ask which.
-- **HOSTILE** — apologise once, wish them a good day → follow the
-  `end_session` turn rule.
+- **YES / WARM** — Great! Just a few quick questions — two minutes. →
+  discovery.
+- **NO / NOT INTERESTED** — No worries! Thanks for your time. Have a great
+  day! → follow the `end_session` turn rule.
+- **BUSY** — Totally get it — two minutes, or I can call back. When works?
+- **HOSTILE** — My apologies for the interruption. Have a great day! → follow
+  the `end_session` turn rule.
 
 Example phrases anywhere in this recipe show tone and content. In
 `ai_instructions` label them `tone only` and never ask the agent to repeat them
@@ -138,8 +138,8 @@ cold call are compliance disclosures and a client's tested script
 
 - NEVER speak raw placeholders ("{{ lead_name }}") or filler words ("unknown",
   "N/A")
-- Name blank → ask whether you are speaking with the [role]
-- Name present → treat it as a guess: ask if this is [name]
+- Name blank → Hi, am I speaking with [role]?
+- Name present → treat as guess: Hi, is this [name]?
 - Address/context partial → reference what you have, ask to confirm
 - Address/context blank → "a [product/property] I have on record under your
   name"
@@ -154,21 +154,17 @@ cold call are compliance disclosures and a client's tested script
 - NEVER echo back their specific words (STT may have garbled them).
 - If unclear, ask to repeat — max twice, then skip.
 - Never correct or challenge answers.
-- If they decline: accept it in a few words, skip and continue.
+- If they decline: No problem at all — skip and continue.
 
 ### Progressive disclosure responses
 
 Each data point gets a brief, contextual acknowledgment before the next
-question. Example pair, tone only:
+question (tone only):
 
-```
-# BAD — flat and robotic:
-"Got it. Next question: what's your budget?"
-
-# GOOD — brief warmth + natural flow:
-"Got it — at that scale the right tools can really make a difference.
-Quick follow-up: what are you currently using for that?"
-```
+- BAD — flat and robotic: Got it. Next question: what's your budget?
+- GOOD — brief warmth + natural flow: Got it — at that scale the right tools
+  can really make a difference. Quick follow-up: what are you currently using
+  for that?
 
 Typical data points (5–6 per scenario): context/size, current solution, biggest
 pain point, timeline/urgency, budget or decision authority, preferred next step.
@@ -181,11 +177,11 @@ Core pattern: **Acknowledge → Reframe → Check In**
 
 - **"Not interested"** — probe: priority issue or timing? Accept a firm no
   gracefully.
-- **"Already have a solution"** — not here to replace it; ask what is not quite
-  working.
-- **"Send me an email"** — agree, then ask one quick detail so the right
-  material goes out.
-- **"Too busy"** — under two minutes now, or ask when this week works.
+- **"Already have a solution"** — Not looking to replace — anything not quite
+  working?
+- **"Send me an email"** — Happy to — one quick detail so I send the right
+  stuff?
+- **"Too busy"** — Under two minutes — or when's better this week?
 - **"How'd you get my number?"** — state the source honestly. Offer removal if
   preferred.
 
@@ -409,7 +405,7 @@ Same strategy / tools / session_analysis as above. No cascade-tts blocks.
 | Discovery Q on the opening         | Wait for a response branch              |
 | Two questions in one turn          | One question per turn                   |
 | Echoing the lead verbatim          | Brief ack + context                     |
-| Unlabelled quoted lines            | Describe the move, or label tone only   |
+| Quoted or fenced example lines     | Plain text, labelled tone only          |
 | Pushing past "not interested"      | Graceful close → `end_session` timing   |
 | Rubric scoring the AI              | Score the LEAD                          |
 | Breaks when a `{{ var }}` is blank | Missing-data fallbacks                  |
@@ -421,9 +417,8 @@ Same strategy / tools / session_analysis as above. No cascade-tts blocks.
 
 ## Quality Checklist
 
-- [ ] Two-beat FLOW opening; 4 branches written as moves; 3 outcomes; one Q
-      per turn
-- [ ] Quoted lines labelled tone only / word for word
+- [ ] Two-beat FLOW opening; 4 branches; 3 outcomes; one Q per turn
+- [ ] Example lines unquoted, labelled tone only / word for word
 - [ ] PERSONALITY/TONE, HANDLING QUESTIONS, EDGE CASES, NEVER list
 - [ ] Missing-data fallbacks; compliance if regulated
 - [ ] `end_session` + `skip_auto_start: false` + talkative silence + conductor

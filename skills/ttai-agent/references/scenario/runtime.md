@@ -204,8 +204,8 @@ Each symptom lists its owner (where to fix), then the mechanism.
   `transcribe_config`: both must match the locale.
 - **"AI sounds robotic"** — `ai_instructions` STYLE: apply the anti-robotic
   rule in [ai-instructions.md](ai-instructions.md#spoken-lines) (vary
-  acknowledgments, ONE concrete example, not a paragraph) and remove unlabelled
-  quoted lines.
+  acknowledgments, ONE concrete example, not a paragraph); strip quotation
+  marks and code fences from example lines and mark them tone only.
 - **"AI says 'end_session' / 'tool' aloud"** — GUARDRAILS section: single NEVER
   bullet.
 - **"Agent doesn't speak first"** — `strategy.skip_auto_start`: should be

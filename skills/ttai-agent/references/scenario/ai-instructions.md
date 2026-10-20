@@ -49,15 +49,13 @@ outperform a long prompt with duplicated instructions.
 
 ## Spoken lines
 
-- **Describe dialogue by default.** Write the move and its constraints
-  ("acknowledge in a few words, offer two minutes now or a callback, ask
-  which"), not the sentence. A described move comes out differently every
-  session and survives interruption.
-- **Every quoted line carries a label.** `tone only, rephrase` for register
-  examples; `word for word, because …` for the few lines that must be exact (a
-  compliance disclosure, a client's tested script, a probe the rubric keys on).
-  An unlabelled quote is read as verbatim and delivered robotically. Treat it
-  as a bug.
+- **Suggested phrasing goes in plain text.** No quotation marks, no code
+  fences, marked `tone only`. The model rephrases a plain, labelled example;
+  it recites a quoted or fenced one word for word, every session, and restarts
+  it when interrupted.
+- **Quote only what must be exact**, marked `word for word, because …` (a
+  compliance disclosure, a client's tested script, a probe the rubric keys
+  on). An unlabelled quote is read as verbatim; treat it as a bug.
 - **Never quote the opening line.** Runtime greets with "your opening line"
   from FLOW when `skip_auto_start` is false. Write Beat 1 as a directive
   ("Start with: … Then STOP and wait."). Quoted openings restart on

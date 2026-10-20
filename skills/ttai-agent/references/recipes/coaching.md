@@ -127,7 +127,7 @@ Session: 10-15 min. 4-8 case studies, pick 3-4 randomly. Visual: `card`
 ### 4. Discuss (2-4 min) — "Why?" before reveal, probe follow-ups
 ### 5. Practice Pitch (3-5 min) ⭐ — Trainee speaks, coach plays customer,
     repeat until natural
-### 6. Teach (1-3 min) — What a strong response covers, good vs improve
+### 6. Teach (1-3 min) — Ideal script, good vs improve
 ### 7. Next or Wrap — After 3-4 scenarios, summarize and follow the closing
     turn rule
 ```
@@ -167,7 +167,7 @@ Case study template (one per scenario in the CONTENT section):
 - **Objection**: Exact words (natural language)
 - **Root cause**: Why they're really saying this
 - **Nuanced discussion points**: Point 1, Point 2, Point 3
-- **Strong response covers**: [the points, in the coach's own words]
+- **Best script**: "[Full ideal response]"
 - **Common mistakes**: Arguing, defensive, no next step
 ```
 

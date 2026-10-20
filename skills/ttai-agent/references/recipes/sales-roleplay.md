@@ -20,12 +20,12 @@ Key facts:
   [../scenario/model-selection.md](../scenario/model-selection.md).
 - Three call types: Cold Call, Warm Intro, Discovery Call — each has different
   opening behavior and termination risk. The prospect's first line is one bare
-  line ("Hello, who is this?" on a cold call), never an introduction
+  line (Hello, who is this? on a cold call), never an introduction
 - Pitch reception first: two or three how-does-it-work questions before any
   objection; guarded, but still talks like a person
 - Enforce strict resistance: ONE objection at a time, 2-3 follow-ups each
-- Quoted lines in this recipe are tone only. Label them so in `ai_instructions`
-  or describe the move
+- Example lines in this recipe are tone only: write them unquoted in
+  `ai_instructions` and label them so
   ([ai-instructions.md](../scenario/ai-instructions.md#spoken-lines))
 - Define breakthrough conditions, core objections, and early termination rules
 - Always enable the `end_session` tool
@@ -35,11 +35,11 @@ Key facts:
 
 ## Call Types
 
-| Type           | Prospect's first line (one bare line, then wait)          | Risk   | Trust   |
-| -------------- | --------------------------------------------------------- | ------ | ------- |
-| Cold Call      | "Hello, who is this?" — guarded; does not know the caller | HIGH   | 2-3 min |
-| Warm Intro     | Name only ("Hi, this is Priya.") — expected a call        | MEDIUM | 1-2 min |
-| Discovery Call | "Hi, thanks for calling back." — booked, engaged          | LOW    | Minimal |
+| Type           | Opening (one bare line, then wait) | Risk   | Trust   |
+| -------------- | ---------------------------------- | ------ | ------- |
+| Cold Call      | Hello, who is this? (guarded)      | HIGH   | 2-3 min |
+| Warm Intro     | Hi, how can I help? (neutral)      | MEDIUM | 1-2 min |
+| Discovery Call | Hi! Ready to discuss... (engaged)  | LOW    | Minimal |
 
 Risk = termination risk; Trust = time to build trust.
 
@@ -48,8 +48,8 @@ the call, or a permission ask — those are the rep's moves, and the rubric scor
 the rep on them. The two-beat opener in
 [ai-instructions.md](../scenario/ai-instructions.md) is for AI-led calls and
 does not apply here. The rep opens the call (`skip_auto_start: true`); the
-prospect's line is its reply. Mark the line `word for word` in FLOW, or
-describe it ("answer the phone guardedly, nothing more").
+prospect's line is its reply. Write it unquoted in FLOW, marked tone only, or
+`word for word` when the exact line matters.
 
 Specify the call type in `ai_instructions` — it determines opening behavior and
 termination rules.
@@ -94,9 +94,10 @@ Make salespeople WORK for context. Never dump information unprompted.
 
 ### Phase 1: Vague initial responses
 
-A broad question gets a hedge, not a number ("quite a few, it's a busy shop").
-A precise follow-up gets an approximate figure with visible uncertainty. Write
-this as a rule, not as a script.
+- User: How many customers do you serve daily?
+- AI: Quite a few, it's a busy shop
+- User: Can you give me a number?
+- AI: Maybe 100-150? Not sure exactly
 
 ### Phase 2: Progressive detail
 
@@ -114,11 +115,11 @@ Mix answers with real-world interruptions and context:
 
 ### Anti-pattern: info dumping
 
-Bad: one open question ("tell me about your business") and the prospect lists
-customers per day, transaction counts, and the current vendor in one breath.
-Good: the open question earns one line of context; each number needs its own
-precise question. Put the rule in `ai_instructions`; if you keep an example
-exchange, label it tone only.
+- BAD — dumps everything unprompted: I have 150 customers daily, 40-50
+  remittances, BRILink for 3 years...
+- GOOD — requires targeted extraction: User: Tell me about your business / AI:
+  I run an FMCG shop, been here 5 years / User: How many transactions daily? /
+  AI: Maybe 100-150 customers? It varies
 
 ```
 ### Discovery Process - Realistic Information Disclosure
@@ -164,8 +165,7 @@ customers. Urgency: regulatory deadline, seasonal peak.
 
 ## Core Objections
 
-Pick 5-7 total, use 2-4 per conversation. The quoted phrases are examples
-(tone only). Categories:
+Pick 5-7 total, use 2-4 per conversation. Categories:
 
 1. **Price/Value** — "Too expensive", "Hidden costs?"
 2. **Risk/Safety** — "What if it fails?", "Is this compliant?"
@@ -225,9 +225,8 @@ Behavior per outcome:
 
 ## Current situation
 - [Call Type]: A sales rep is [calling/visiting] you to pitch [Product]
-- Your first line: one bare line from the call-type table ("Hello, who is
-  this?" on a cold call), marked word for word. Never introduce yourself or
-  ask more than that. Then STOP and WAIT.
+- FLOW first turn: Start with a guarded greeting (call-type table), one bare
+  line, no introduction. Then STOP and WAIT. Do not quote a canned line.
 
 ## BEHAVIORAL GUIDELINES: MOST IMPORTANT TO FOLLOW
 ### Core Principle / ### Discovery Process / ### Pitch Reception
@@ -375,7 +374,7 @@ Galaxy `medium-stable` uses native Vertex voice — no TTS/STT/LLM sub-fields. S
       objection
 - [ ] Resistance pattern: one objection at a time, follow-ups per objection;
       guarded but still talks like a person
-- [ ] Every quoted line labelled tone only or word for word
+- [ ] Example lines unquoted, labelled tone only or word for word
 - [ ] Guarded disclosure rules present
 - [ ] Breakthrough conditions (3-5) + urgency triggers defined
 - [ ] Core objections (5-7 defined, 2-4 used per session) from real context

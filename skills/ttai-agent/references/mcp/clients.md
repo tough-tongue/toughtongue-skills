@@ -21,13 +21,17 @@ no local process).
 
 Register the URL with no credentials. The client runs the OAuth 2.1 flow and
 opens a browser consent page on first use (sign in at
-[app.toughtongueai.com](https://app.toughtongueai.com) first). The client stores
-and refreshes the token itself; revoke access at
+[app.toughtongueai.com](https://app.toughtongueai.com) first). Revoke access at
 [app.toughtongueai.com/developer](https://app.toughtongueai.com/developer).
 
-Never read a token from environment variables or files, never add an
-`Authorization` header to a config, and never ask the user to paste a token
-into chat. Any setup here needs only the server URL.
+- **No local browser (SSH)** — plugin install:
+  `claude mcp login plugin:toughtongue:ttai --no-browser` (check the name with
+  `claude mcp list`); manual install: `claude mcp login ttai --no-browser`. It
+  prints a URL to open on another machine and needs an interactive terminal
+  (`ssh -t`). Not for CI or `claude -p`.
+- **CI, servers, webhook pipelines, or a client without MCP OAuth** — send the
+  user to [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server) in the Tough Tongue AI docs. Don't set up
+  sign-in yourself.
 
 ## Coding agents
 
@@ -38,7 +42,8 @@ into chat. Any setup here needs only the server URL.
 claude mcp add --transport http ttai https://api.toughtongueai.com/api/public/mcp
 ```
 
-Run `/mcp` in a session and finish the browser login.
+Run `/mcp` in a session and finish the browser login. (Plugin installs list
+the server as `plugin:toughtongue:ttai`.)
 
 </details>
 
@@ -110,7 +115,8 @@ Settings > MCP > Add new global MCP server**:
 }
 ```
 
-Windsurf prompts for OAuth on first use.
+Current Windsurf builds prompt for OAuth on first use; if yours doesn't, see
+the headless setup page linked under Auth.
 
 </details>
 
@@ -127,7 +133,8 @@ Windsurf prompts for OAuth on first use.
 }
 ```
 
-Gemini CLI prompts for OAuth on first use (`/mcp auth ttai`).
+Current Gemini CLI builds prompt for OAuth on first use (`/mcp auth ttai`); if
+yours doesn't, see the headless setup page linked under Auth.
 
 </details>
 
@@ -196,8 +203,10 @@ refresh. Writes prompt for confirmation; deep research is read-only.
 
 - **Expected tool missing** — the client cached discovery. Start a new thread;
   else remove and re-add the server.
-- **401 / auth error** — finish OAuth: Claude Code `/mcp`, Codex
-  `codex mcp login ttai`, Cursor Settings > MCP.
+- **401 / auth error** — finish OAuth: Claude Code `/mcp` (or
+  `claude mcp login plugin:toughtongue:ttai`), Codex `codex mcp login ttai`,
+  Cursor Settings > MCP.
+- **No browser at all (CI, server)** — link [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server).
 - **Edit not live in a call** — Scenario edits apply to new sessions only.
 - **Works personally, not by org** — pass `org_id` from
   `ttai:get_workspace_info` (`organizations[].id`).
@@ -208,9 +217,6 @@ refresh. Writes prompt for confirmation; deep research is read-only.
 
 Smoke test: `ttai:read_guide`, then
 `ttai:get_workspace_info`.
-
-Never ask the user to paste a token into chat. On `401`, finish OAuth for that
-client.
 
 ## Key Files
 

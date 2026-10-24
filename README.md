@@ -82,9 +82,8 @@ Settings > Apps, find **Tough Tongue AI** in the app directory, and connect.
 ### 2. Sign in
 
 Restart your agent. The first Tough Tongue AI action opens a browser sign-in;
-approve it once. No API key needed. (No browser, e.g. CI? Use an API key, a
-personal access token from the developer portal: see
-[clients.md](skills/ttai-agent/references/mcp/clients.md).)
+approve it once. No API key needed. Running in CI or on a server with no
+browser? See [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server) in our docs.
 
 ### 3. Ask
 
@@ -146,7 +145,9 @@ codex plugin add toughtongue@toughtongue
 ## Troubleshooting
 
 - **Sign-in or 401 errors**: finish the browser sign-in. Claude Code: `/mcp`.
-  Codex: `codex mcp login ttai`. Cursor: Settings > MCP.
+  Codex: `codex mcp login ttai`. Cursor: Settings > MCP. Over SSH:
+  `claude mcp login plugin:toughtongue:ttai --no-browser` (connect with
+  `ssh -t`).
 - **A Tough Tongue AI tool is missing**: start a new chat; if it persists,
   remove and re-add the MCP server.
 - **The agent explains but can't act**: the skills are installed but the MCP

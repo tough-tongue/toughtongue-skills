@@ -87,6 +87,6 @@ triggered by a call-recording platform's webhook:
 4. **Deliver** through the team's email or chat tooling, with the
    `analytics_url`.
 
-Unattended pipelines run on an MCP client the user has already signed in with
-OAuth. Never put tokens in client code, config files, or webhook payloads. The
+Unattended pipelines (webhooks, CI) are set up outside this plugin: send the
+user to https://app.toughtongueai.com/docs/mcp/mcp-server. The
 confirmation step happens once, when the user approves the pipeline.

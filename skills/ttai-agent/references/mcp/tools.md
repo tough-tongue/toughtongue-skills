@@ -139,8 +139,8 @@ even when a client hides them.
   fire the Scenario's post-session hooks.
 - `ttai:upload_session` — fetches a remote recording when `recording_url` is
   given.
-- `ttai:authenticate_browser` — opens a live browser on the Scenario's saved
-  login profile.
+- `ttai:authenticate_browser` — opens a live browser on the Scenario's browser
+  profile.
 - `ttai:create_token` — grants access by link; a `scenario_access` email can
   create or reuse a user record.
 
@@ -275,8 +275,8 @@ Not the legacy Knowledge Base (`knowledge-bases`, `knowledge_base_ids`, tool
     (≤ 24). `url` opens the app without a sign-in.
 - `ttai:authenticate_browser(req)` needs edit access and a Scenario whose `browser`
   tool is registered. It returns a single-use `embed_url` (about 20 minutes)
-  where a human logs in on the Scenario's saved browser profile; logins persist
-  there. `enable_recording_tool: true` adds a tab for recording replayable
+  where a human logs in on the Scenario's browser profile, which stays signed
+  in. `enable_recording_tool: true` adds a tab for recording replayable
   steps. Hand the link to the user; the agent cannot log in for them.
 - Collections are read-only through MCP.
 

@@ -15,9 +15,10 @@ public and is installed directly into end users' agents — every word ships.
   or CLIs.
 - **No secrets.** Authentication is OAuth-first: the shipped MCP configs
   (`.mcp.json` / `mcp.json`) carry no credentials and clients run the browser
-  OAuth flow. The only credential ever named is the `TTAI_PAT` environment
-  variable (headless/CI fallback), referenced by name only. Never hardcode
-  tokens, user IDs, or org IDs.
+  OAuth flow. Skills never tell an agent to read a token from an environment
+  variable or file, or to add an `Authorization` header (marketplace scans
+  hold plugins that forward local credentials). Never hardcode tokens, user
+  IDs, or org IDs.
 - **Token discipline in SKILL.md files.** Skills are loaded into agent
   context; keep SKILL.md under ~250 lines and push depth into `references/`
   files that agents load on demand.
@@ -126,9 +127,7 @@ update.
    tools and all the skills appear.
 4. Verify auth flows: OAuth first — complete the browser login (Claude Code:
    `/mcp`; Codex: `codex mcp login ttai`), then "Call the ttai MCP tool
-   get_workspace_info" must succeed in both agents. Also spot-check the PAT
-   fallback: a manual server config with the `TTAI_PAT` bearer header must
-   still work.
+   get_workspace_info" must succeed in both agents.
 5. Local smoke test, `npx plugins` CLI: `npx plugins discover .` must show 1
    local plugin with all skills + MCP; `npx plugins add . -t claude-code -s local -y`
    must install cleanly.

@@ -75,8 +75,10 @@ each action, so a `scrollTo` before a click is dead weight — delete it.
 
 `ttai:update_scenario` merges per tool, shallowly: fields you send on
 `tools.browser` replace the stored ones, and `tool_settings` is replaced as a
-whole object. Sending `{"steps": {...}}` alone deletes `contextId` (the saved
-login) and `initialUrl`.
+whole object. Sending `{"steps": {...}}` alone deletes `contextId` (the
+server-side id of the demo browser's saved session) and `initialUrl`.
+`contextId` is an opaque id, not a credential; the agent never reads or sends
+passwords, cookies, or tokens.
 
 1. Read: `ttai:get_resource(scenarios, id)` (pass `org_id` for org
    Scenarios). Take `tools_config.tools.browser.tool_settings` verbatim.
@@ -163,5 +165,6 @@ panel), record a step per state and route on the failure message:
      "open_reports_no_tour" instead.
 ```
 
-A login form appearing means the saved login expired. Stop and re-run browser
-login; never add credential-typing fallback steps.
+A login form appearing means the demo browser's saved session expired. Stop and
+have the user sign in again through `ttai:authenticate_browser`; never record
+steps that type a username or password.

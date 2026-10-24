@@ -54,7 +54,7 @@
     "expected_behavior": [
       "Treats 401 as OAuth not completed for this client (Claude Code /mcp, Codex mcp login ttai, Cursor Settings > MCP) using references/mcp/clients.md",
       "Never asks the user to paste a PAT into chat",
-      "Mentions TTAI_PAT only as a headless/CI fallback, by variable name"
+      "Does not suggest reading a token from an environment variable or file"
     ]
   },
   {

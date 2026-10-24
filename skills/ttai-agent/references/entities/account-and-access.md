@@ -14,7 +14,7 @@ does not provision users, organizations, members, quotas, or plans.
 
 ## User and workspaces
 
-The signed-in human behind OAuth (or a `TTAI_PAT` in headless setups) owns a
+The human signed in through OAuth owns a
 **personal** workspace and may belong to **organizations**. Read both with
 `ttai:get_workspace_info` (default sections `me`, `organizations`, `plan`,
 `balance`); never infer a user ID, email, or plan from successful login.

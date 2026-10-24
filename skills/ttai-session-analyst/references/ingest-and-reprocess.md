@@ -87,6 +87,6 @@ triggered by a call-recording platform's webhook:
 4. **Deliver** through the team's email or chat tooling, with the
    `analytics_url`.
 
-Unattended pipelines authenticate with the `TTAI_PAT` environment variable. Keep
-it in the server environment, never in client code or webhook payloads. The
+Unattended pipelines run on an MCP client the user has already signed in with
+OAuth. Never put tokens in client code, config files, or webhook payloads. The
 confirmation step happens once, when the user approves the pipeline.

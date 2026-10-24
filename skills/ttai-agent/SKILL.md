@@ -172,8 +172,8 @@ Sibling skills:
   server decides. Treat `403` and balance errors as real blockers.
 - Advice stops at a recommendation. Never turn it into a write, call, or bot
   without the user's request.
-- Never ask for, paste, or log a token. `TTAI_PAT` is named only as a headless
-  fallback.
+- Never ask for, paste, read, or log a token. Authentication is the client's
+  OAuth flow only.
 - Scenario edits affect new sessions only.
 
 ## Key Files

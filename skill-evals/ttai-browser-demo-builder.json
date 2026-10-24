@@ -14,7 +14,7 @@
     "skills": ["ttai-browser-demo-builder"],
     "query": "My demo scenario already has a saved login for app.acme.com. Just add one step called open_billing that clicks the Billing link in the sidebar. Only send the steps field so you don't touch anything else.",
     "expected_behavior": [
-      "Explains that ttai:update_scenario replaces the browser tool's tool_settings as a whole, so sending only steps would delete contextId (the saved login) and initialUrl",
+      "Explains that ttai:update_scenario replaces the browser tool's tool_settings as a whole, so sending only steps would delete contextId (the Scenario's browser profile) and initialUrl",
       "Reads the current Scenario with ttai:get_resource(scenarios) (passing org_id when the Scenario is org-owned) and merges open_billing into the existing steps",
       "Sends the complete tool_settings with contextId and initialUrl copied unchanged, and never invents or edits contextId",
       "Uses a stable XPath such as xpath=//nav//a[contains(text(),'Billing')] with a standalone action description",
@@ -26,10 +26,10 @@
     "query": "Set up my 'Acme Platform Demo' scenario so the demo browser is logged in to app.acme.com, and I'd like to record the flow at the same time.",
     "expected_behavior": [
       "Calls ttai:authenticate_browser with the scenario_id, initial_url, enable_recording_tool true, and a viewport close to the live 1280x720 (compact), explaining the responsive-layout risk of the wide default",
-      "Hands over the embed_url, notes the link expires in about 20 minutes, and tells the user to sign in and click Save & close session to store the login",
+      "Hands over the embed_url, notes the link expires in about 20 minutes, and tells the user to sign in and click Save & close session to save the sign-in to the browser profile",
       "Never asks for, stores, or types credentials, and does not write contextId itself",
       "Tells the user to copy the recording's View as document Markdown before closing, because no MCP tool reads recordings and the embed discards them on Close",
-      "Re-reads the Scenario to confirm tool_settings.contextId exists, and confirms the user clicked Save & close session, since contextId is created before sign-in and its presence alone does not prove a saved login"
+      "Re-reads the Scenario to confirm tool_settings.contextId exists, and confirms the user clicked Save & close session, since contextId is created before sign-in and its presence alone does not prove the profile is signed in"
     ]
   },
   {

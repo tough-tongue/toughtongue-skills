@@ -76,7 +76,7 @@ each action, so a `scrollTo` before a click is dead weight — delete it.
 `ttai:update_scenario` merges per tool, shallowly: fields you send on
 `tools.browser` replace the stored ones, and `tool_settings` is replaced as a
 whole object. Sending `{"steps": {...}}` alone deletes `contextId` (the
-platform's opaque id for the Scenario's demo browser profile) and `initialUrl`.
+platform's opaque id for the Scenario's browser profile) and `initialUrl`.
 Copy `contextId` back unchanged.
 
 1. Read: `ttai:get_resource(scenarios, id)` (pass `org_id` for org
@@ -164,6 +164,6 @@ panel), record a step per state and route on the failure message:
      "open_reports_no_tour" instead.
 ```
 
-A login form appearing means the demo browser profile is signed out. Stop and
+A login form appearing means the browser profile is signed out. Stop and
 have the user sign in again through `ttai:authenticate_browser`; never record
 steps that type a username or password.

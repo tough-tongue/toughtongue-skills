@@ -1,7 +1,7 @@
 # Connect a client
 
 Per-client registration of the hosted `ttai` MCP server. Plugin installs do this
-automatically — use this file for manual, headless, and web setups, and for auth
+automatically — use this file for manual, SSH, and web setups, and for auth
 errors. Tools appear as `ttai:…` (some clients: `mcp__ttai__…`). If they are
 missing, the server is not registered: fix registration here; never fall back to
 invented REST calls.
@@ -24,14 +24,15 @@ opens a browser consent page on first use (sign in at
 [app.toughtongueai.com](https://app.toughtongueai.com) first). Revoke access at
 [app.toughtongueai.com/developer](https://app.toughtongueai.com/developer).
 
-- **No local browser (SSH)** — plugin install:
+- **No local browser (Claude Code over SSH)** — plugin install:
   `claude mcp login plugin:toughtongue:ttai --no-browser` (check the name with
   `claude mcp list`); manual install: `claude mcp login ttai --no-browser`. It
-  prints a URL to open on another machine and needs an interactive terminal
-  (`ssh -t`). Not for CI or `claude -p`.
+  prints a URL: open it on your local machine, then paste the redirect URL from
+  the browser's address bar back at the prompt. Needs an interactive terminal
+  (`ssh -t`); not for CI or `claude -p`.
 - **CI, servers, webhook pipelines, or a client without MCP OAuth** — send the
-  user to [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server) in the Tough Tongue AI docs. Don't set up
-  sign-in yourself.
+  user to [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server)
+  in the Tough Tongue AI docs. Don't set up sign-in yourself.
 
 ## Coding agents
 
@@ -61,9 +62,6 @@ Or in `~/.codex/config.toml`:
 [mcp_servers.ttai]
 url = "https://api.toughtongueai.com/api/public/mcp"
 ```
-
-If this is your first HTTP MCP server, enable
-`[features] experimental_use_rmcp_client = true`.
 
 </details>
 
@@ -133,8 +131,9 @@ the headless setup page linked under Auth.
 }
 ```
 
-Current Gemini CLI builds prompt for OAuth on first use (`/mcp auth ttai`); if
-yours doesn't, see the headless setup page linked under Auth.
+Gemini CLI discovers OAuth on first connect; if no browser opens, run
+`/mcp auth ttai`. It needs a local browser; otherwise see the headless setup
+page linked under Auth.
 
 </details>
 
@@ -204,14 +203,16 @@ refresh. Writes prompt for confirmation; deep research is read-only.
 - **Expected tool missing** — the client cached discovery. Start a new thread;
   else remove and re-add the server.
 - **401 / auth error** — finish OAuth: Claude Code `/mcp` (or
-  `claude mcp login plugin:toughtongue:ttai`), Codex `codex mcp login ttai`,
-  Cursor Settings > MCP.
-- **No browser at all (CI, server)** — link [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server).
+  `claude mcp login <name>`: `plugin:toughtongue:ttai` or `ttai`), Codex
+  `codex mcp login ttai`, Cursor Settings > MCP, Gemini CLI `/mcp auth ttai`.
+- **No browser at all (CI, server)** — link
+  [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server).
 - **Edit not live in a call** — Scenario edits apply to new sessions only.
 - **Works personally, not by org** — pass `org_id` from
   `ttai:get_workspace_info` (`organizations[].id`).
-- **mcp-remote internal error** — `rm -rf ~/.mcp-auth`, reconnect, update Node
-  to current LTS.
+- **mcp-remote internal error** — have the user clear mcp-remote's cached
+  sign-in for this server (see the mcp-remote README), reconnect, and update
+  Node to current LTS. Don't delete files yourself.
 - **Rate limited** — 30 calls/minute per token; wait, then retry; request only
   the page you need.
 

@@ -255,8 +255,9 @@ Not the legacy Knowledge Base (`knowledge-bases`, `knowledge_base_ids`, tool
     paid plan and edit access to the Scenario.
 - `ttai:cancel_bot(id)` takes a bot id from `list_resources(bots)` and cancels
   either kind.
-- `session_credentials: "bot_uc"` gives a call or bot run the deploying user's
-  identity for the Scenario's MCP tools. Omit it unless requested.
+- `session_credentials: "bot_uc"` is a server-side setting: the call or bot
+  runs the Scenario's attached MCP tools as the deploying Tough Tongue AI user.
+  Nothing is read from the user's machine. Omit it unless requested.
 - `ttai:upload_session(req_data)` is for automations that use Tough Tongue AI's analysis
   and extraction on calls held elsewhere (dialer, Gong, Zoom): it uploads a
   transcript or `recording_url` as a completed session, then the Scenario's
@@ -275,9 +276,10 @@ Not the legacy Knowledge Base (`knowledge-bases`, `knowledge_base_ids`, tool
     (≤ 24). `url` opens the app without a sign-in.
 - `ttai:authenticate_browser(req)` needs edit access and a Scenario whose `browser`
   tool is registered. It returns a single-use `embed_url` (about 20 minutes)
-  where a human logs in on the Scenario's browser profile, which stays signed
-  in. `enable_recording_tool: true` adds a tab for recording replayable
-  steps. Hand the link to the user; the agent cannot log in for them.
+  where a human signs in to the Scenario's browser profile, then clicks
+  **Save & close session** to keep the login. `enable_recording_tool: true`
+  adds a tab for recording replayable steps. Hand the link to the user; the
+  agent cannot log in for them.
 - Collections are read-only through MCP.
 
 ## Directory endpoint

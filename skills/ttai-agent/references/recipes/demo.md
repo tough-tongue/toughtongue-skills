@@ -87,8 +87,9 @@ skill for the recording workflow, selector rules, and instruction templates.
 (`tool_settings.contextId`, set by the platform — never invent or hand-edit it).
 For a product behind a login, enable the `browser` tool, then call
 `ttai:authenticate_browser` and give the returned link to the user; they log in
-once and the profile stays signed in. On update, resend the full
-`browser.tool_settings` so `contextId` and `steps` survive.
+once, click **Save & close session**, and the profile stays signed in. On
+update, resend the full `browser.tool_settings` so `contextId` and `steps`
+survive.
 
 ### ai_instructions structure
 

@@ -42,13 +42,14 @@ read-merge-write → verify. Output: named steps the voice agent replays with
 
 1. **Never write `tool_settings` partially.** `ttai:update_scenario` replaces
    the browser tool's `tool_settings` object whole. Omitting `contextId` unlinks
-   the Scenario's browser profile. Every write = read → merge → write the complete object.
+   the Scenario's browser profile. Every write = read → merge → write the
+   complete object.
    Details: [references/steps-format.md](references/steps-format.md).
 2. **Never write `contextId` yourself.** `ttai:authenticate_browser` creates it
    and stores it on the Scenario. Carry the existing value through unchanged.
 3. **No credentials anywhere.** Not in steps, descriptions, arguments, or
-   `ai_instructions`. Scenario config is plaintext. Sign-in happens only in the
-   Scenario's browser profile, by the user.
+   `ai_instructions`. Scenario config is plaintext. Only the user signs in, in
+   the Scenario's browser profile (Phase 1).
 4. **No positional XPath.** Never ship `/html[1]/body[1]/div[3]/…` (the
    recorder's fallback). Rewrite to text-, label-, or role-anchored XPath:
    [references/selector-guide.md](references/selector-guide.md).
@@ -82,8 +83,8 @@ read-merge-write → verify. Output: named steps the voice agent replays with
 2. Hand the user the returned `embed_url`. The link expires in 20 minutes
    (`expires_at`); the live browser it opens closes after about 7 minutes, so
    open it when ready.
-3. User signs in, then clicks **Save & close session**. That click keeps the
-   browser profile signed in. Closing the tab without it saves nothing.
+3. User signs in, then clicks **Save & close session**. That click saves the
+   sign-in to the browser profile. Closing the tab without it saves nothing.
 4. Re-read the Scenario and confirm `tool_settings.contextId` exists. The call
    creates `contextId` before anyone signs in, so its presence does not prove the
    profile is signed in: confirm the user clicked **Save & close session**.
@@ -111,6 +112,8 @@ round, skipping what is known:
 4. Drop flaky parts: date pickers, auto-assigned records, optional panels.
 
 Harvest in the same logged-in state the demo sees, at a 1280-wide window.
+Take only selectors and visible labels from that browser; never copy its
+cookies, storage, or tokens into steps or tool calls.
 
 ## Phase 3 — Convert to steps
 

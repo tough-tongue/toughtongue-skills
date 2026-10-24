@@ -4,8 +4,7 @@ Evaluation scenarios for each skill, in the format from Anthropic's
 [skill authoring best practices](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/best-practices#build-evaluations-first).
 There is no built-in runner — run each `query` against an agent with the
 plugin installed and an authenticated ttai MCP connection (OAuth login), then
-grade against
-`expected_behavior`.
+grade against `expected_behavior`.
 
 | File                                                             | Skill under test          |
 | ---------------------------------------------------------------- | ------------------------- |

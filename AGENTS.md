@@ -14,10 +14,10 @@ public and is installed directly into end users' agents — every word ships.
   "write a file to disk" or references to internal Tough Tongue AI repos, paths,
   or CLIs.
 - **No secrets.** Shipped MCP configs (`.mcp.json` / `mcp.json`) carry only the
-  server URL; clients run the browser OAuth flow. Headless setup lives only on
-  the docs site (https://app.toughtongueai.com/docs/mcp/mcp-server). This repo is the folder Anthropic's
-  directory scans, so link there in prose and add no credential setup
-  instructions anywhere in it. Never hardcode tokens, user IDs, or org IDs.
+  server URL; clients sign in through the browser OAuth flow. Skills and docs
+  in this repo describe OAuth sign-in only; for CI or server setups, link
+  <https://app.toughtongueai.com/docs/mcp/mcp-server> and add no credential
+  setup steps. Never hardcode tokens, user IDs, or org IDs.
 - **Token discipline in SKILL.md files.** Skills are loaded into agent
   context; keep SKILL.md under ~250 lines and push depth into `references/`
   files that agents load on demand.
@@ -124,7 +124,7 @@ update.
 3. Local smoke test, Codex: `codex plugin marketplace add <checkout-path>`,
    `codex plugin add toughtongue@toughtongue`, restart, verify the ttai MCP
    tools and all the skills appear.
-4. Verify auth flows: OAuth first — complete the browser login (Claude Code:
+4. Verify sign-in: complete the browser OAuth login (Claude Code:
    `/mcp`; Codex: `codex mcp login ttai`), then "Call the ttai MCP tool
    get_workspace_info" must succeed in both agents. Confirm the headless setup
    page still loads and matches the server (web team).
@@ -139,13 +139,13 @@ update.
 
 Reused across every channel below — do not go hunting for these again:
 
-| Asset                  | URL                                                 |
-| ---------------------- | --------------------------------------------------- |
-| Privacy policy         | <https://app.toughtongueai.com/privacy-policy/>     |
-| Terms of service       | <https://app.toughtongueai.com/terms/>              |
-| Public MCP docs        | <https://app.toughtongueai.com/docs/mcp>            |
-| PAT / developer portal | <https://app.toughtongueai.com/developer>           |
-| Headless setup (docs)  | <https://app.toughtongueai.com/docs/mcp/mcp-server> |
+| Asset                            | URL                                                 |
+| -------------------------------- | --------------------------------------------------- |
+| Privacy policy                   | <https://app.toughtongueai.com/privacy-policy/>     |
+| Terms of service                 | <https://app.toughtongueai.com/terms/>              |
+| Public MCP docs                  | <https://app.toughtongueai.com/docs/mcp>            |
+| Developer portal (revoke access) | <https://app.toughtongueai.com/developer>           |
+| Headless setup (docs)            | <https://app.toughtongueai.com/docs/mcp/mcp-server> |
 
 The paths are `/privacy-policy/` and `/terms/`; `/privacy` and `/tos` 404.
 

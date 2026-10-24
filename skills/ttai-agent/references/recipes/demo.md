@@ -83,7 +83,7 @@ always clicks the same things, record the flow into `tool_settings.steps` and
 make `step` the primary command — hand off to the `ttai-browser-demo-builder`
 skill for the recording workflow, selector rules, and instruction templates.
 
-**Logins:** the Scenario keeps one saved browser profile
+**Browser profile:** the Scenario keeps one browser profile
 (`tool_settings.contextId`, set by the platform — never invent or hand-edit it).
 For a product behind a login, enable the `browser` tool, then call
 `ttai:authenticate_browser` and give the returned link to the user; they log in

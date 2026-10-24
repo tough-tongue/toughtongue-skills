@@ -277,9 +277,9 @@ Not the legacy Knowledge Base (`knowledge-bases`, `knowledge_base_ids`, tool
 - `ttai:authenticate_browser(req)` needs edit access and a Scenario whose `browser`
   tool is registered. It returns a single-use `embed_url` (about 20 minutes)
   where a human signs in to the Scenario's browser profile, then clicks
-  **Save & close session** to keep the login. `enable_recording_tool: true`
-  adds a tab for recording replayable steps. Hand the link to the user; the
-  agent cannot log in for them.
+  **Save & close session** so the profile stays signed in.
+  `enable_recording_tool: true` adds a tab for recording replayable steps.
+  Hand the link to the user; the agent cannot log in for them.
 - Collections are read-only through MCP.
 
 ## Directory endpoint

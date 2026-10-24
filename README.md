@@ -22,6 +22,19 @@ flowchart LR
 Armed with these skills, your coding agent becomes a workspace commander for
 your Tough Tongue AI voice agents.
 
+### What the plugin contains and connects to
+
+- **Skills and configuration only.** Markdown skills, reference docs, an icon,
+  and MCP server configs. No hooks, scripts, or executable code.
+- **One server.** Your agent talks to Tough Tongue AI's hosted MCP server at
+  `https://api.toughtongueai.com/api/public/mcp` over HTTPS. You sign in with
+  OAuth in your browser. The plugin reads no API keys, tokens, or environment
+  variables, and its configs carry only that URL.
+- **What is sent.** Only what your agent passes to the `ttai` tools: Scenario
+  text, session queries, and the phone numbers, meeting links, transcripts, or
+  recording links you ask it to use. It all stays in your Tough Tongue AI
+  workspace under the [privacy policy](https://app.toughtongueai.com/privacy-policy/).
+
 ## Get started
 
 ### 1. Install
@@ -82,8 +95,10 @@ Settings > Apps, find **Tough Tongue AI** in the app directory, and connect.
 ### 2. Sign in
 
 Restart your agent. The first Tough Tongue AI action opens a browser sign-in;
-approve it once. No API key needed. Running in CI or on a server with no
-browser? See [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server#authentication)
+approve it once. No API key needed. Claude Code over SSH: run
+`claude mcp login plugin:toughtongue:ttai --no-browser` in an `ssh -t` session
+and open the printed URL on your own machine. Running in CI or on a server with
+no browser? See [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server#authentication)
 in the Tough Tongue AI docs.
 
 ### 3. Ask

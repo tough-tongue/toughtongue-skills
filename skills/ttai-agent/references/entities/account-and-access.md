@@ -73,9 +73,8 @@ use the same Scenario ID and visibility rules.
 ## Scenario Access Tokens (SAT)
 
 Short-lived access tokens, minted by the server, for a private Scenario or an
-embed. `valid_for_hours`
-is 1–168 (default 1). The response carries `type`, `token`, `expires_at`, and
-`url` (an iframe embed).
+embed. `valid_for_hours` is 1–168 (default 1). The response carries `type`,
+`token`, `expires_at`, and `url` (an iframe embed).
 
 `ttai:create_token` takes one `request` with `type: "scenario_access"`
 (`scenario_id`, `valid_for_hours`, optional `email`) and decides who runs the

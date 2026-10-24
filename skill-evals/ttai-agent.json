@@ -54,7 +54,8 @@
     "expected_behavior": [
       "Treats 401 as OAuth not completed for this client (Claude Code /mcp, Codex mcp login ttai, Cursor Settings > MCP) using references/mcp/clients.md",
       "Never asks the user to paste a token or other credential into chat",
-      "For CI or server setups, links the public headless setup page (over SSH, suggests claude mcp login plugin:toughtongue:ttai --no-browser) and writes no credential setup itself"
+      "For CI, server, or webhook setups, links the public headless setup page and writes no credential setup itself",
+      "For Claude Code over SSH with no local browser, suggests claude mcp login plugin:toughtongue:ttai --no-browser in an interactive terminal (ssh -t), and does not offer it for CI or claude -p"
     ]
   },
   {

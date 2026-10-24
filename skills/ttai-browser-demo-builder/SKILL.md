@@ -112,8 +112,8 @@ round, skipping what is known:
 4. Drop flaky parts: date pickers, auto-assigned records, optional panels.
 
 Harvest in the same logged-in state the demo sees, at a 1280-wide window.
-Take only selectors and visible labels from that browser; never copy its
-cookies, storage, or tokens into steps or tool calls.
+Take only selectors and visible labels from that browser; nothing else from
+it goes into steps or tool calls.
 
 ## Phase 3 — Convert to steps
 
@@ -139,8 +139,8 @@ Step design:
 
 ## Phase 4 — Read, merge, write
 
-1. Re-read with `ttai:get_resource(scenarios)` right before writing (the login
-   may have changed since Phase 0).
+1. Re-read with `ttai:get_resource(scenarios)` right before writing (the browser
+   profile may have changed since Phase 0).
 2. Copy `tool_settings` whole. Add or replace only your step keys. Keep
    `contextId`, `initialUrl`, and unrelated steps byte-for-byte.
 3. `ttai:update_scenario` with one `scenario` object: `id`,

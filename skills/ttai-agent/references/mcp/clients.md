@@ -28,8 +28,8 @@ opens a browser consent page on first use (sign in at
   `claude mcp login plugin:toughtongue:ttai --no-browser` (check the name with
   `claude mcp list`); manual install: `claude mcp login ttai --no-browser`. It
   prints a URL: open it on your local machine, then paste the redirect URL from
-  the browser's address bar back at the prompt. Needs an interactive terminal
-  (`ssh -t`); not for CI or `claude -p`.
+  the browser's address bar back at that command's prompt. Needs an
+  interactive terminal (`ssh -t`); not for CI or `claude -p`.
 - **CI, servers, webhook pipelines, or a client without MCP OAuth** — send the
   user to [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server#authentication)
   in the Tough Tongue AI docs. Don't set up sign-in yourself.
@@ -69,7 +69,9 @@ url = "https://api.toughtongueai.com/api/public/mcp"
 <summary>Cursor</summary>
 
 [**Install in Cursor**](cursor://anysphere.cursor-deeplink/mcp/install?name=ttai&config=eyJ1cmwiOiJodHRwczovL2FwaS50b3VnaHRvbmd1ZWFpLmNvbS9hcGkvcHVibGljL21jcCJ9)
-adds the server; Cursor prompts for OAuth on first use. Manual: **Cursor
+adds the server; Cursor prompts for OAuth on first use. The link's `config`
+parameter is the JSON below, base64-encoded, and holds only the server URL.
+Manual: **Cursor
 Settings > MCP > Add new global MCP server**:
 
 ```json
@@ -210,9 +212,10 @@ refresh. Writes prompt for confirmation; deep research is read-only.
 - **Edit not live in a call** — Scenario edits apply to new sessions only.
 - **Works personally, not by org** — pass `org_id` from
   `ttai:get_workspace_info` (`organizations[].id`).
-- **mcp-remote internal error** — have the user clear mcp-remote's cached
-  sign-in for this server (see the mcp-remote README), reconnect, and update
-  Node to current LTS. Don't delete files yourself.
+- **mcp-remote internal error** — have the user clear mcp-remote's sign-in
+  cache (its README: delete the `~/.mcp-auth` folder, which signs out every
+  server mcp-remote holds), restart the client, and check Node is 18 or newer.
+  Don't delete files yourself.
 - **Rate limited** — 30 calls/minute per token; wait, then retry; request only
   the page you need.
 

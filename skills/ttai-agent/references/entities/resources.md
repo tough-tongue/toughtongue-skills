@@ -43,8 +43,10 @@ How runs start: [scenario-engine.md](scenario-engine.md).
 - **Bot** — a phone call (`kind: phone`: trunk + Scenario + E.164 numbers) or a
   meeting bot (`kind: meeting`: Google Meet, Zoom, or Teams). MCP: type `bots`;
   `ttai:schedule_bot`; `ttai:cancel_bot` before it starts.
-- **Browser profile** — the Scenario's saved logins for live browser demos. MCP:
-  `ttai:authenticate_browser` returns a link for a human login.
+- **Browser profile** — the browser Tough Tongue AI runs for a Scenario's live
+  demos. A human signs in to it once through the link from
+  `ttai:authenticate_browser`; the Scenario stores only the platform-set
+  `contextId`.
 - **Access token (SAT)** — time-limited link to a private Scenario. MCP:
   `ttai:create_token` (`scenario_access`), for a runner or for yourself.
 - **Custom Function** — HTTP function a Scenario can call. MCP: type

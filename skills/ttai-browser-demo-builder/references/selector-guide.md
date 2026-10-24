@@ -128,7 +128,7 @@ Count matches (must be 1):
 ```js
 ((p) =>
   document.evaluate(
-    `count(${p})`,
+    "count(" + p + ")",
     document,
     null,
     XPathResult.NUMBER_TYPE,
@@ -165,8 +165,8 @@ List candidate anchors for an element you can see:
 
 ## Interaction gotchas
 
-- **Logged-in vs fresh**: harvest in the saved-login state; a fresh visit shows
-  different screens.
+- **Signed-in vs fresh**: harvest while signed in to the product, as the browser
+  profile is; a signed-out visit shows different screens.
 - **Disabled submit**: `fill` fires input events that enable it — fill, then
   click.
 - **Async screens**: there is no wait action. End the step at the click that

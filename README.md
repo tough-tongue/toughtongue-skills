@@ -83,7 +83,7 @@ Settings > Apps, find **Tough Tongue AI** in the app directory, and connect.
 
 Restart your agent. The first Tough Tongue AI action opens a browser sign-in;
 approve it once. No API key needed. Running in CI or on a server with no
-browser? See [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server)
+browser? See [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server#authentication)
 in the Tough Tongue AI docs.
 
 ### 3. Ask

@@ -88,5 +88,5 @@ triggered by a call-recording platform's webhook:
    `analytics_url`.
 
 Unattended pipelines (webhooks, CI) authenticate outside this skill: send the
-user to [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server).
+user to [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server#authentication).
 The confirmation step happens once, when the user approves the pipeline.

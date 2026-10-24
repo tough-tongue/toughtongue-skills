@@ -31,7 +31,7 @@ opens a browser consent page on first use (sign in at
   the browser's address bar back at the prompt. Needs an interactive terminal
   (`ssh -t`); not for CI or `claude -p`.
 - **CI, servers, webhook pipelines, or a client without MCP OAuth** — send the
-  user to [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server)
+  user to [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server#authentication)
   in the Tough Tongue AI docs. Don't set up sign-in yourself.
 
 ## Coding agents
@@ -206,7 +206,7 @@ refresh. Writes prompt for confirmation; deep research is read-only.
   `claude mcp login <name>`: `plugin:toughtongue:ttai` or `ttai`), Codex
   `codex mcp login ttai`, Cursor Settings > MCP, Gemini CLI `/mcp auth ttai`.
 - **No browser at all (CI, server)** — link
-  [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server).
+  [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server#authentication).
 - **Edit not live in a call** — Scenario edits apply to new sessions only.
 - **Works personally, not by org** — pass `org_id` from
   `ttai:get_workspace_info` (`organizations[].id`).

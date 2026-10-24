@@ -16,8 +16,8 @@ public and is installed directly into end users' agents — every word ships.
 - **No secrets.** Shipped MCP configs (`.mcp.json` / `mcp.json`) carry only the
   server URL; clients sign in through the browser OAuth flow. Skills and docs
   in this repo describe OAuth sign-in only; for CI or server setups, link
-  <https://app.toughtongueai.com/docs/mcp/mcp-server> and add no credential
-  setup steps. Never hardcode tokens, user IDs, or org IDs.
+  <https://app.toughtongueai.com/docs/mcp/mcp-server#authentication> and add no
+  credential setup steps. Never hardcode tokens, user IDs, or org IDs.
 - **Token discipline in SKILL.md files.** Skills are loaded into agent
   context; keep SKILL.md under ~250 lines and push depth into `references/`
   files that agents load on demand.

@@ -6,7 +6,7 @@ description: >-
   Tongue AI Scenario, so its voice agent clicks exact XPath selectors instead
   of improvising. Signs the demo browser in with ttai:authenticate_browser,
   converts a pasted browser recording or a walked-through flow into steps,
-  saves them with ttai:update_scenario without losing the saved login, and
+  saves them with ttai:update_scenario without losing the browser profile, and
   repairs steps that click the wrong element. Use when the user says "record
   browser demo steps", "turn my recording into steps", "make my demo
   deterministic", "the demo clicks the wrong thing", or "log the demo browser
@@ -41,14 +41,15 @@ read-merge-write → verify. Output: named steps the voice agent replays with
 ## Hard rules
 
 1. **Never write `tool_settings` partially.** `ttai:update_scenario` replaces
-   the browser tool's `tool_settings` object whole. Omitting `contextId` deletes
-   the saved login. Every write = read → merge → write the complete object.
+   the browser tool's `tool_settings` object whole. Omitting `contextId` unlinks
+   the Scenario's browser profile. Every write = read → merge → write the
+   complete object.
    Details: [references/steps-format.md](references/steps-format.md).
 2. **Never write `contextId` yourself.** `ttai:authenticate_browser` creates it
    and stores it on the Scenario. Carry the existing value through unchanged.
 3. **No credentials anywhere.** Not in steps, descriptions, arguments, or
-   `ai_instructions`. Scenario config is plaintext. Sign-in goes through the
-   saved login only.
+   `ai_instructions`. Scenario config is plaintext. Only the user signs in, in
+   the Scenario's browser profile (Phase 1).
 4. **No positional XPath.** Never ship `/html[1]/body[1]/div[3]/…` (the
    recorder's fallback). Rewrite to text-, label-, or role-anchored XPath:
    [references/selector-guide.md](references/selector-guide.md).
@@ -83,10 +84,10 @@ read-merge-write → verify. Output: named steps the voice agent replays with
    (`expires_at`); the live browser it opens closes after about 7 minutes, so
    open it when ready.
 3. User signs in, then clicks **Save & close session**. That click saves the
-   login. Closing the tab without it saves nothing.
+   sign-in to the browser profile. Closing the tab without it saves nothing.
 4. Re-read the Scenario and confirm `tool_settings.contextId` exists. The call
-   creates `contextId` before anyone signs in, so its presence does not prove a
-   saved login: confirm the user clicked **Save & close session**.
+   creates `contextId` before anyone signs in, so its presence does not prove the
+   profile is signed in: confirm the user clicked **Save & close session**.
 
 ## Phase 2 — Capture the flow
 
@@ -111,6 +112,8 @@ round, skipping what is known:
 4. Drop flaky parts: date pickers, auto-assigned records, optional panels.
 
 Harvest in the same logged-in state the demo sees, at a 1280-wide window.
+Take only selectors and visible labels from that browser; nothing else from
+it goes into steps or tool calls.
 
 ## Phase 3 — Convert to steps
 
@@ -136,8 +139,8 @@ Step design:
 
 ## Phase 4 — Read, merge, write
 
-1. Re-read with `ttai:get_resource(scenarios)` right before writing (the login
-   may have changed since Phase 0).
+1. Re-read with `ttai:get_resource(scenarios)` right before writing (the browser
+   profile may have changed since Phase 0).
 2. Copy `tool_settings` whole. Add or replace only your step keys. Keep
    `contextId`, `initialUrl`, and unrelated steps byte-for-byte.
 3. `ttai:update_scenario` with one `scenario` object: `id`,

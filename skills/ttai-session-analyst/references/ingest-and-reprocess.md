@@ -87,6 +87,6 @@ triggered by a call-recording platform's webhook:
 4. **Deliver** through the team's email or chat tooling, with the
    `analytics_url`.
 
-Unattended pipelines authenticate with the `TTAI_PAT` environment variable. Keep
-it in the server environment, never in client code or webhook payloads. The
-confirmation step happens once, when the user approves the pipeline.
+Unattended pipelines (webhooks, CI) authenticate outside this skill: send the
+user to [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server#authentication).
+The confirmation step happens once, when the user approves the pipeline.

@@ -172,8 +172,9 @@ Sibling skills:
   server decides. Treat `403` and balance errors as real blockers.
 - Advice stops at a recommendation. Never turn it into a write, call, or bot
   without the user's request.
-- Never ask for, paste, or log a token. `TTAI_PAT` is named only as a headless
-  fallback.
+- Never ask for, paste, read, or log a credential; sign-in is the client's job.
+  For CI or server setups, link
+  [headless setup](https://app.toughtongueai.com/docs/mcp/mcp-server#authentication).
 - Scenario edits affect new sessions only.
 
 ## Key Files

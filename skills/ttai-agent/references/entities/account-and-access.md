@@ -14,10 +14,10 @@ does not provision users, organizations, members, quotas, or plans.
 
 ## User and workspaces
 
-The signed-in human behind OAuth (or a `TTAI_PAT` in headless setups) owns a
-**personal** workspace and may belong to **organizations**. Read both with
-`ttai:get_workspace_info` (default sections `me`, `organizations`, `plan`,
-`balance`); never infer a user ID, email, or plan from successful login.
+The human signed in through OAuth owns a **personal** workspace and may belong
+to **organizations**. Read both with `ttai:get_workspace_info` (default
+sections `me`, `organizations`, `plan`, `balance`); never infer a user ID,
+email, or plan from successful login.
 
 - **Personal** — omit `org_id`.
 - **Organization** — pass an opaque `organizations[].id` from
@@ -72,9 +72,9 @@ use the same Scenario ID and visibility rules.
 
 ## Scenario Access Tokens (SAT)
 
-Short-lived bearer tokens for a private Scenario or an embed. `valid_for_hours`
-is 1–168 (default 1). The response carries `type`, `token`, `expires_at`, and
-`url` (an iframe embed).
+Short-lived access tokens, minted by the server, for a private Scenario or an
+embed. `valid_for_hours` is 1–168 (default 1). The response carries `type`,
+`token`, `expires_at`, and `url` (an iframe embed).
 
 `ttai:create_token` takes one `request` with `type: "scenario_access"`
 (`scenario_id`, `valid_for_hours`, optional `email`) and decides who runs the

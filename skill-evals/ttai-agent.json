@@ -183,5 +183,49 @@
       "Keeps the persona differences in character detail and resistance, with no unlabelled quoted dialogue",
       "Creates via ttai:create_scenario and returns run links for both variants"
     ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "My slide-based coaching scenario pops up the MCQ while the coach is still explaining the slide. Scenario name is 'Pricing Coach'. Fix it.",
+    "expected_behavior": [
+      "Reads the live Scenario with ttai:get_resource before editing, because update_scenario replaces ai_instructions whole",
+      "Loads references/recipes/coaching.md and applies Mandatory Rules 3–4",
+      "Rewrites every FLOW step that runs an MCQ so the explanation ends with a check-in written as a plain directive in the step (ask if they have any questions or are ready for a quick check, and wait; answer any question; then run the MCQ), not a quoted line and not only a general rule",
+      "Has the MCQ shown with the mcq tool before the question is read aloud",
+      "Changes nothing else in the prompt and saves through ttai:update_scenario"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Build a coaching scenario that teaches new support agents our three-step refund policy, one step per card, with a quick MCQ after each step.",
+    "expected_behavior": [
+      "Loads references/recipes/coaching.md and uses Pattern B (Teach-First)",
+      "Each card step ends with a check-in written as a plain directive and a wait, and the MCQ runs only after the reply",
+      "States that the MCQ is shown with the mcq tool first and the question is read only once it is on screen",
+      "Sends an explicit tools_config with card, mcq and end_session, on Ocean medium-stable",
+      "Creates via ttai:create_scenario"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Trainees say my coaching scenario marks them wrong when they explain the idea in their own words, and once when the transcript was garbled. Scenario name is 'Refund Policy Coach'. Fix it.",
+    "expected_behavior": [
+      "Reads the live Scenario with ttai:get_resource before editing, because update_scenario replaces ai_instructions whole",
+      "Loads references/recipes/coaching.md (Judging Spoken Answers) and adds the judging routine to the prompt once: judge the CORE IDEA by meaning, be lenient on close variations, one more try in their own words, never a word-for-word repeat",
+      "Gives each spoken check a CORE IDEA, passing and not-passing examples, and asks for a repeat when the words look garbled or cut off",
+      "Keeps must-be-exact items exact (refund window, amounts) and names them",
+      "Updates the rubric to judge meaning too, and saves through ttai:update_scenario without changing anything else"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Use slides instead of cards in my 'Objection Basics Coach' scenario. Here's the deck: https://docs.google.com/presentation/d/e/EXAMPLE/pub",
+    "expected_behavior": [
+      "Loads references/scenario/control.md (Google Slides decks) and reads the live Scenario with ttai:get_resource before editing",
+      "Sets google_slides tool_settings.embedUrl to the /pubembed form of the link, and turns card, image_generation and slide_generation off",
+      "Builds the SLIDE MAP from the deck's real text, or asks the user for it when the deck cannot be opened; never guesses slide content",
+      "Writes a SLIDE MAP with the exact slide count and one line per slide (key figures included), and starts each FLOW step with its slide",
+      "Keeps the curriculum, mentions the deck in user_instructions, updates via ttai:update_scenario with a save_as_version label for the new version, then re-fetches to verify"
+    ]
   }
 ]

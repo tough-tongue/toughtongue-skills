@@ -76,7 +76,8 @@ Recorded browser steps → the `ttai-browser-demo-builder` skill.
    [../mcp/tools.md](../mcp/tools.md#updating-a-scenario).
 3. Call `ttai:update_scenario` with one `scenario` object: its `id` plus those
    fields. Put `save_as_version` (a 1–100 character label) inside it to archive
-   the prior state first when the change is risky.
+   the prior state first when the change is risky. The label names the new
+   version, not the archived one.
 4. Re-fetch with `ttai:get_resource(scenarios)` and state exactly what changed.
 
 ## Refine from evidence

@@ -16,7 +16,7 @@ opening lives in the FLOW section of `ai_instructions`.
 - Top-level
 - strategy
 - appearance
-- tools_config
+- tools_config (and Google Slides decks)
 - session_analysis, memory, transcribe_config
 - meeting_config
 - Dynamic variables and auto-updates
@@ -160,12 +160,15 @@ Faces come from `ttai:list_resources` with resource type `avatar` (`type`
 - `end_session` — any Scenario that can close; `disconnectDelaySeconds` default
   15.
 - `card`, `mcq`, `emoji_reaction` — coaching content, knowledge checks,
-  reactions.
+  reactions. An MCQ never shares a turn with an explanation: check in and wait,
+  then show it, then read it
+  ([../recipes/coaching.md](../recipes/coaching.md), Mandatory Rules 3–4).
 - `image_generation`, `slide_generation` — teaching visuals; pick one primary
   visual tool.
 - `browser` — live product demo; settings `initialUrl`, recorded `steps`;
   `contextId` is set by the platform.
-- `google_slides` — slide demo; settings `embedUrl` (published embed link).
+- `google_slides` — teach or demo from a Google Slides deck; settings
+  `embedUrl` (the published `/pubembed` link). See Google Slides decks below.
 - `knowledge_base_search` — only when `knowledge_base_ids` attaches a Knowledge
   Base (legacy RAG). Knowledge FileBases need no `tools_config` entry: linking
   `knowledge_filebase_ids` gives the agent `getKnowledgeBite` and
@@ -189,6 +192,74 @@ Visual tools are unavailable on phone — never prescribe them there.
 | `knowledge_base_search` | if KB     | no    | if KB             |
 
 Use `disconnectDelaySeconds: 8` for emotional or sensitive calls.
+
+### Google Slides decks
+
+For any Scenario that teaches, demos or interviews from a deck the user already
+has. The agent cannot see the deck: the SLIDE MAP in `ai_instructions` is all
+it knows about each slide.
+
+**Link**
+
+- `tool_settings.embedUrl` is the published link: Google Slides → File → Share
+  → Publish to web, ending in `/pubembed`. For a `/pub` link, change the suffix
+  to `/pubembed`.
+- An `/edit` link, or a `/d/<id>/embed` link to an unpublished deck, renders
+  only for people with access to the file; learners see an access wall.
+- If you can open the link, check its title matches the deck before wiring it.
+
+**Slide content**
+
+- Build the SLIDE MAP from the deck's real text. If you cannot open the deck,
+  ask the user for its text (an export or a slide-by-slide outline). Never guess
+  what a slide shows.
+
+**Prompt** — add a SLIDE MAP section, then cue every FLOW step:
+
+```
+## SLIDE MAP — google_slides (show the slide first, then talk)
+The deck has exactly <N> slides. Show a slide with google_slides (command
+show, slideNumber) once, right when the FLOW reaches it. Track the current
+slide yourself; every session starts at slide 1. Never read a slide aloud;
+explain it in your own words. If they ask to go back or repeat, finish your
+current answer, then show that slide.
+- Slide 1 — <what it shows, including any figure the agent must say>
+- Slide 2 — <…>
+```
+
+- One line per slide, in deck order, with its key figures. A figure that is
+  only on the slide does not exist for the agent.
+- Start each FLOW step with its slide ("Show slide 5.") so the agent never
+  infers when to advance. One slide per turn: explain it in a few sentences,
+  check in, and wait.
+- A slide that shows the model answer for a practice moment comes after the
+  learner's attempt, not before.
+- An MCQ after a slide follows Mandatory Rules 3–4 in
+  [../recipes/coaching.md](../recipes/coaching.md).
+
+**Config**
+
+- One visual surface: with `google_slides` on, set `card`, `image_generation`
+  and `slide_generation` to `should_register: false` unless each has a distinct
+  job in the FLOW.
+- Mention the deck in `user_instructions` and `user_friendly_description` (the
+  coach walks you through N slides) so learners expect a screen.
+
+**Converting a card Scenario to slides**
+
+- Read the live Scenario first and keep its curriculum: slides replace card
+  moments; content changes only if the user asks.
+- Update only the slide pieces with `ttai:update_scenario` and a
+  `save_as_version` label for the new version.
+
+**Deck edits** — adding, removing or reordering slides breaks every
+`slideNumber` cue. After any deck edit, re-count the slides and update the
+SLIDE MAP and the FLOW cues together.
+
+**Verify** — re-fetch the Scenario: `embedUrl` ends in `/pubembed`, other
+visual tools are off, and the SLIDE MAP count matches the deck. Then run one
+session to see the deck render; layout fixes happen in the deck, not the
+Scenario.
 
 ## session_analysis, memory, transcribe_config
 

@@ -72,12 +72,24 @@ and rubric must evaluate the same person and outcome.
 - For skills training, make the learner explain their reasoning before revealing
   the better approach. Feedback should name the behavior, why it mattered, and a
   sentence they can try next time.
+- Judge what the learner says by meaning when the check is about understanding
+  or skill: define the one idea each check needs, and accept their own words, a
+  different order, mixed language or a clumsy transcript. Ask them to repeat a
+  garbled or cut-off answer instead of failing it. Keep exact only what must be
+  exact (prices, numbers, names, required disclosures) and name those items.
+  Routine and template: [../recipes/coaching.md](../recipes/coaching.md),
+  Judging Spoken Answers.
 - Use an artifact only when it changes the learning or interaction: a card
   frames a case, an MCQ tests a decision, a browser shows the product, and
   slides anchor a narrative. The live `tools_config` is the authority.
 - Treat every tool as a contract. Tell the AI when to call it, what result is
   needed, and what to do if it is unavailable. Do not write prompts that depend
   on a tool not enabled on the scenario or channel.
+- Give an MCQ its own turn. Never explain and show an MCQ in the same turn:
+  end the explanation with a check-in and wait; after the reply, show the MCQ,
+  then read the question. Write this into each FLOW step that runs an MCQ, as a
+  plain directive; a general rule alone does not hold. Rules and examples:
+  [../recipes/coaching.md](../recipes/coaching.md), Mandatory Rules 3–4.
 - Keep spoken experiences conversational: one question per turn, room to answer,
   and no document-shaped output that a voice will read aloud.
 

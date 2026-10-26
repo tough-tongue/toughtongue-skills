@@ -55,6 +55,10 @@ Analysis runs only when `session_analysis.is_auto_analysis` is true.
 3. Keep learning feedback (how the human did) separate from business
    intelligence (what happened).
 4. Never claim criteria were reprocessed unless a tool result shows it.
+5. When the scenario judges spoken answers by meaning, say so in `rubrik`: own
+   words, a different order, mixed language or an imperfect transcript count
+   when the idea lands. Name any items that must be exact. A report that grades
+   wording contradicts a coach that judged meaning.
 
 ## Key Files
 

@@ -17,7 +17,8 @@ description: >-
   (ttai-session-analyst) or browser demo steps (ttai-browser-demo-builder).
 when_to_use: >-
   Also when the user pastes a brief or an example conversation to turn into a
-  Scenario, or a ttai tool call fails.
+  Scenario, hands over a Google Slides deck or /pubembed link, asks for slides
+  instead of cards, or a ttai tool call fails.
 ---
 
 # Tough Tongue AI Agent
@@ -105,7 +106,9 @@ the job, the file, and when to read it.
   [scenario/model-selection.md](references/scenario/model-selection.md). Model
   family, pipeline, voice.
 - **Set controls** — [scenario/control.md](references/scenario/control.md).
-  `strategy`, `appearance`, `tools_config`, analysis, links.
+  `strategy`, `appearance`, `tools_config`, analysis, links. A Google Slides
+  deck (embed link, SLIDE MAP, slides instead of cards): its Google Slides
+  decks section.
 - **Answer from the user's documents** —
   [mcp/tools.md](references/mcp/tools.md#knowledge-filebases). PDFs or docs →
   knowledge FileBase → `knowledge_filebase_ids`.

@@ -212,7 +212,8 @@ and wait. If first_name is blank, skip the name.
 ## QUALIFYING QUESTIONS (weave in naturally)
 - [Question 1] / [Question 2] / [Question 3]
 
-## SLIDE SUMMARY
+## SLIDE MAP — google_slides (show the slide first, then talk)
+[Tool contract and rules: Google Slides decks in ../scenario/control.md]
 - Slide 1 (Title): [Company overview, core value prop]
 - Slide 2: [Key feature / problem]
 - Slide 3: [Differentiator]
@@ -370,7 +371,9 @@ Each line: anti-pattern → instead.
 - [ ] Rubric produces a Demo Intelligence Report (not a performance review)
 - [ ] Browser demo: `initialUrl` set; login done via `ttai:authenticate_browser`
       if needed; `multimodal_analysis: true` when the plan allows
-- [ ] Slide demo: `embedUrl` set in `google_slides` tool settings
+- [ ] Slide demo: `embedUrl` is the `/pubembed` link; the SLIDE MAP count
+      matches the deck and every FLOW step names its slide
+      ([../scenario/control.md](../scenario/control.md), Google Slides decks)
 
 ## Key Files
 

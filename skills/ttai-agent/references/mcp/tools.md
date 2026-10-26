@@ -164,8 +164,10 @@ even when a client hides them.
   - Everything else is replaced whole: `ai_model_config` (resend `tts_voice_id`
     and the rest of the stamp), `stages`, `rubrik`, `processed_rubrik`,
     `auto_update_config`, ID lists, `user_metadata`.
-  - `save_as_version` (1–100 characters) archives the prior state under that
-    label before applying the change.
+  - `save_as_version` (1–100 characters) archives the prior state, then
+    applies the change. The label names the new version you are saving; the
+    archived copy keeps its own earlier label ("Initial version" if it had
+    none).
 - `get_resource(scenarios, id)` omits linked-resource IDs
   (`knowledge_base_ids`, `knowledge_filebase_ids`, `custom_function_ids`,
   `pre_connect`); the create/update response returns the full authoring state.

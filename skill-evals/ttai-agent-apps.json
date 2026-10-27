@@ -38,7 +38,7 @@
       "Reads references/app-structure.md and references/runtime.md before the first ttai:write_filebase",
       "Puts the scoreboard state in one flat JSON file under data/ (for example data/score.json) and documents its fields in README.md ## Data",
       "src/App.tsx reads it with import files from \"./desktop-files\" and parses files[\"data/…\"] inside the component on every render, with a waiting state for missing or invalid JSON",
-      "No src/ file imports from data/ (no \"../data/…\" module import); package.json, if written, lists only allowlisted packages",
+      "No src/ file imports from data/ (no \"../data/…\" module import); package.json, if written, lists each dependency with an exact version (no range, no lockfile, no react)",
       "README ## Controls tell the agent to rewrite the whole data file with desktop_write before speaking"
     ]
   },

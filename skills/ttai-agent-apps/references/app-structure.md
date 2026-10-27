@@ -16,7 +16,7 @@ on screen: [runtime.md](runtime.md).
 ```text
 <app_name>/
 ├── README.md        # the agent's manual
-├── package.json     # optional: extra packages from the allowlist
+├── package.json     # optional: npm packages, exact versions
 ├── src/
 │   └── App.tsx      # fixed render code; default-exports the root component
 └── data/
@@ -29,14 +29,24 @@ agent's `desktop_*` tools alike.
 
 ## Files
 
-| File           | Required         | Rule                                                                                                                                                                      |
-| -------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/App.tsx`  | yes              | Default-exports a React 18 component that takes no props. Other `src/**` modules are free. The live agent never edits `src/`.                                             |
-| `data/**`      | for agent writes | The only paths the live agent can write. Read only through `import files from "./desktop-files"`. Keep each file a few KB: every agent write sends all data files.        |
-| `README.md`    | yes              | The agent's manual (below).                                                                                                                                               |
-| `package.json` | no               | `dependencies` from this allowlist only: `yaml`, `marked`, `mermaid`, `dompurify`, `lucide-react`. React 18 is forced; any other package is dropped and its import fails. |
+| File           | Required         | Rule                                                                                                                                                               |
+| -------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `src/App.tsx`  | yes              | Default-exports a React 18 component that takes no props. Other `src/**` modules are free. The live agent never edits `src/`.                                      |
+| `data/**`      | for agent writes | The only paths the live agent can write. Read only through `import files from "./desktop-files"`. Keep each file a few KB: every agent write sends all data files. |
+| `README.md`    | yes              | The agent's manual (below).                                                                                                                                        |
+| `package.json` | no               | `dependencies`: any npm package, each with an exact version. React 18 is forced. See "Dependencies" below.                                                         |
 
 - "Required": the write receipt's `missing` lists the file until it exists.
+- Dependencies: list exact versions (`"yaml": "2.9.1"`, not `"^2.6.0"`).
+  - A range makes the bundler download the package's whole version list from
+    jsDelivr on every boot before it can fetch the package. An exact version
+    skips that, reuses the prebuilt bundle, and never upgrades silently.
+  - Ship no lockfile (`package-lock.json`, `yarn.lock`): the bundler ignores it.
+    Sub-dependencies come inside the prebuilt bundle, so an exact top-level
+    version already fixes them.
+  - React 18 (`18.3.1`) is forced: do not list `react` or `react-dom`.
+  - To find what a range resolves to, run `npm view <pkg>@"<range>" version`
+    and take the last line.
 - Reserved: the runtime supplies `src/index.tsx` (mounts `App`),
   `src/desktop-files.ts`, `src/desktop-events.ts` and `index.html`. Never write
   them; your own copies are ignored.

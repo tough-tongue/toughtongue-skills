@@ -75,13 +75,20 @@ Every entry in `tools_config.tools.<tool_id>` has two booleans:
 
 ### `end_session` specifics
 
-- Reads `tool_settings.disconnectDelaySeconds` (default 15): the agent's goodbye
-  keeps playing for that many seconds before disconnect.
+- Reads `tool_settings.disconnectDelaySeconds` (default 15): the line stays live
+  that many seconds after the tool call, then disconnects.
 - `endSession(reason)` schedules the end (the reason is logged, never spoken);
   `endSession(cancel=true)` cancels a pending end when the user substantively
   re-opens the conversation. Thanks, goodbyes, and noise do not cancel.
-- The goodbye is its own turn; call the tool only after the user's reply.
-  Premature calls are the #1 source of "the agent hung up on me" complaints.
+- Farewell mode is the live window between `endSession(reason)` and the
+  disconnect: the agent answers pleasantries in one line with no tool call, and
+  cancels first when the user re-engages.
+- By default the goodbye is its own turn; call the tool only after the user's
+  reply. Premature calls are the #1 source of "the agent hung up on me"
+  complaints.
+- When `ai_instructions` carries an ENDING THE CALL block, set
+  `add_to_system_prompt: false` so the block is the only ending rule. The
+  block, the scripted-close variant, and fixes: [ending.md](ending.md).
 
 ### Session-surface differences
 
@@ -186,10 +193,12 @@ it if you spot it. Never write `cascade-01` — use `cascade`.
 
 Each symptom lists its owner (where to fix), then the mechanism.
 
-- **"end_session never called"** — `ai_instructions` end-of-call block: timing
-  instruction unclear or `add_to_system_prompt: false`.
-- **"end_session called mid-conversation"** — `ai_instructions`: add "NEVER call
-  before closing line + customer farewell".
+- **"end_session never called"** — `ai_instructions` ENDING THE CALL block: no
+  clear completed-call trigger, or `add_to_system_prompt: false` with no block
+  in the prompt ([ending.md](ending.md#failure-modes-and-fixes)).
+- **"end_session called mid-conversation"** — `ai_instructions`: add the block's
+  not-exit-signals list and its "hangs up, not a phase marker" line
+  ([ending.md](ending.md#failure-modes-and-fixes)).
 - **"Wrap-up fires too early"** — `strategy.conductor.messages[].time_seconds`:
   bump to match real call length distribution.
 - **"Long silence then call drops"** — `strategy.silence`: omitted (120s

@@ -117,6 +117,9 @@ the job, the file, and when to read it.
 - **Diagnose runtime behavior** —
   [scenario/runtime.md](references/scenario/runtime.md). Hang-ups, silence,
   wrap-up timing, tools over SIP.
+- **End the call cleanly** —
+  [scenario/ending.md](references/scenario/ending.md). The ENDING THE CALL
+  block, farewell mode, hang-up complaints.
 
 ### Recipes
 

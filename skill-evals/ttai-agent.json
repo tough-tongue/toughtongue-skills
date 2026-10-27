@@ -101,10 +101,23 @@
     "skills": ["ttai-agent"],
     "query": "For a cold-call scenario, should the AI end the session as soon as it says goodbye?",
     "expected_behavior": [
-      "Explains the response-gated close: state the outcome and goodbye first, then call end_session only after the other person's reply",
-      "Says end_session must not share a turn with a pitch, question, summary, or goodbye",
-      "Distinguishes ordinary thanks, noise, and crosstalk from substantive re-engagement; the latter cancels a pending end (endSession with cancel) before responding",
-      "Points to references/scenario/authoring.md or the cold-call recipe instead of inventing runtime behavior"
+      "Answers that by default it should not: the goodbye is its own turn, and end_session is called only after the lead's reply",
+      "Says end_session hangs up rather than marking a phase, and never shares a turn with a question or pitch",
+      "Explains farewell mode: after endSession(reason) the line stays live for disconnectDelaySeconds; thanks, goodbyes, and noise get a warm reply with no tool, while a substantive question, a request to wait, or a new topic calls endSession(cancel=true) before responding",
+      "Mentions the tool-with-closing-line variant for scripted outbound calls whose closing line settles the call (endSession first, then the closing line) as an option, not the default",
+      "Points to references/scenario/ending.md instead of inventing runtime behavior"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Our outbound caller hangs up when customers say 'haan' or 'ok', and sometimes says goodbye and then just sits in silence. Scenario name is 'Lead Qualifier'. Fix it.",
+    "expected_behavior": [
+      "Resolves the title with one ttai:list_resources(scenarios, query: 'Lead Qualifier') call, fetches it with ttai:get_resource(scenarios), and reads recent transcripts via ttai:list_resources(sessions) filtered by scenario_ids before proposing an edit",
+      "Loads references/scenario/ending.md and ties each symptom to evidence: a bare 'haan' or 'ok' treated as an exit, and a goodbye with no end_session call after the reply",
+      "Adds or rewrites one ENDING THE CALL block in ai_instructions: endSession hangs up and is not a phase marker, a short list of situations that end the call, the not-exit-signals list in the call's language, and farewell mode where real re-engagement cancels first",
+      "For the silent goodbye, makes the completed-call trigger explicit, and may offer the tool-with-closing-line variant for a scripted caller as the user's choice",
+      "Sets end_session add_to_system_prompt to false and disconnectDelaySeconds to about 10, sending the full end_session entry merged from the current tool_settings",
+      "Shows the planned change and confirms with the user before ttai:update_scenario, sends only id plus changed fields, and reports that edits affect new sessions only"
     ]
   },
   {
@@ -135,7 +148,7 @@
     "expected_behavior": [
       "Uses a current Scenario ID when available; otherwise resolves the title with one ttai:list_resources(scenarios, query: <title>) call, then fetches full current detail with ttai:get_resource(scenarios)",
       "Pulls compact session evidence via ttai:list_resources(sessions) filtered by scenario_ids, then inspects selected transcripts before proposing any edit",
-      "Loads references/scenario/runtime.md, diagnoses one root cause from the evidence, and distinguishes the prescribed behavior from what happened",
+      "Loads references/scenario/runtime.md or ending.md, diagnoses one root cause from the evidence, and distinguishes the prescribed behavior from what happened",
       "Applies a surgical edit via ttai:update_scenario sending only id plus the changed fields (full tool_settings if a tool's settings change)",
       "Reports diagnosis, change summary, and the new-sessions-only reminder"
     ]

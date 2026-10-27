@@ -85,8 +85,8 @@ directive — "Start with: … Then STOP and wait." Never quote the opening.
 Then branches. What must never be skipped. One question per turn.
 
 ## TOOLS
-When to call `end_session` (and any other enabled tools). Timing rules —
-without them the agent never hangs up or hangs up mid-sentence.
+When to call each enabled tool. `end_session` timing: the ENDING THE CALL
+block in ending.md — without it the agent never hangs up or hangs up early.
 
 ## GUARDRAILS
 Never reveal you are an AI unless asked. Never speak tool names. Never

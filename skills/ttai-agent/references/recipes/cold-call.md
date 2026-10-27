@@ -200,11 +200,17 @@ instructions; do not call it in the same turn as a question or pitch.
 | **NURTURE**   | Partial data, door open, not ready         |
 | **DEAD LEAD** | Not interested, wrong number, DNC, hostile |
 
-Close each outcome, then follow the closing turn rule:
+Close each outcome with one closing line, then end the call as the ENDING THE
+CALL block says ([ending.md](../scenario/ending.md)):
 
 - **CONVERTED** — confirm date/time/action + warmth.
 - **NURTURE** — agree on a follow-up plan.
 - **DEAD LEAD** — one polite goodbye.
+
+By default the agent ends after the lead's reply to the closing line. A
+scripted caller whose closing line settles the call (a booked time, a clear
+no) may instead start the closing turn with `endSession(reason)`, then say the
+line; farewell mode handles the lead's goodbye.
 
 ---
 
@@ -269,12 +275,15 @@ You are [Name], [title] at [Company]. [One-line mission.]
 [Acknowledge → reframe → check in]
 ### Phase 4: Q&A + next step (keep the call OPEN)
 ### Phase 5: Close
-[State the goodbye. Wait for the lead's reply, then call end_session if they
-have not substantively re-opened the conversation.]
+[One closing line per outcome, each ending "Then end the call". ENDING THE
+CALL decides when the tool fires.]
 
 ## TOOLS
-Call end_session for CONVERTED / NURTURE / DEAD LEAD only after the lead's
-post-goodbye reply.
+[Other enabled tools and when to call them.]
+
+## ENDING THE CALL
+[The block from scenario/ending.md. Default: end after the lead's reply to
+the closing line; a fixed script may use the tool-with-closing-line variant.]
 
 ## HANDLING QUESTIONS
 [FAQ guidance for likely product/company questions]

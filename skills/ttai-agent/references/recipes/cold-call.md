@@ -11,7 +11,7 @@ whose data is (at least partially) known. The user plays the lead.
 - Discovery / data collection
 - Objection handling and call outcomes
 - ai_instructions and user_instructions structure
-- Rubric structure (evaluates the LEAD)
+- Call results (extraction for the CRM; optional rubric on the LEAD)
 - Technical config, anti-patterns, quality checklist
 
 Key facts:
@@ -308,10 +308,40 @@ sell.
 
 ---
 
-## Rubric Structure
+## Call Results: Extraction and Rubric
 
-**CRITICAL**: Cold call rubrics evaluate the **LEAD** (the human), not the AI.
-It is a lead-screening brief for the sales/ops team — NOT a performance review.
+A cold call's result is the lead's outcome for the CRM and the rep who follows
+up, not a score. Capture it with extraction
+([extraction.md](../scenario/extraction.md)): leave `rubrik` empty, set
+`is_auto_analysis: false` and `enable_extraction: true`, and write
+`extraction_vars`.
+
+Map the three call outcomes to one outcome variable, plus values for calls
+that never became a conversation:
+
+```
+call_result (text)
+Return exactly one of: 'CONVERTED', 'NURTURE', 'DEAD LEAD', 'Voicemail',
+'Ambiguous'. CONTEXT: [who called whom and why; the transcript is
+speech-to-text of phone audio, so infer intent]. Judge the FINAL state of the
+call.
+- 'CONVERTED': qualified and committed to a next step (demo, visit, callback).
+- 'NURTURE': partial data, door open, a follow-up agreed but no commitment.
+- 'DEAD LEAD': not interested, wrong number, do-not-call request, or hostile.
+- 'Voicemail': no live person: voicemail, IVR or a carrier message only.
+- 'Ambiguous': a dropped call, unclear replies, or no outcome reached.
+DISAMBIGUATION: 'CONVERTED' needs the discovery data and a committed next
+step; a callback only to finish discovery is 'NURTURE'.
+```
+
+Add a variable for the next step's date and time (strict format, named
+timezone, `null` if none), one per discovery data point (counts as `number`),
+and a handoff summary for the rep.
+
+**Optional lead report.** When the team also wants a written screening brief
+per call, add this rubric and set `is_auto_analysis: true`. It evaluates the
+**LEAD** (the human), not the AI: a lead-screening brief for the sales/ops
+team, NOT a performance review.
 
 ```
 # [Company] Cold Call Report

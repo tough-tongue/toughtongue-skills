@@ -114,8 +114,21 @@
       "Calls ttai:read_guide first when available and the guide is not already in context, then resolves whether to pass an org_id with ttai:get_workspace_info (organizations)",
       "Follows references/scenario/workflow.md: loads the cold-call recipe plus authoring, model-selection, control, and ai-instructions references",
       "Drafts from supplied lead facts with a two-beat directive opening and the recipe's three outcomes (CONVERTED / NURTURE / DEAD LEAD); prefers Landmass cascade and uses Ocean only when Cascade/Cartesia is unavailable; never invents a TTS voice ID",
-      "Writes a rubric that evaluates the LEAD (the human), not the AI caller, and sends an explicit tools_config with end_session",
+      "Captures the call outcome with extraction (one outcome variable over CONVERTED / NURTURE / DEAD LEAD); any lead-report rubric evaluates the LEAD (the human), not the AI caller; sends an explicit tools_config with end_session",
       "Calls ttai:create_scenario without an id field and returns the practice link https://app.toughtongueai.com/run/<scenario_id>"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Our outbound qualification agent should push results into our CRM: the outcome, the callback time, and a short note for the sales rep. Set that up on 'Lead Qualifier'.",
+    "expected_behavior": [
+      "Loads references/scenario/extraction.md, finds the Scenario by title, and reads its current session_analysis with ttai:get_resource(scenarios) before drafting",
+      "Writes one outcome variable that returns exactly one of a fixed set of values, each with a definition, plus no-live-person and catch-all values, a judge-the-final-state rule, and disambiguation lines for confusable pairs",
+      "Writes a callback-time variable with one strict format, a named timezone, special values, a null rule when no time was agreed, and a latest-value rule",
+      "Writes a handoff summary variable for the sales rep: 2 to 4 sentences, or one sentence if the call never connected",
+      "Sets enable_extraction: true; turns analysis off (is_auto_analysis: false, no rubric) unless someone on the call is being scored",
+      "Sends the full extraction_vars list, keeping existing variables, and confirms the Scenario and change with the user before ttai:update_scenario, then re-fetches to verify",
+      "Names an existing post-session Custom Function (post_session_function_id, which receives extracted_variables) as the way into the CRM; never invents a function ID or a CRM integration"
     ]
   },
   {

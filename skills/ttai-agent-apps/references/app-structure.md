@@ -91,8 +91,14 @@ README and the file list, `desktop_read` reads a file, and `desktop_write` /
 - Say how ids are formed (short, stable) and that the whole file is rewritten
   each time.
 - Say "write the file, then speak", so the screen changes as the agent says it.
-- For each emitted event give its name, data, and the agent's reaction; say
-  whether it asks for a reply (`reply: true`) or is silent context.
+- For each emitted event give its name, data, and the agent's reaction; label
+  it `(reply)` when it sets `reply: true`, otherwise `(silent)`.
+- For a timed run, give a start flag: `go: false` while the agent explains,
+  `go: true` starts the app's clock.
+- Say "stay quiet until the app's event; never count aloud over it", and tell
+  it to answer mid-run speech in a few words.
+- Say "sound is off until the learner taps; ask once, never nag", and name the
+  event that shows it is on.
 - If something is clickable and not emitted, say the agent never sees it and
   must ask the learner what they picked.
 - Keep each line imperative and under ~20 words.

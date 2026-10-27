@@ -129,6 +129,10 @@ and rubric must evaluate the same person and outcome.
   persona pools by level (a trusting first-timer, a researched sceptic). The
   map feeds the objections, the persona rotation, and the rubric.
   Population-wide maps are the `ttai-session-analyst` skill's job.
+- Test before hand-off. A rule that breaks only under pressure (a gated
+  reveal, a red line, a concession floor, a hang-up rule) needs a scripted
+  counterpart that probes it on purpose, not a cooperative tester. Fix one
+  rule per round and re-run the same probes: [testing.md](testing.md).
 
 ## Corpus hygiene
 

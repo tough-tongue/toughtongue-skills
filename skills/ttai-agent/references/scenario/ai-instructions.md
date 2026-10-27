@@ -121,7 +121,9 @@ structure; that contract supplies its content.
 otherwise prompts the user), or `dynamic_vars` on calls and meeting bots. The
 field runs full Liquid, so a missing value takes a `default:` filter or an
 `{% if %}` block, and one Scenario can branch on a variable (persona level,
-language, offer). Patterns, limits, and a worked example:
+language, offer). The platform fills `tt_session_type` (the channel) and
+`tt_call_time["<UTC offset>"]` (the start time) itself; never ask the user
+for them. Patterns, limits, and a worked example:
 [dynamic-variables.md](dynamic-variables.md). Prefer `appearance.voice` for
 Realtime. Cascade `tts_voice_id` lives in
 [model-selection.md](model-selection.md).

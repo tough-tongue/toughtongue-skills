@@ -30,6 +30,20 @@ itself is in [ai-instructions.md](ai-instructions.md).
 - **Calls and bots** — `dynamic_vars` on `ttai:schedule_bot` (`kind: "phone"`
   or `"meeting"`). The same values reach post-session hooks.
 - All values arrive as **strings**.
+- **Platform (reserved)** — Tough Tongue AI fills these itself, in
+  `ai_instructions` and `super` stage text:
+  - `tt_session_type` — `web`, `meeting_bot`, `sip_inbound`, or
+    `sip_outbound`.
+  - `tt_call_time["<UTC offset>"]` — the session start time at that fixed
+    offset, for example `tt_call_time["+05:30"]` for India. Offsets run from
+    `-12:00` to `+14:00` in 15-minute steps, always `±HH:MM` in double quotes,
+    and never follow daylight saving: US Eastern is `"-04:00"` in summer and
+    `"-05:00"` in winter. Pick the offset of the people on the call. Time is
+    opt-in: a phone call gets no clock unless the instructions reference
+    `tt_call_time`.
+  - The whole `tt_*` namespace belongs to the platform: never ask the user for
+    these values, never pass them in `dynamic_vars` or a run link, and never
+    invent another `tt_*` name.
 
 ## What runs where
 
@@ -91,17 +105,25 @@ Each one replaces a copy of the Scenario.
 4. **Language per lead.** `{% case preferred_language %}` with a default and
    one block per language. Never announce the choice aloud.
 
-5. **Clock-aware rules.** The platform does not inject the time into
-   `ai_instructions`. Pass it as a variable (for example `current_datetime` as
-   `YYYY-MM-DD HH:MM`) and derive what the flow needs:
+5. **Clock-aware rules.** Reference `tt_call_time` at the offset of the people
+   on the call and state the rule in words; the model applies it to the time
+   it is given. Nothing to pass per run.
 
    ```
-   {% assign hm = current_datetime | date: "%H%M" | plus: 0 %}
-   {% if hm < 1100 or hm > 1930 %}Experts are off now: book a time between eleven and seven thirty.{% endif %}
+   It is now {{ tt_call_time["+05:30"] }} for the customer.
+   Experts call back only between eleven AM and seven thirty PM India time. Offer a slot inside those hours; if today's are over, offer tomorrow from eleven.
    ```
 
 6. **Campaign text.**
    `{% if current_offer != blank %}Mention {{ current_offer }} once, in your own words, after the first question.{% endif %}`
+
+7. **One Scenario for web and phone.** Branch the steps that need a screen on
+   `tt_session_type` instead of keeping a phone copy.
+
+   ```
+   {% if tt_session_type == "web" %}Show the three plans on a card, then ask which fits.
+   {% else %}Read the three plans aloud, one per turn, and ask which fits.{% endif %}
+   ```
 
 ## Worked example
 
@@ -154,6 +176,8 @@ Then ask what time an expert should call back. One question per turn.
 
 - [ ] Every `{{ var }}` has a `default:` or a `!= blank` branch
 - [ ] Numeric comparisons go through `plus: 0`
+- [ ] No `tt_*` value requested from the user, passed in `dynamic_vars`, or
+      invented; `tt_call_time` uses the offset of the people on the call
 - [ ] Each `case` or `if` branch tested from a run link with and without the
       value
 - [ ] No `&` or quotes in values the caller passes

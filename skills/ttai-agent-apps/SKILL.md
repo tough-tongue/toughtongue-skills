@@ -50,15 +50,15 @@ re-renders in place. The app tells the agent what the learner did with `emit`.
 
 ## Tool map
 
-| Intent               | Call                                                                      |
-| -------------------- | ------------------------------------------------------------------------- |
-| Discover             | `ttai:list_resources(type: filebases, filters: {kind: app}, query?)`      |
-| Inspect / read files | `ttai:get_resource(type: filebases, id, paths?: [...])` (≤ 20 files)      |
-| Create               | `ttai:create_filebase(kind: app, name, title, description?, visibility?)` |
-| Write / delete files | `ttai:write_filebase(id, files?, delete?)`: overwrites, confirm           |
-| Check it runs        | `view_url` on the create, write and get results and on list rows          |
-| Share a link         | `ttai:create_token({type: filebase_view, filebase_id, valid_for_hours})`  |
-| Attach               | `ttai:update_scenario` (`tools_config.tools.agent_desktop`)               |
+| Intent               | Call                                                                         |
+| -------------------- | ---------------------------------------------------------------------------- |
+| Discover             | `ttai:list_resources(type: filebases, filters: {kind: app}, query?)`         |
+| Inspect / read files | `ttai:get_resource(type: filebases, id, paths?: [...])` (≤ 20 files)         |
+| Create               | `ttai:create_filebase(kind: app, name, title, description?, visibility?)`    |
+| Write / delete files | `ttai:write_filebase(id, files?, edits?, upload?/commit?, delete?)`: confirm |
+| Check it runs        | `view_url` on the create, write and get results and on list rows             |
+| Share a link         | `ttai:create_token({type: filebase_view, filebase_id, valid_for_hours})`     |
+| Attach               | `ttai:update_scenario` (`tools_config.tools.agent_desktop`)                  |
 
 Changing visibility after create, and deleting an app, happen in the web app's
 app editor, not over MCP.
@@ -95,10 +95,11 @@ it, and which Scenario uses it. Split before writing:
 ### 3. Write files
 
 `ttai:write_filebase` with `id` and `files`: a map of **package-relative** paths
-(`README.md`, `src/App.tsx`, `data/board.json`) to full contents.
+(`README.md`, `src/App.tsx`, `data/board.json`) to full contents. Files on disk
+and a shell? Send `upload: [paths]` instead, run the returned `script` from the
+package folder within 15 minutes, then call again with `commit: <upload_id>`.
 
-- Each file is replaced whole. Send only the files that change; `delete`
-  removes paths.
+- `files` and `upload` replace each file whole; `delete` removes paths.
 - First write: `README.md`, `src/App.tsx`, and the data files. The receipt's
   `missing` must be empty.
 - `README.md` is the agent's manual: `# Title`, one line, `## Data`,
@@ -162,9 +163,12 @@ to new sessions.
 
 ### 7. Iterate
 
-Data or README change → `ttai:write_filebase` on that file only. Code change →
-write the changed `src/` files, then check it runs again. Open sessions keep
-the files they loaded: relaunch the app or reload the page.
+Read the file first (`paths`). A small change to an existing file (a README
+line, a data value, one component) → `ttai:write_filebase` with
+`edits: [{path, old, new}]`; `old` is exact current text that occurs once.
+Never retry an `edits` call that succeeded: it can apply again. A new or
+rewritten file → `files`. After a code change, check it runs again. Open
+sessions keep the files they loaded: relaunch the app or reload the page.
 
 ## Rules
 

@@ -25,7 +25,9 @@ is compiled:
    the run's variables (`?t_company=Acme` on the run link, `dynamic_vars` on
    calls and bots). An unset variable renders as empty text, so the sentence
    around it breaks — every variable needs a documented missing-value fallback
-   in the instructions.
+   in the instructions. The platform also fills `tt_session_type` (the
+   channel) and `tt_call_time["<UTC offset>"]` (the start time) itself
+   ([dynamic-variables.md](dynamic-variables.md)).
 2. **Template wrapping** — controlled by
    `strategy.system_instructions_template`:
    - unset (default) → **STANDARD** template: about 550 tokens of identity
@@ -99,7 +101,8 @@ Landmass `cascade`.
 
 If a scenario is used over SIP and its instructions prescribe visual tools, the
 agent will narrate actions it cannot perform. Fix the instructions, not the
-config.
+config. If a Scenario runs on web and phone, branch the tool-dependent FLOW
+steps on `tt_session_type` instead of keeping two copies.
 
 **Pipeline:** do not infer the pipeline from SIP alone. For outbound cold calls,
 start with the situation recipe: Cascade is preferred for controllable external

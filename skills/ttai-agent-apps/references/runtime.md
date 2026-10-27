@@ -25,7 +25,8 @@ the app and the live agent, and how to debug it.
   then rebuilds the whole app and resets its state.
 - Parse defensively. A missing, empty, or half-written file renders a waiting
   state, never a crash.
-- YAML: the allowlisted `yaml` package. Markdown: `marked`, then `dompurify`.
+- YAML: the `yaml` package. Markdown: `marked`, then `dompurify`. List each in
+  `package.json` with an exact version ([app-structure.md](app-structure.md)).
 
 ## How updates reach the screen
 

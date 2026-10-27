@@ -115,7 +115,8 @@ and check:
 - The tree has every app file `src/App.tsx` imports (`./desktop-files` and
   `./desktop-events` are supplied at run time, never written).
 - No `src/` file imports a data file as a module (`from "../data/…"`).
-- `package.json`, if present, lists only allowlisted packages (see
+- `package.json`, if present, lists each dependency with an exact version
+  (`"yaml": "2.9.1"`, not `"^2.6.0"`), no lockfile, and no `react` (see
   app-structure.md).
 
 ### 5. Check it runs
@@ -181,7 +182,7 @@ the files they loaded: relaunch the app or reload the page.
       tree has every file `src/App.tsx` imports
 - [ ] Data read via `import files from "./desktop-files"` inside the
       component; no `../data/` import
-- [ ] Data files live under `data/`; `package.json` deps allowlisted
+- [ ] Data files live under `data/`; `package.json` deps exact, no lockfile
 - [ ] `## Controls` name the exact file, its fields, allowed values, and each
       `emit`ted event
 - [ ] `view_url` opened (or a `create_token` link given); the app renders

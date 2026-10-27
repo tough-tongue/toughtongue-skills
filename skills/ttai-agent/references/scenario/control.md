@@ -116,12 +116,13 @@ retired `prefix`.
 - `voice`: realtime voice name — `Aoede` (default), `Puck`, `Kore`, `Charon`,
   `Fenrir`. Galaxy uses it natively; Ocean maps it to its own voices. Not a TTS
   voice ID — those go in `ai_model_config.tts_voice_id`.
-- `language_code` (BCP 47) must match the Scenario's language:
+- `language_code` (BCP 47) — the language the agent speaks:
   `en-US en-GB
   en-IN en-AU de-DE es-US es-ES fr-FR fr-CA hi-IN pt-BR ar-XA id-ID it-IT
   ja-JP tr-TR vi-VN bn-IN gu-IN kn-IN ml-IN mr-IN ta-IN te-IN nl-NL ko-KR
   zh-CN pl-PL ru-RU th-TH`.
-  Match `transcribe_config.language` when set.
+  One language: match `transcribe_config.language`. Code-mix (Hinglish): set
+  the two deliberately — [languages.md](languages.md).
 - `start_sound`: `countdown_blip` (default), `ringtone`, `click`, `none`.
 
 Faces come from `ttai:list_resources` with resource type `avatar` (`type`
@@ -283,7 +284,9 @@ Scenario.
   Scenario learning.
 - `memory: { "is_memory": true }` lets the agent recall a returning user's prior
   sessions; `short_mem_prompt` shapes the summary kept per session.
-- `transcribe_config.language` must match `appearance.language_code`.
+- `transcribe_config.language` — the language the transcriber listens for. One
+  language: match `appearance.language_code`. Code-mix: see
+  [languages.md](languages.md).
 
 ## meeting_config
 

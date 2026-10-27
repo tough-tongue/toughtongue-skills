@@ -200,8 +200,9 @@ Each symptom lists its owner (where to fix), then the mechanism.
   opening — rewrite as a directive.
 - **"Opening breaks when a name is missing"** — `ai_instructions` CONTEXT block:
   add "If `firstname` is blank, open without a name."
-- **"Wrong accent / language drift"** — `appearance.language_code` +
-  `transcribe_config`: both must match the locale.
+- **"Wrong accent / language drift"** — `appearance.language_code`,
+  `transcribe_config.language`, and the prompt's accent line and LANGUAGE
+  block: set them per [languages.md](languages.md).
 - **"AI sounds robotic"** — `ai_instructions` STYLE: apply the anti-robotic
   rule in [ai-instructions.md](ai-instructions.md#spoken-lines) (vary
   acknowledgments, ONE concrete example, not a paragraph); strip quotation

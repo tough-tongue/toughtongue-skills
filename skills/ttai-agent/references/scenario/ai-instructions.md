@@ -110,6 +110,8 @@ structure; that contract supplies its content.
 - Plain text in the model's **output**. No markdown, bullets, or URLs in what
   will be spoken.
 - Spell out numbers and symbols when they will be read aloud.
+- Any non-English or mixed-language Scenario (Hindi, Hinglish): load
+  [languages.md](languages.md) — language codes, script, switching, gender.
 - Realtime (Galaxy, Ocean, Landmass `gemini`/`openai`) hear audio. Landmass
   Cascade sees **transcripts** — only then load
   [../recipes/cascade-tts.md](../recipes/cascade-tts.md) (STT errors, SSML,

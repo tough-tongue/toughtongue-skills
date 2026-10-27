@@ -175,6 +175,20 @@
   },
   {
     "skills": ["ttai-agent"],
+    "query": "Our outbound caller in India needs to handle Hinglish: customers switch between Hindi and English mid-call, and the agent keeps answering in pure English and calling women 'sir'.",
+    "expected_behavior": [
+      "Loads references/scenario/languages.md, resolves the Scenario, and fetches it with ttai:get_resource(scenarios) before proposing changes",
+      "Writes Hindi in Devanagari and English words in Latin script in every example line, filler and voicemail message; never romanized Hindi",
+      "Adds a LANGUAGE block with a stated default and mix and switch triggers written as checkable rules (a request for Hindi switches and stays; the last-two-answers rule for English), not 'switch naturally'",
+      "Fixes the agent's own gender with example verb forms and keeps the caller gender-neutral (आप, जी instead of sir or ma'am) until two signals agree, at least one being their own verb forms or name; never asks their gender",
+      "Sets appearance.language_code and transcribe_config.language deliberately for code-mix (for example en-IN speaking, hi-IN listening) instead of forcing them equal",
+      "Suggests stt_provider sarvam with stt_mode codemix only when the model is Landmass cascade; adds no stt_* fields to a realtime stamp",
+      "Keeps numbers, dates and prices in words in a stated language",
+      "Reads, merges, and writes the full objects it changes, confirms the change with the user before ttai:update_scenario, and notes that edits affect new sessions only"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
     "query": "I want one scenario that can play either a trusting first-time buyer or a researched sceptic, chosen when the rep starts the run.",
     "expected_behavior": [
       "Loads references/scenario/dynamic-variables.md and proposes one Scenario with a {% case level %} block on a variable (with a default), not two Scenarios",

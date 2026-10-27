@@ -102,7 +102,7 @@
     "query": "Call these 200 leads tomorrow between 10am and 7pm India time with 'Lead Qualifier'. Retry anyone who goes to voicemail twice, an hour apart.",
     "expected_behavior": [
       "Checks SIP access and balance with ttai:get_workspace_info (plan, balance) and lists outbound trunks with ttai:list_resources(sip-trunks) instead of inventing a trunk ID",
-      "Reads the 'Lead Qualifier' Scenario for its {{ var }} names and outcome extraction variable, and pins scenario_version_id to an archived version",
+      "Reads the 'Lead Qualifier' Scenario for its {{ var }} names and outcome extraction variable, and asks whether to pin scenario_version_id to an archived version so mid-campaign edits do not reach queued calls",
       "Proposes one test call to the user's own number before dialing any lead",
       "Builds call_policy.office_hours with timezone Asia/Kolkata, weekdays covering the calling day, start 10:00 and end 19:00, and sets scheduled_ts for tomorrow",
       "Builds call_policy.retry with max_retries 2 and delays_minutes [60, 60], with an extraction condition on the Scenario's outcome variable equal to its voicemail value; without such a variable, explains the gap and offers to add one; notes that conditions combine with AND",

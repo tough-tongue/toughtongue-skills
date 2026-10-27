@@ -68,11 +68,12 @@ Leads in different timezones go in separate batches.
    trunks (`ttai:list_resources(sip-trunks)`) and let the user pick one.
 2. Read the Scenario: its `{{ var }}` names and its outcome extraction
    variable, if any (such as `call_result`, with a value for voicemail).
-3. Pin `scenario_version_id` to an archived version
+3. Ask whether mid-campaign edits should reach queued calls. If not, pin
+   `scenario_version_id` to an archived version
    (`ttai:list_resources(scenario-versions)`) holding the content you will
-   test, so edits made mid-campaign do not reach queued calls. If that content
-   exists only as the current copy, a `ttai:update_scenario` with
-   `save_as_version` archives it (a confirmed write).
+   test; if that content exists only as the current copy, a
+   `ttai:update_scenario` with `save_as_version` archives it (a confirmed
+   write). Unpinned, a fix to the Scenario reaches calls not yet placed.
 4. Place one test call to the user's own number with that version and one
    lead's `dynamic_vars`. Read its transcript and extraction before dialing
    anyone else. Before relying on voicemail retries, let a second test call

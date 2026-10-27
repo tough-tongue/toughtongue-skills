@@ -120,7 +120,8 @@ prompt has no voicemail branch. AMD off: the prompt needs one. Details:
 
 **Confirm** — show, then wait for an explicit yes before `ttai:schedule_bot`:
 
-- Scenario, pinned version label, and trunk.
+- Scenario, the version calls will run (a pinned label or the current
+  copy), and trunk.
 - Number count, the first and last three numbers, and any rows left out.
 - Start time and office hours in the callee's timezone (and the user's, if
   different).

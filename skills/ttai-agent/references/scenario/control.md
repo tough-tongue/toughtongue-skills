@@ -290,8 +290,23 @@ Scenario.
 For meeting bots and phone calls: `is_notetaker` (join without AI), `audit_mode`
 (notetaker: one combined session), `public_meet_bot` (allow deployment from the
 public meeting embed), and `amd_config` (answering machine detection for
-outbound calls: `enabled`, `voicemail.action` `leave_message`|`hangup`,
-`voicemail.message`).
+outbound calls; default `null`):
+
+- `enabled` — default `true` once `amd_config` is sent.
+- `voicemail.action` — `hangup` (default) or `leave_message`.
+- `voicemail.message` — spoken in the Scenario's voice; without one, the call
+  hangs up. Write it in the callee's language: who is calling and why. Promise
+  a callback only when the campaign retries.
+- `prompt` — replaces the voicemail classifier's system prompt (up to 8,000
+  characters). Leave it unset unless real calls are misclassified.
+- On update, `amd_config` is replaced whole: resend `voicemail`.
+
+Voicemail has one handler. AMD on: remove any voicemail branch from
+`ai_instructions`. AMD off: give the prompt a voicemail branch — on a recorded
+greeting or beep, say one short message once, then end the call without
+waiting for a reply.
+Retries after voicemail:
+[../entities/scenario-engine.md](../entities/scenario-engine.md#calling-campaigns).
 
 ## Dynamic variables and auto-updates
 

@@ -259,7 +259,9 @@ Not the legacy Knowledge Base (`knowledge-bases`, `knowledge_base_ids`, tool
   either kind.
 - `session_credentials: "bot_uc"` is a server-side setting: the call or bot
   runs the Scenario's attached MCP tools as the deploying Tough Tongue AI user.
-  Nothing is read from the user's machine. Omit it unless requested.
+  Nothing is read from the user's machine. A meeting bot for a private
+  Scenario needs it; without it the server rejects the bot. Otherwise omit it
+  unless requested.
 - `ttai:upload_session(req_data)` is for automations that use Tough Tongue AI's analysis
   and extraction on calls held elsewhere (dialer, Gong, Zoom): it uploads a
   transcript or `recording_url` as a completed session, then the Scenario's

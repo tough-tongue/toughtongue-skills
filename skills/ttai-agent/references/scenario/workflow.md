@@ -62,9 +62,8 @@ registers a broad default tool set. On a validation error, fix the named field
 and retry.
 
 Return the run link `https://app.toughtongueai.com/run/<scenario_id>`. For a
-private Scenario (only when the user asked to limit access; meeting bots and
-phone calls cannot run one), offer a Scenario Access Token when the user wants
-to share it
+private Scenario (only when the user asked to limit access; phone calls cannot
+run one), offer a Scenario Access Token when the user wants to share it
 ([../entities/account-and-access.md](../entities/account-and-access.md)).
 Recorded browser steps → the `ttai-browser-demo-builder` skill.
 

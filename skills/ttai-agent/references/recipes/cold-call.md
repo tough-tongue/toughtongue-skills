@@ -397,19 +397,19 @@ Same strategy / tools / session_analysis as above. No cascade-tts blocks.
 
 ## Anti-Patterns
 
-| Anti-pattern                       | Instead                                 |
-| ---------------------------------- | --------------------------------------- |
-| Beat 1 + Beat 2 in one turn        | Stop after Beat 1                       |
-| Discovery Q on the opening         | Wait for a response branch              |
-| Two questions in one turn          | One question per turn                   |
-| Echoing the lead verbatim          | Brief ack + context                     |
-| Quoted or fenced example lines     | Plain text, labelled tone only          |
-| Pushing past "not interested"      | Graceful close → `end_session` timing   |
-| Rubric scoring the AI              | Score the LEAD                          |
-| Breaks when a `{{ var }}` is blank | Missing-data fallbacks                  |
-| `skip_auto_start: true`            | Always `false`                          |
-| No conductor timeout               | Always set                              |
-| Galaxy or casual Ocean stamp       | Cascade or Gemini Live; Ocean fallback  |
+| Anti-pattern                       | Instead                                |
+| ---------------------------------- | -------------------------------------- |
+| Beat 1 + Beat 2 in one turn        | Stop after Beat 1                      |
+| Discovery Q on the opening         | Wait for a response branch             |
+| Two questions in one turn          | One question per turn                  |
+| Echoing the lead verbatim          | Brief ack + context                    |
+| Quoted or fenced example lines     | Plain text, labelled tone only         |
+| Pushing past "not interested"      | Graceful close → `end_session` timing  |
+| Rubric scoring the AI              | Score the LEAD                         |
+| Breaks when a `{{ var }}` is blank | Missing-data fallbacks                 |
+| `skip_auto_start: true`            | Always `false`                         |
+| No conductor timeout               | Always set                             |
+| Galaxy or casual Ocean stamp       | Cascade or Gemini Live; Ocean fallback |
 
 ---
 

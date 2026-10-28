@@ -69,7 +69,8 @@ app editor, not over MCP.
 
 One round of questions; skip what is stated: what the app shows, what the agent
 changes mid-call (a slide, a status, a list item), what the learner can do in
-it, and which Scenario uses it. Split before writing:
+it, who keeps time (the voice, or the app: a timer, a paced exercise, media),
+and which Scenario uses it. Split before writing:
 
 - **Code**: `src/**`, fixed; the agent never edits it.
 - **Data**: small flat JSON or YAML files under `data/` that the agent
@@ -78,6 +79,9 @@ it, and which Scenario uses it. Split before writing:
 - **Learner actions**: the agent sees a click only if the app calls
   `emit` (`import { emit } from "./desktop-events"`). Prefer state the voice
   drives; emit only what the agent must react to.
+- **App-paced**: when the app keeps time, it runs the clock or media and emits
+  milestones while the agent stays quiet
+  ([runtime.md](references/runtime.md#timed-and-media-apps)).
 
 ### 2. Create
 
@@ -158,7 +162,9 @@ copy the existing `agent_desktop.tool_settings` keys into your write. Send one
 `add_to_system_prompt: true` adds the desktop workflow, one line per app, and
 the `[desktop:<app>]` event note to the prompt. `ai_instructions` then only
 needs the when (which phase shows which app), not the how. The change applies
-to new sessions.
+to new sessions. For an app-paced app, set `strategy.silence` with
+`silence_threshold` longer than the longest run and
+`force_agent_to_speak: false`, so the agent is not nudged to talk over it.
 
 ### 7. Iterate
 
@@ -188,10 +194,13 @@ the files they loaded: relaunch the app or reload the page.
 - [ ] `view_url` opened (or a `create_token` link given); the app renders
 - [ ] `agent_desktop.tool_settings` merged, not replaced;
       `add_to_system_prompt: true`
+- [ ] App-paced: start flag, resumable clock, each milestone emitted once, no
+      sound before a tap
 
 ## Key Files
 
 - [references/app-structure.md](references/app-structure.md): package layout,
   required files, the README manual, worked example
 - [references/runtime.md](references/runtime.md): reading data, how updates
-  reach the screen, app events, render surface, input, debugging
+  reach the screen, app events, render surface, input, timed and media apps,
+  debugging

@@ -63,5 +63,15 @@
       "README ## Controls list the event with its data and what the agent does, and say to write the next question to the data file after reacting",
       "Says that attaching the app to a Scenario is how others run it, and confirms before ttai:update_scenario"
     ]
+  },
+  {
+    "skills": ["ttai-agent-apps"],
+    "query": "Build a guided breathing app for my wellness coach: the screen should run the breathing timer itself and play a soft tone, and the coach should stay quiet while it runs.",
+    "expected_behavior": [
+      "The app owns the clock: the agent writes a start flag (go false while explaining, go true to start), and the app keeps the start time in sessionStorage so a remount resumes the run",
+      "When the run ends, the app emits one reply: true event, guarded so it is never sent twice, and the agent speaks only then",
+      "Plays no sound until the learner taps; that tap creates or resumes an AudioContext and tones are synthesized with Web Audio",
+      "Sets silence_threshold longer than the run with force_agent_to_speak false, and confirms before ttai:update_scenario"
+    ]
   }
 ]

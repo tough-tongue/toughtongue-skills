@@ -10,6 +10,7 @@ the app and the live agent, and how to debug it.
 - App events
 - Render surface
 - Input
+- Timed and media apps
 - Checking it runs
 
 ## Reading data
@@ -58,8 +59,9 @@ at run time: never write it. The worked example in
   the agent weighs it at its next turn.
 - `reply: true`: the agent is asked to answer once the current speaker
   finishes; rapid ones merge. Nothing interrupts the agent or the learner.
-- Bursts are throttled. Emit on learner actions only, never from an effect on
-  `files` or a data change: agent write → emit → agent write loops.
+- Bursts are throttled. Emit on learner actions, or once per milestone of the
+  app's own clock. Never emit from an effect on `files` or a data change: agent
+  write → emit → agent write loops.
 - List every event in README `## Controls`: its data and what the agent does.
 - Only a live session forwards events; the preview does not.
 
@@ -85,6 +87,22 @@ at run time: never write it. The worked example in
 
 - Space is the session's push-to-talk key. Bind no Space or Enter shortcuts,
   and blur a clicked element after the click so Space returns to push-to-talk.
+
+## Timed and media apps
+
+When the app keeps time (a timer, a paced exercise, media), it runs that
+stretch and the agent stays quiet until the app reports a milestone.
+
+- Clock: on `go: true`, store the start time in `sessionStorage` under an
+  app-prefixed key for the run, and compute progress from `Date.now() - start`,
+  so a remount resumes the run instead of restarting it.
+- Milestones: emit each once with `reply: true` (`breath:done`). Store a sent
+  key and check it first, so a remount or rewrite never sends it twice.
+- Sound: a sound button's tap creates or resumes one `AudioContext`; synthesize
+  tones with Web Audio (packages hold no audio files). Emit `sound {on}`
+  without `reply`, so the agent stops asking.
+- Media: play from an `https` URL after a learner tap, emit `ended` the same
+  way, and check it plays in `view_url`.
 
 ## Checking it runs
 

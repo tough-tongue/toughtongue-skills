@@ -414,7 +414,11 @@ didn't connect]
     "is_auto_submit": true,
     "enable_extraction": true,
     "extraction_vars": [
-      { "name": "call_result", "type": "text", "description": "[see Call Results]" }
+      {
+        "name": "call_result",
+        "type": "text",
+        "description": "[see Call Results]"
+      }
     ]
   },
   "is_recording": true

@@ -92,6 +92,26 @@
   },
   {
     "skills": ["ttai-agent"],
+    "query": "Draft a scenario where an AI caller phones our webinar sign-ups to confirm they are attending. It's just a draft for now.",
+    "expected_behavior": [
+      "Creates the Scenario with is_public true sent explicitly in ttai:create_scenario, even though it is a draft",
+      "Does not make the draft private; if privacy comes up, explains that phone calls need a public Scenario and that a meeting bot runs a private one only with session_credentials bot_uc",
+      "Marks it as a draft through the name or user_friendly_description rather than through visibility",
+      "Returns the run link and offers a test call to the user's own number only on request, after confirmation"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Make my 'Lead Qualifier' scenario private so only a few people on my team can open it.",
+    "expected_behavior": [
+      "Resolves the Scenario and checks how it runs: ttai:list_resources(bots, filters: {scenario_ids}) for phone calls or meeting bots, and asks the user whether it will join meetings or calls",
+      "Explains that a private Scenario cannot take phone calls and that each meeting bot for it must be sent with session_credentials bot_uc; when it takes calls, recommends keeping it public and says why",
+      "Only after the user confirms, sends ttai:update_scenario with id and is_public false, and offers a Scenario Access Token per person to share it",
+      "Never sets is_public false without the user's request"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
     "query": "I am building a web chat companion. What context should I give it before it recommends or changes a Tough Tongue AI scenario?",
     "expected_behavior": [
       "Describes the operating model as provider-neutral rather than tied to a CLI or a second API client",
@@ -108,6 +128,20 @@
       "Does not infer a plan from balance or from a Scenario",
       "May use ttai:get_workspace_info (sections balance) for available minutes when relevant",
       "Treats the live server response as authoritative for SIP access rather than guessing a tier, and lists SIP trunks before suggesting a call"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Call these 200 leads tomorrow between 10am and 7pm India time with 'Lead Qualifier'. Retry anyone who goes to voicemail twice, an hour apart.",
+    "expected_behavior": [
+      "Checks SIP access and balance with ttai:get_workspace_info (plan, balance) and lists outbound trunks with ttai:list_resources(sip-trunks) instead of inventing a trunk ID",
+      "Reads the 'Lead Qualifier' Scenario for its {{ var }} names and outcome extraction variable, and asks whether to pin scenario_version_id to an archived version so mid-campaign edits do not reach queued calls",
+      "Proposes one test call to the user's own number before dialing any lead",
+      "Builds call_policy.office_hours with timezone Asia/Kolkata, weekdays covering the calling day, start 10:00 and end 19:00, and sets scheduled_ts for tomorrow",
+      "Builds call_policy.retry with max_retries 2 and delays_minutes [60, 60], with an extraction condition on the Scenario's outcome variable equal to its voicemail value; without such a variable, explains the gap and offers to add one; notes that conditions combine with AND",
+      "Settles voicemail handling as either answering machine detection (meeting_config.amd_config) or a voicemail branch in the prompt, not both",
+      "States the number count, first and last numbers, schedule, office hours, retry policy, pinned version, and trunk, then waits for an explicit yes before ttai:schedule_bot",
+      "Explains tracking with ttai:list_resources(bots) filtered by batch_ids and cancelling unstarted calls with ttai:cancel_bot"
     ]
   },
   {

@@ -112,8 +112,7 @@ the job, the file, and when to read it.
   decks section.
 - **Pick and wire built-in tools** —
   [conversation/built-in-tools.md](references/conversation/built-in-tools.md).
-  Timer, webcam, notepad, design board, cards: what the model calls and the
-  traps.
+  Timer, webcam, notepad, design board: prompt rules and traps.
 - **Answer from the user's documents** —
   [mcp/tools.md](references/mcp/tools.md#knowledge-filebases). PDFs or docs →
   knowledge FileBase → `knowledge_filebase_ids`.

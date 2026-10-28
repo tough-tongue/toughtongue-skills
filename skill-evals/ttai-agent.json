@@ -242,6 +242,16 @@
   },
   {
     "skills": ["ttai-agent"],
+    "query": "Build an MBA video-essay practice: show each of 4 questions on screen, 30 seconds to think, 60 seconds to answer.",
+    "expected_behavior": [
+      "Loads references/conversation/built-in-tools.md and sends an explicit tools_config with card, timer and end_session",
+      "Shows each question with runCardCommand (command publish) and never reads the card aloud",
+      "Starts answer time only after [conductor:timer] reports think time complete, treating the setTimer result as the clock starting",
+      "Says what to do on a forced turn before the timer completes (one short line, no advancing, no new setTimer)"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
     "query": "Trainees say my coaching scenario marks them wrong when they explain the idea in their own words, and once when the transcript was garbled. Scenario name is 'Refund Policy Coach'. Fix it.",
     "expected_behavior": [
       "Reads the live Scenario with ttai:get_resource before editing, because update_scenario replaces ai_instructions whole",

@@ -25,7 +25,7 @@ Two fields, two jobs:
 
 - `appearance.language_code` — the language the agent speaks (the schema:
   speech synthesis). It defaults to `en-US`; set it for any other locale. Valid
-  values: [control.md](control.md#appearance).
+  values: [control.md](../scenario/control.md#appearance).
 - `transcribe_config.language` — the language the transcriber listens for. It
   overrides the user's own language preference.
 
@@ -51,7 +51,8 @@ In a `super` Scenario, a flow with its own model can override both with
   `stt_provider`, `stt_mode`, and `stt_keyterms` are Cascade fields with no
   documented effect here.
 - **Realtime with separate TTS** — as above, plus a `tts_voice_id` that speaks
-  both languages. Never invent one ([model-selection.md](model-selection.md)).
+  both languages. Never invent one
+  ([model-selection.md](../scenario/model-selection.md)).
 - **Cascade** — STT writes the transcript the LLM reads:
   - Hinglish: `stt_provider: "sarvam"` with `stt_mode: "codemix"`, which keeps
     Hinglish as Devanagari Hindi + Latin English, the same script the prompt
@@ -113,7 +114,7 @@ fill:
 - Keep only the triggers the Scenario needs: an English-first caller rarely
   needs the English trigger; a Hindi-first caller needs it.
 - Language known per lead before the call: branch on a variable with
-  `{% case %}` ([dynamic-variables.md](dynamic-variables.md)).
+  `{% case %}` ([dynamic-variables.md](../scenario/dynamic-variables.md)).
 - Say which languages work in `user_instructions` (Answer in English or Hindi).
 
 ## Grammatical gender
@@ -206,7 +207,7 @@ For a male agent, swap the examples (बोल रहा हूँ, समझ �
 
 ## Key Files
 
-- [model-selection.md](model-selection.md) — pipeline and voice
-- [control.md](control.md) — `appearance`, `transcribe_config`
-- [ai-instructions.md](ai-instructions.md) — prompt shape
+- [model-selection.md](../scenario/model-selection.md) — pipeline and voice
+- [control.md](../scenario/control.md) — `appearance`, `transcribe_config`
+- [ai-instructions.md](../scenario/ai-instructions.md) — prompt shape
 - [../recipes/cascade-tts.md](../recipes/cascade-tts.md) — Cascade speech rules

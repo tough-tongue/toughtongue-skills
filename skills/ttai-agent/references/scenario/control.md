@@ -122,7 +122,7 @@ retired `prefix`.
   ja-JP tr-TR vi-VN bn-IN gu-IN kn-IN ml-IN mr-IN ta-IN te-IN nl-NL ko-KR
   zh-CN pl-PL ru-RU th-TH`.
   One language: match `transcribe_config.language`. Code-mix (Hinglish): set
-  the two deliberately — [languages.md](languages.md).
+  the two deliberately — [languages.md](../conversation/languages.md).
 - `start_sound`: `countdown_blip` (default), `ringtone`, `click`, `none`.
 
 Faces come from `ttai:list_resources` with resource type `avatar` (`type`
@@ -286,7 +286,7 @@ Scenario.
   sessions; `short_mem_prompt` shapes the summary kept per session.
 - `transcribe_config.language` — the language the transcriber listens for. One
   language: match `appearance.language_code`. Code-mix: see
-  [languages.md](languages.md).
+  [languages.md](../conversation/languages.md).
 
 ## meeting_config
 

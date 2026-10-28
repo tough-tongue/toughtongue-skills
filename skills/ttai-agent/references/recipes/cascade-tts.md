@@ -173,7 +173,7 @@ the user's name from their speech — STT frequently mangles names.
 
 Language codes, the Devanagari script rule, the LANGUAGE block with switch
 triggers, and grammatical gender apply to every pipeline:
-[../scenario/languages.md](../scenario/languages.md). Cascade adds:
+[../conversation/languages.md](../conversation/languages.md). Cascade adds:
 
 - **Hinglish STT** — `stt_provider: "sarvam"` with `stt_mode: "codemix"` keeps
   Hinglish as Devanagari Hindi + Latin English, the script the prompt uses.

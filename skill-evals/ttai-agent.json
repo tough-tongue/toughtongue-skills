@@ -177,7 +177,7 @@
     "skills": ["ttai-agent"],
     "query": "Our outbound caller in India needs to handle Hinglish: customers switch between Hindi and English mid-call, and the agent keeps answering in pure English and calling women 'sir'.",
     "expected_behavior": [
-      "Loads references/scenario/languages.md, resolves the Scenario, and fetches it with ttai:get_resource(scenarios) before proposing changes",
+      "Loads references/conversation/languages.md, resolves the Scenario, and fetches it with ttai:get_resource(scenarios) before proposing changes",
       "Writes Hindi in Devanagari and English words in Latin script in every example line, filler and voicemail message; never romanized Hindi",
       "Adds a LANGUAGE block with a stated default and mix and switch triggers written as checkable rules (a request for Hindi switches and stays; the last-two-answers rule for English), not 'switch naturally'",
       "Fixes the agent's own gender with example verb forms and keeps the caller gender-neutral (आप, जी instead of sir or ma'am) until two signals agree, at least one being their own verb forms or name; never asks their gender",

@@ -106,8 +106,8 @@ the job, the file, and when to read it.
   [scenario/model-selection.md](references/scenario/model-selection.md). Model
   family, pipeline, voice.
 - **Speak Hindi, Hinglish, or another language** —
-  [scenario/languages.md](references/scenario/languages.md). Language codes,
-  code-mix STT, script, switching, grammatical gender.
+  [conversation/languages.md](references/conversation/languages.md). Language
+  codes, code-mix STT, script, switching, grammatical gender.
 - **Set controls** — [scenario/control.md](references/scenario/control.md).
   `strategy`, `appearance`, `tools_config`, analysis, links. A Google Slides
   deck (embed link, SLIDE MAP, slides instead of cards): its Google Slides

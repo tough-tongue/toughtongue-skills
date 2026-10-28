@@ -373,7 +373,7 @@ didn't connect]
       "messages": [
         {
           "time_seconds": 350,
-          "message": "Wrap up — confirm data or next step and say goodbye. Wait for the lead's reply before end_session.",
+          "message": "Wrap up — confirm data or next step, then close as ENDING THE CALL says.",
           "end_turn": true
         }
       ]
@@ -383,8 +383,8 @@ didn't connect]
     "tools": {
       "end_session": {
         "should_register": true,
-        "add_to_system_prompt": true,
-        "tool_settings": { "disconnectDelaySeconds": 8 }
+        "add_to_system_prompt": false,
+        "tool_settings": { "disconnectDelaySeconds": 10 }
       }
     }
   },

@@ -33,13 +33,10 @@
     "skills": ["ttai-agent"],
     "query": "Our outbound research calls feel slow and the agent keeps talking over people on the phone. Should we switch pipelines?",
     "expected_behavior": [
-      "Loads references/scenario/model-selection.md before recommending a pipeline",
-      "Reads the current Scenario's ai_model_config and strategy.silence with ttai:get_resource, and checks recent transcripts for where the agent cut in or lagged",
-      "Separates scripted calls (Landmass cascade) from open conversations such as research calls, and recommends the tuned Landmass gemini-stable voice-to-voice stamp for this one, or tuning its existing gemini_realtime_config",
-      "Names the settings and why: low start/end-of-speech sensitivity, a longer silence_duration_ms, thinking_budget 0, proactivity false; presents them as starting values to adjust from transcripts",
-      "Resends the whole ai_model_config on update, not just gemini_realtime_config",
-      "Suggests keeping a second Scenario whose name and description end with its pipeline (- Gemini Live, - Cascade) to compare results",
-      "Confirms with the user before calling ttai:update_scenario, and never invents a voice name or ID"
+      "Loads references/scenario/model-selection.md and reads the Scenario's ai_model_config and recent transcripts before recommending",
+      "Recommends the tuned Landmass gemini-stable stamp for open conversations (or tuning its gemini_realtime_config): low sensitivities, silence_duration_ms, thinking_budget 0, as starting values",
+      "Keeps Cascade for calls whose lines must be said as written",
+      "Resends the whole ai_model_config and confirms before ttai:update_scenario"
     ]
   },
   {

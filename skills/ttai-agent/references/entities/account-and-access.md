@@ -60,7 +60,11 @@ Notes:
 ## Scenario visibility
 
 - `is_public: true` (default) — anyone with the run link can start a session.
-- `is_public: false` — needs a SAT or an in-app share to open.
+  Phone calls and meeting bots run it with no extra setting.
+- `is_public: false` — needs a SAT or an in-app share to open. Phone calls
+  cannot run it. A meeting bot runs it only when sent with
+  `session_credentials: "bot_uc"` (the bot runs as the user who sends it);
+  without that the server rejects the bot.
 - `passcode` — extra gate before start.
 - `starts_at` / `ends_at` — availability window.
 - `access` — `is_one_time_access`, `max_access_count`.
@@ -69,6 +73,15 @@ Notes:
 
 Run link: `https://app.toughtongueai.com/run/<scenario_id>`. Embeds and iframes
 use the same Scenario ID and visibility rules.
+
+**Choose public by default.** Send `is_public: true` on create, including for
+drafts, pre-reads, and test Scenarios: many Scenarios exist to take calls or
+join meetings, and a private one cannot take calls and needs an extra setting
+on every meeting bot. Make a Scenario private only when the user asks to limit
+who can open it (a few named people, a paid cohort). Then ask how it will run:
+if it will take phone calls, keep it public and say why; if it joins meetings,
+it can stay private, and every bot for it is sent with
+`session_credentials: "bot_uc"`. Share a private Scenario with a SAT.
 
 ## Scenario Access Tokens (SAT)
 
@@ -100,6 +113,10 @@ Notes:
    `org_id`, or personal).
 2. Ambiguous team vs personal before a write → ask.
 3. Before sharing a private Scenario, mint a SAT or confirm `is_public`.
+   Before a phone call, confirm `is_public: true`; if it is false, say the
+   call cannot run it and offer to make it public (a confirmed
+   `ttai:update_scenario`). A meeting bot for a private Scenario is sent with
+   `session_credentials: "bot_uc"`.
 4. Never invent organization IDs, tokens, or plan facts.
 
 ## Key Files

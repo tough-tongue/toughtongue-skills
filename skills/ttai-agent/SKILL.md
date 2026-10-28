@@ -87,7 +87,8 @@ the job, the file, and when to read it.
   Org vs personal, entitlements, private links, SATs.
 - **Run a Scenario, read results** —
   [entities/scenario-engine.md](references/entities/scenario-engine.md). Web
-  link, embed, SIP, meeting bot, session results.
+  link, embed, SIP, meeting bot, calling campaigns (office hours, retries,
+  voicemail), session results.
 
 ### Scenario authoring
 

@@ -114,7 +114,7 @@
       "Calls ttai:read_guide first when available and the guide is not already in context, then resolves whether to pass an org_id with ttai:get_workspace_info (organizations)",
       "Follows references/scenario/workflow.md: loads the cold-call recipe plus authoring, model-selection, control, and ai-instructions references",
       "Drafts from supplied lead facts with a two-beat directive opening and the recipe's three outcomes (CONVERTED / NURTURE / DEAD LEAD); prefers Landmass cascade and uses Ocean only when Cascade/Cartesia is unavailable; never invents a TTS voice ID",
-      "Captures the call outcome with extraction (one outcome variable over CONVERTED / NURTURE / DEAD LEAD); any lead-report rubric evaluates the LEAD (the human), not the AI caller; sends an explicit tools_config with end_session",
+      "Captures the call outcome as an extraction outcome variable over CONVERTED / NURTURE / DEAD LEAD, the lead-report rubric, or both; any rubric evaluates the LEAD (the human), not the AI caller; sends an explicit tools_config with end_session",
       "Calls ttai:create_scenario without an id field and returns the practice link https://app.toughtongueai.com/run/<scenario_id>"
     ]
   },

@@ -247,19 +247,32 @@ Not the legacy Knowledge Base (`knowledge-bases`, `knowledge_base_ids`, tool
 - `ttai:schedule_bot` takes one `bot` object with `kind`:
   - `kind: "phone"` — `scenario_id`, `sip_trunk_id` (an outbound trunk from
     `list_resources(sip-trunks)`), `entries` of E.164 `phone_number` + optional
-    `user_name` and `dynamic_vars`, optional `scheduled_ts` and
+    `user_name` and per-entry `dynamic_vars`, optional `scheduled_ts` and
     `scenario_version_id`. One entry dials directly; several form a batch the
-    dialer works through within minutes. Needs a SIP-enabled plan and enough
-    balance.
+    dialer works through within minutes, inside `office_hours` when set. Needs
+    a SIP-enabled plan and enough balance. Optional `call_policy` covers every
+    call in the batch: `office_hours` (IANA `timezone`, `weekdays`, one
+    `start`–`end` window in `HH:MM`) and `retry` (`max_retries` 1–5, one
+    `delays_minutes` entry per retry, `retry_on_failed` default `true`,
+    `extraction_conditions` that must all match, `check_recent_calls`).
+    Procedure:
+    [../entities/scenario-engine.md](../entities/scenario-engine.md#calling-campaigns).
   - `kind: "meeting"` — joins Google Meet, Zoom, or Teams visibly. Required:
     `scenario_id`, `meeting_url`, `meeting_provider`
-    (`google-meet`|`zoom`|`teams`), and an AI-identifying `bot_name`. Needs a
-    paid plan and edit access to the Scenario.
+    (`google-meet`|`zoom`|`teams`), and an AI-identifying `bot_name`. Optional:
+    `scheduled_ts`, `scenario_version_id`, `dynamic_vars` (sent as `t_*`),
+    `embed_overrides` (iframe controls such as `speed`, `bg`, `theme`; no `t_`
+    prefix), `artifact_screenshare` (default `true`: screenshares supported
+    artifacts), `login_required` (a signed-in Google Meet bot). `meeting_url`
+    may hold several URLs, one per line. Needs a paid plan and edit access to
+    the Scenario.
 - `ttai:cancel_bot(id)` takes a bot id from `list_resources(bots)` and cancels
   either kind.
 - `session_credentials: "bot_uc"` is a server-side setting: the call or bot
   runs the Scenario's attached MCP tools as the deploying Tough Tongue AI user.
-  Nothing is read from the user's machine. Omit it unless requested.
+  Nothing is read from the user's machine. A meeting bot for a private
+  Scenario needs it; without it the server rejects the bot. Otherwise omit it
+  unless requested.
 - `ttai:upload_session(req_data)` is for automations that use Tough Tongue AI's analysis
   and extraction on calls held elsewhere (dialer, Gong, Zoom): it uploads a
   transcript or `recording_url` as a completed session, then the Scenario's

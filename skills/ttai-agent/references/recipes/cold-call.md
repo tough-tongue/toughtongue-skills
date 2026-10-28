@@ -201,7 +201,7 @@ instructions; do not call it in the same turn as a question or pitch.
 | **DEAD LEAD** | Not interested, wrong number, DNC, hostile |
 
 Close each outcome with one closing line, then end the call as the ENDING THE
-CALL block says ([ending.md](../scenario/ending.md)):
+CALL block says ([ending.md](../conversation/ending.md)):
 
 - **CONVERTED** — confirm date/time/action + warmth.
 - **NURTURE** — agree on a follow-up plan.
@@ -282,7 +282,7 @@ CALL decides when the tool fires.]
 [Other enabled tools and when to call them.]
 
 ## ENDING THE CALL
-[The block from scenario/ending.md. Default: end after the lead's reply to
+[The block from conversation/ending.md. Default: end after the lead's reply to
 the closing line; a fixed script may use the tool-with-closing-line variant.]
 
 ## HANDLING QUESTIONS

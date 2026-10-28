@@ -110,7 +110,8 @@ and rubric must evaluate the same person and outcome.
 - A scripted outbound call whose closing line settles it may instead call
   `end_session` at the start of the closing turn, then say the line; the
   disconnect delay leaves room for the other person's goodbye. Copy-ready
-  block, both variants, settings, and fixes: [ending.md](ending.md).
+  block, both variants, settings, and fixes:
+  [ending.md](../conversation/ending.md).
 
 ## Evaluation and iteration
 

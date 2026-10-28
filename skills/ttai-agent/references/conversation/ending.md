@@ -137,13 +137,13 @@ its own turn, then call `endSession` after their reply, or right away when a
   `silence_threshold` with no goodbye and no farewell mode; it bypasses the
   block. Keep it for flows where silence means the person left. Calls that
   carry the block use talkative silence (`end_session: false`). An omitted
-  `silence` means 120 s, then hang up ([runtime.md](runtime.md)).
+  `silence` means 120 s, then hang up ([runtime.md](../scenario/runtime.md)).
 - **Voicemail.** When `meeting_config.amd_config.enabled` is true on outbound
   calls, answering machine detection handles voicemail and IVR
   (`voicemail.action` `hangup`, or `leave_message` with `voicemail.message`;
-  see [control.md](control.md)). The prompt then needs no voicemail rule:
-  drop situation 3. With detection off, keep situation 3 and a voicemail
-  section that gives the message.
+  see [control.md](../scenario/control.md)). The prompt then needs no
+  voicemail rule: drop situation 3. With detection off, keep situation 3 and a
+  voicemail section that gives the message.
 - **Conductor.** With the block in place, a wrap-up message points at it
   (close as ENDING THE CALL says) instead of restating timing. A final
   time-is-up message may tell the agent to say its goodbye and call
@@ -181,6 +181,6 @@ Edits affect new sessions only.
 
 ## Key Files
 
-- [ai-instructions.md](ai-instructions.md) — prompt skeleton
-- [runtime.md](runtime.md) — tool registration and silence
-- [control.md](control.md) — `tools_config` and `meeting_config`
+- [ai-instructions.md](../scenario/ai-instructions.md) — prompt skeleton
+- [runtime.md](../scenario/runtime.md) — tool registration and silence
+- [control.md](../scenario/control.md) — `tools_config` and `meeting_config`

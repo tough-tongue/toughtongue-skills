@@ -88,7 +88,8 @@ Every entry in `tools_config.tools.<tool_id>` has two booleans:
   complaints.
 - When `ai_instructions` carries an ENDING THE CALL block, set
   `add_to_system_prompt: false` so the block is the only ending rule. The
-  block, the scripted-close variant, and fixes: [ending.md](ending.md).
+  block, the scripted-close variant, and fixes:
+  [ending.md](../conversation/ending.md).
 
 ### Session-surface differences
 
@@ -195,10 +196,11 @@ Each symptom lists its owner (where to fix), then the mechanism.
 
 - **"end_session never called"** — `ai_instructions` ENDING THE CALL block: no
   clear completed-call trigger, or `add_to_system_prompt: false` with no block
-  in the prompt ([ending.md](ending.md#failure-modes-and-fixes)).
+  in the prompt
+  ([ending.md](../conversation/ending.md#failure-modes-and-fixes)).
 - **"end_session called mid-conversation"** — `ai_instructions`: add the block's
   not-exit-signals list and its "hangs up, not a phase marker" line
-  ([ending.md](ending.md#failure-modes-and-fixes)).
+  ([ending.md](../conversation/ending.md#failure-modes-and-fixes)).
 - **"Wrap-up fires too early"** — `strategy.conductor.messages[].time_seconds`:
   bump to match real call length distribution.
 - **"Long silence then call drops"** — `strategy.silence`: omitted (120s

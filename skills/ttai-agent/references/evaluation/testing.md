@@ -37,11 +37,11 @@ rule; fix it there.
       silence — [control.md](../scenario/control.md#strategy).
 - [ ] Every conductor `time_seconds` is below `max_duration_seconds` —
       [control.md](../scenario/control.md#strategy).
-- [ ] `appearance.language_code` matches the Scenario's language, and
-      `transcribe_config.language` when set —
+- [ ] `appearance.language_code` and `transcribe_config.language` are set
+      for the language(s) the Scenario speaks and hears —
       [control.md](../scenario/control.md#appearance).
-- [ ] Ending rules are present: the goodbye is its own turn and
-      `end_session` comes after the reply —
+- [ ] Ending rules are present: when `end_session` fires, and never in the
+      same turn as a question —
       [authoring.md](../scenario/authoring.md#closure-and-re-engagement).
 - [ ] ROLE, `user_instructions`, and the rubric name the same person;
       `evaluation_target` is set for a multi-party session —

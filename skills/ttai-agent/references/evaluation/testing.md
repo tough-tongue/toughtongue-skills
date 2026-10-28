@@ -139,8 +139,8 @@ Create it with `ttai:create_scenario` in the real Scenario's workspace.
   learners.
 - Keep `is_public: true` (the default). If either Scenario is private, send
   its meeting bot with `session_credentials: "bot_uc"`; without it the server
-  rejects the bot. Leave analysis, extraction, and recording off (the defaults); the real
-  Scenario's session carries the scores.
+  rejects the bot. Leave analysis, extraction, and recording off (the
+  defaults); the real Scenario's session carries the scores.
 - Opposite opener: if the real Scenario speaks first, the test waits
   (`skip_auto_start: true`) and its step 1 says so; if the real one waits,
   the test opens.

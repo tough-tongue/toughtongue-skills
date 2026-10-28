@@ -14,7 +14,7 @@ content. Skip this file for Galaxy, Ocean, and half-cascade (realtime Landmass +
 - Natural speech style
 - SSML emotion tags (Cartesia only)
 - User names and dynamic variables
-- Language and code-switching (Hindi/Hinglish rules)
+- Language and code-switching (Cascade specifics)
 - Response pacing and turn-taking
 - Concise opening pattern (Beat structure)
 - Checklist
@@ -171,41 +171,18 @@ the user's name from their speech — STT frequently mangles names.
 
 ## 7. Language and Code-Switching
 
-For multilingual scenarios (Hindi, Hinglish, Indian English):
+Language codes, the Devanagari script rule, the LANGUAGE block with switch
+triggers, and grammatical gender apply to every pipeline:
+[../conversation/languages.md](../conversation/languages.md). Cascade adds:
 
-```
-Speak in [default language] by default. If the customer switches to
-[other language], switch naturally. Support [mixed variety] if they mix both.
-```
-
-### Hindi-specific rules
-
-- Always use respectful "आप" — never "तुम"
-- Spell out Hindi numbers: "दो मिनट" not "2 मिनट"
-- Domain terms in English are fine even in Hindi responses
-
-### Devanagari script rule (CRITICAL for Hindi/Hinglish)
-
-Always write Hindi words in **Devanagari script** — never romanized
-transliteration. English words stay in Latin script. This produces dramatically
-better TTS pronunciation.
-
-```
-**CRITICAL — Script rule**: Always write Hindi words and phrases in
-**Devanagari script** (e.g. "आपको best schools suggest
-करने के लिए बस कुछ quick details चाहिए").
-NEVER use romanized Hindi (e.g. "Aapko best schools suggest karne ke liye").
-English words stay in Latin script. This is essential for correct TTS
-pronunciation.
-```
-
-- **Devanagari + English (correct)** gives natural Hindi with clean English:
-  - "आपको best schools suggest करने के लिए..."
-- **Romanized Hindi (wrong)** gives broken pronunciation:
-  - "Aapko best schools suggest karne ke liye..."
-
-Apply to ALL Hindi text: `ai_instructions` examples, FLOW Beat 1, filler words,
-edge-case dialogues.
+- **Hinglish STT** — `stt_provider: "sarvam"` with `stt_mode: "codemix"` keeps
+  Hinglish as Devanagari Hindi + Latin English, the script the prompt uses.
+- **Filler words** — TTS pre-synthesizes `strategy.filler_words`: write Hindi
+  fillers in Devanagari (`हाँ जी, अच्छा, okay`).
+- **Hindi numbers** — spell them out: "दो मिनट" not "2 मिनट".
+- **Romanized Hindi** — TTS reads it as English, so pronunciation breaks:
+  "आपको best schools suggest करने के लिए..." (correct), never "Aapko best
+  schools suggest karne ke liye..." (wrong).
 
 ---
 

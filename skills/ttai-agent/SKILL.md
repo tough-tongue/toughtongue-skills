@@ -106,6 +106,9 @@ the job, the file, and when to read it.
 - **Pick `ai_model_config`** —
   [scenario/model-selection.md](references/scenario/model-selection.md). Model
   family, pipeline, voice.
+- **Speak Hindi, Hinglish, or another language** —
+  [conversation/languages.md](references/conversation/languages.md). Language
+  codes, code-mix STT, script, switching, grammatical gender.
 - **Set controls** — [scenario/control.md](references/scenario/control.md).
   `strategy`, `appearance`, `tools_config`, analysis, links. A Google Slides
   deck (embed link, SLIDE MAP, slides instead of cards): its Google Slides

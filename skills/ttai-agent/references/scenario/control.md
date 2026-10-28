@@ -32,7 +32,10 @@ Create **requires** `name` and `ai_instructions`; set the rest deliberately.
 - `user_friendly_description` — 1–2 public sentences.
 - `user_instructions` — what the human reads before starting.
 - `stages` — `super` only: stages with `flows` (sub-agents).
-- `is_public` — default `true`; `false` needs an access token.
+- `is_public` — default `true`; send it on create. `false` needs an access
+  token, and meeting bots and phone calls cannot run the Scenario. Private
+  only on request
+  ([../entities/account-and-access.md](../entities/account-and-access.md#scenario-visibility)).
 - `is_recording` — default `false`; set `true` for voice.
 - `recording_mode` — `standard` (default) or `turbo`.
 - `passcode`, `starts_at`, `ends_at`, `access`, `analysis_access` — visibility;

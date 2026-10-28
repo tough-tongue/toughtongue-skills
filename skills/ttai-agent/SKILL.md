@@ -171,6 +171,9 @@ Sibling skills:
   full object.
 - Confirm the exact target (phone number, meeting URL, Scenario ID, audience)
   before any call, bot, delete, share, or post-processing.
+- Create Scenarios public: send `is_public: true`. Meeting bots and phone calls
+  cannot run a private Scenario. Make one private only when the user asks to
+  limit who can open it and it will never join a meeting or a call.
 - Separate what the platform supports from what this user's plan allows; the
   server decides. Treat `403` and balance errors as real blockers.
 - Advice stops at a recommendation. Never turn it into a write, call, or bot

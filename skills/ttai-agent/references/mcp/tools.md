@@ -248,8 +248,9 @@ Not the legacy Knowledge Base (`knowledge-bases`, `knowledge_base_ids`, tool
 `knowledge_base_search`), which is created in the web app only.
 
 - Entry: root `index.md`, not `README.md`: what the base covers and which file
-  answers what, linking every other file. Keep it under 4 KB; a short index is
-  inlined in the agent's prompt.
+  answers what, linking every other file with relative paths (keep them working
+  when files move). Keep it under 4 KB; a short index is inlined in the
+  agent's prompt.
 - Workflow: the user attaches PDFs or docs → distill them into focused
   markdown files plus `index.md` → `create_filebase(kind: knowledge)` →
   `write_filebase` (index first; `files`, or `upload` + `commit` from a shell)
@@ -274,6 +275,9 @@ Not the legacy Knowledge Base (`knowledge-bases`, `knowledge_base_ids`, tool
 - `ttai:read_guide` returns the server's usage guide, the same text as the
   `ttai://guide/mcp-agent` resource. Call it once at the first action in a
   conversation unless the guide is already in context.
+- The `ttai://reference/speech-support` resource lists which realtime model,
+  voice provider (`tts_provider`), and speech recognizer (`stt_provider`)
+  support each language. Read it before a non-English Scenario.
 - On connect the server also sends MCP `instructions`: a short index of this
   map. `tools/list` is ordered by importance (the guide first, `int_` tools
   last).

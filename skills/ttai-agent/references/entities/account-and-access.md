@@ -30,6 +30,7 @@ Notes:
 - `organizations` lists each membership's `id`, `name`, `slug`, the caller's
   `role`, and `quota_enabled`. Never send the slug as `org_id`.
 - Roles: `view` < `edit` (Admin in the app) < `owner`; `no_access` = end users.
+  `get_workspace_info` can report `view` as `read`; treat the two as the same.
 - `members` (org only, `query` filters name/email) lists people, roles, and
   `quota_available`.
 - An organization's description, logo, and cover image change with

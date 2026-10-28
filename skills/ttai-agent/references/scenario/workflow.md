@@ -66,8 +66,8 @@ pre-flight check, a run link per Liquid branch, and a scripted counterpart for
 any rule a cooperative tester will not trigger.
 
 Return the run link `https://app.toughtongueai.com/run/<scenario_id>`. For a
-private Scenario, offer a Scenario Access Token only when the user wants to
-share it
+private Scenario (only when the user asked to limit access; phone calls cannot
+run one), offer a Scenario Access Token when the user wants to share it
 ([../entities/account-and-access.md](../entities/account-and-access.md)).
 Recorded browser steps → the `ttai-browser-demo-builder` skill.
 

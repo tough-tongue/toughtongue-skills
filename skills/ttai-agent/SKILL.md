@@ -88,7 +88,8 @@ the job, the file, and when to read it.
   Org vs personal, entitlements, private links, SATs.
 - **Run a Scenario, read results** —
   [entities/scenario-engine.md](references/entities/scenario-engine.md). Web
-  link, embed, SIP, meeting bot, session results.
+  link, embed, SIP, meeting bot, calling campaigns (office hours, retries,
+  voicemail), session results.
 
 ### Scenario authoring
 
@@ -175,6 +176,10 @@ Sibling skills:
   full object.
 - Confirm the exact target (phone number, meeting URL, Scenario ID, audience)
   before any call, bot, delete, share, or post-processing.
+- Create Scenarios public: send `is_public: true`. Phone calls need a public
+  Scenario, and a meeting bot runs a private one only with
+  `session_credentials: "bot_uc"`. Make one private only when the user asks to
+  limit who can open it.
 - Separate what the platform supports from what this user's plan allows; the
   server decides. Treat `403` and balance errors as real blockers.
 - Advice stops at a recommendation. Never turn it into a write, call, or bot

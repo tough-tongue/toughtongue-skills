@@ -42,7 +42,7 @@ describe the action in plain words.
 | `agent_desktop`         | Runs Agent Desktop apps beside the call         | `desktop_launch`, `desktop_info`, `desktop_read`, `desktop_write`, `desktop_delete` | web        | `apps: {"<app name>": true}`                      |
 | `knowledge_base_search` | Searches a legacy Knowledge Base                | —                                                                                   | web, phone | needs `knowledge_base_ids`                        |
 | `cold_transfer`         | Transfers the call                              | —                                                                                   | phone      | `transfer_to`                                     |
-| `ask_conductor`         | Fetches a fresh directive on demand             | `ask_conductor`                                                                     | web, phone | registered by an on-demand conductor message      |
+| `ask_conductor`         | Fetches a fresh directive on demand             | `askConductor`                                                                      | web, phone | registered by an on-demand conductor message      |
 
 Where each one goes next:
 

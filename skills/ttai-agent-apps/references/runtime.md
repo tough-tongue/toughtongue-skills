@@ -60,9 +60,8 @@ at run time: never write it. The worked example in
 - `reply: true`: the agent is asked to answer once the current speaker
   finishes; rapid ones merge. Nothing interrupts the agent or the learner.
 - Bursts are throttled. Emit on learner actions, or once per milestone of the
-  app's own clock ([Timed and media apps](#timed-and-media-apps)). Never emit
-  straight from an effect on `files` or a data change: agent write → emit →
-  agent write loops.
+  app's own clock. Never emit from an effect on `files` or a data change: agent
+  write → emit → agent write loops.
 - List every event in README `## Controls`: its data and what the agent does.
 - Only a live session forwards events; the preview does not.
 
@@ -82,8 +81,7 @@ at run time: never write it. The worked example in
 - Each agent write shows a brief notice in the top-right corner. Keep anything
   the learner must read right after a write out of that corner.
 - Links need `target="_blank"`. Fullscreen is unavailable. Autoplay audio is
-  blocked: default to no sound until the learner taps
-  ([Timed and media apps](#timed-and-media-apps)).
+  blocked: default to no sound.
 
 ## Input
 
@@ -92,38 +90,19 @@ at run time: never write it. The worked example in
 
 ## Timed and media apps
 
-When the app keeps time (a breathing timer, a paced exercise, a countdown,
-media), it runs that stretch on its own and the agent stays quiet until the app
-reports a milestone.
+When the app keeps time (a timer, a paced exercise, media), it runs that
+stretch and the agent stays quiet until the app reports a milestone.
 
-- Start flag: the agent writes the state with `go: false` while it explains,
-  then the same state with `go: true` to start the run.
 - Clock: on `go: true`, store the start time in `sessionStorage` under an
-  app-prefixed key built from the run (title, pattern, length). Compute
-  progress from `Date.now() - start` on an interval, never by counting ticks.
-  A rebuild or relaunch then resumes the run; a different run starts fresh.
-- Milestones: emit with `reply: true` when a run ends (`breath:done`) or a
-  timed part elapses (`part:next {at, last}`). Store a sent key per milestone
-  and check it first, so a remount or a rewrite never sends it twice. A
-  finished run stays finished, so the README tells the agent never to rewrite
-  it after its done event.
-- Hand back: a field such as `seconds: 0` turns the app's timer off, and the
-  agent paces that part itself.
-- Sound: the browser blocks it until the learner taps. Give the app a sound
-  button; its click creates or resumes one `AudioContext` that every later
-  tone plays through. Emit `sound {on}` without `reply`, so the agent stops
-  asking.
-- Tones: synthesize them with Web Audio (oscillators and gain ramps). Package
-  files are text, so there are no audio files.
-- Media: play audio or video from an `https` URL, with sound only after a
-  learner tap. Emit its milestones the same way: `ended`, and once per chapter
-  mark. Check that it loads and plays in `view_url` before attaching.
-- Fresh or replay: key each screen by a signature of what it shows (phase,
-  title, part). Play entrances and cues only when the signature changes. Keep
-  the last seen signature in `sessionStorage`, so a rewrite of the same state
-  or a remount plays nothing.
-- New session: when the first screen mounts, clear the app's stored keys, so a
-  later session in the same tab starts with nothing seen or running.
+  app-prefixed key for the run, and compute progress from `Date.now() - start`,
+  so a remount resumes the run instead of restarting it.
+- Milestones: emit each once with `reply: true` (`breath:done`). Store a sent
+  key and check it first, so a remount or rewrite never sends it twice.
+- Sound: a sound button's tap creates or resumes one `AudioContext`; synthesize
+  tones with Web Audio (packages hold no audio files). Emit `sound {on}`
+  without `reply`, so the agent stops asking.
+- Media: play from an `https` URL after a learner tap, emit `ended` the same
+  way, and check it plays in `view_url`.
 
 ## Checking it runs
 

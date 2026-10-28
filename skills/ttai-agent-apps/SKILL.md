@@ -79,9 +79,9 @@ and which Scenario uses it. Split before writing:
 - **Learner actions**: the agent sees a click only if the app calls
   `emit` (`import { emit } from "./desktop-events"`). Prefer state the voice
   drives; emit only what the agent must react to.
-- **App-paced**: when the app keeps time, it runs the clock or the media,
-  makes its own sound, and emits milestones while the agent stays quiet. See
-  "Timed and media apps" in [references/runtime.md](references/runtime.md).
+- **App-paced**: when the app keeps time, it runs the clock or media and emits
+  milestones while the agent stays quiet
+  ([runtime.md](references/runtime.md#timed-and-media-apps)).
 
 ### 2. Create
 
@@ -160,26 +160,11 @@ copy the existing `agent_desktop.tool_settings` keys into your write. Send one
 
 `apps` maps each app `name` to `true`: the apps the agent may launch.
 `add_to_system_prompt: true` adds the desktop workflow, one line per app, and
-the `[desktop:<app>]` event note to the prompt; the agent reads the README with
-`desktop_info`. The change applies to new sessions. In `ai_instructions`, say
-which phase shows which app, and:
-
-- Each turn that changes the screen: `desktop_write` the whole file first,
-  wait for it, then speak. Say what you write; never describe the screen.
-- A few fixed states: put each one in `ai_instructions` as ready-to-copy JSON,
-  with the event lines and rules, and tell the agent to skip `desktop_info`.
-  That saves a tool call per session; a README change then needs the same
-  change in `ai_instructions`.
-- App-paced: label each event line with what the agent does. Set
-  `strategy.silence` with `silence_threshold` longer than the longest stretch
-  the app runs alone, `end_session: false` and `force_agent_to_speak: false`;
-  if a nudge still comes mid-run, the agent says nothing or one soft word. Set
-  `max_duration_seconds` (its own wrap-up fires 30 s before the cap), plus a
-  conductor wrap-up with `end_turn: false` a few minutes earlier, so the agent
-  finishes the current part. Sending `strategy.conductor` replaces its
-  messages: copy the existing ones.
-- The rest of the Scenario (voice, flow, rubric) belongs to the `ttai-agent`
-  skill.
+the `[desktop:<app>]` event note to the prompt. `ai_instructions` then only
+needs the when (which phase shows which app), not the how. The change applies
+to new sessions. For an app-paced app, set `strategy.silence` with
+`silence_threshold` longer than the longest run and
+`force_agent_to_speak: false`, so the agent is not nudged to talk over it.
 
 ### 7. Iterate
 
@@ -195,8 +180,7 @@ the files they loaded: relaunch the app or reload the page.
 - No secrets, tokens, or personal data in app files.
 - The agent's edits during a session stay in that session. Every new session
   starts from the stored files.
-- In the package, agent guidance lives in `README.md` only. `ai_instructions`
-  may copy fixed states and event lines from it (step 6); keep them in sync.
+- Agent guidance lives in `README.md` only.
 
 ## Checklist
 
@@ -210,9 +194,8 @@ the files they loaded: relaunch the app or reload the page.
 - [ ] `view_url` opened (or a `create_token` link given); the app renders
 - [ ] `agent_desktop.tool_settings` merged, not replaced;
       `add_to_system_prompt: true`
-- [ ] App-paced: start flag; the run resumes after a remount; each milestone
-      emitted once with `reply: true`; no sound before a tap; silence
-      threshold longer than the longest run
+- [ ] App-paced: start flag, resumable clock, each milestone emitted once, no
+      sound before a tap
 
 ## Key Files
 

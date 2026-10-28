@@ -65,8 +65,7 @@ The core job. Full procedure:
 
 Loop: resolve workspace → fetch current Scenario
 (`ttai:get_resource(scenarios)`) → load the matching recipe and Scenario
-references → draft → load the live write schema → write → re-fetch → test
-([evaluation/testing.md](references/evaluation/testing.md)) → report the
+references → draft → load the live write schema → write → re-fetch → report the
 change, the run link `https://app.toughtongueai.com/run/<scenario_id>`, and that
 edits affect new sessions only.
 
@@ -96,8 +95,8 @@ the job, the file, and when to read it.
 - **Create / edit / refine a Scenario** —
   [scenario/workflow.md](references/scenario/workflow.md). Any Scenario write.
 - **Test before you hand off** —
-  [evaluation/testing.md](references/evaluation/testing.md). Pre-flight check,
-  branch tests, a scripted counterpart that probes the rules.
+  [evaluation/testing.md](references/evaluation/testing.md). Branch links and
+  a scripted counterpart that probes the rules.
 - **Design a good Scenario** —
   [scenario/authoring.md](references/scenario/authoring.md). Before drafting
   content.

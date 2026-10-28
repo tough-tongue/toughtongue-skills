@@ -61,9 +61,8 @@ required. Always send an explicit `tools_config`: when it is omitted, the server
 registers a broad default tool set. On a validation error, fix the named field
 and retry.
 
-Before hand-off, test it ([testing.md](../evaluation/testing.md)): the
-pre-flight check, a run link per Liquid branch, and a scripted counterpart for
-any rule a cooperative tester will not trigger.
+Before hand-off, test any branch or pressure rule
+([testing.md](../evaluation/testing.md)).
 
 Return the run link `https://app.toughtongueai.com/run/<scenario_id>`. For a
 private Scenario (only when the user asked to limit access; phone calls cannot
@@ -81,8 +80,7 @@ Recorded browser steps → the `ttai-browser-demo-builder` skill.
 3. Call `ttai:update_scenario` with one `scenario` object: its `id` plus those
    fields. Put `save_as_version` (a 1–100 character label) inside it to archive
    the prior state first when the change is risky. The label names the new
-   version, not the archived one: name the behaviour the change makes hold
-   (`v2 walk-away price holds under repeated asking`), not `fix`.
+   version, not the archived one.
 4. Re-fetch with `ttai:get_resource(scenarios)` and state exactly what changed.
 
 ## Refine from evidence
@@ -99,15 +97,12 @@ Recorded browser steps → the `ttai-browser-demo-builder` skill.
    supports; separate what the Scenario prescribes from what happened. Do not
    layer more prose onto a weak prompt.
 4. Update the narrowest field that improves it, then re-fetch.
-5. Re-test with [testing.md](../evaluation/testing.md): the pre-flight check,
-   then the same run link or probe plan that exposed the failure.
 
 ## Report and hand off
 
 Report **Diagnosis** (refine only), **Change** (fields touched, before → after
-in one line each), **Tested** (the checks run, what held, what broke), the run
-link, and the reminder that edits affect new sessions only — never an active
-or past session.
+in one line each), the run link, and the reminder that edits affect new sessions
+only — never an active or past session.
 
 - Population-wide trends, scorecards → the `ttai-session-analyst` skill.
 - Deterministic browser walkthroughs → the `ttai-browser-demo-builder` skill.

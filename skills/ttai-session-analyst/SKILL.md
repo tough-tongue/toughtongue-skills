@@ -2,16 +2,17 @@
 name: ttai-session-analyst
 description: >-
   Turns Tough Tongue AI sessions into evidence-backed reports. Reads
-  sessions, scores, report cards, strengths, weaknesses, and transcripts from
-  practice roleplays, AI phone calls, and meeting-bot calls for a Scenario,
-  person, or date range, then writes team performance, Scenario health, or
-  individual coaching reports with action items. Can also ingest an external
+  sessions, scores, report cards, strengths, weaknesses, extracted call
+  outcomes, and transcripts from practice roleplays, AI phone calls, and
+  meeting-bot calls for a Scenario, person, or date range, then writes team
+  performance, Scenario health, individual coaching, or call outcome reports
+  with action items. Can also ingest an external
   call transcript or recording as a scored session (ttai:upload_session) and
   fill in missing analysis (ttai:analyze_session), each after the user
   confirms. Use when the user asks "how is my team doing?", "top improvement
   areas for scenario X", "lowest-scoring sessions", "coaching report for
-  Priya", or "session trends this month". Not for changing a Scenario,
-  rubric, or prompt (ttai-agent).
+  Priya", "how did yesterday's calls go?", or "session trends this month".
+  Not for changing a Scenario, rubric, or prompt (ttai-agent).
 when_to_use: >-
   Also when the user wants an external sales or support call scored against a
   coaching Scenario.
@@ -68,6 +69,9 @@ Read-only by default. The only writes are `ttai:upload_session` and
    `ttai:list_resources(scenarios, query)` call with the title, take the ID, and continue by ID.
 3. Pin down the population: Scenario(s), date window, people, and how many
    sessions. When the window is vague, use the last 30 days and say so.
+4. Learn what the Scenario records: `ttai:get_resource(scenarios, id)`.
+   Extraction on with no rubric and analysis off is an **outcome Scenario**:
+   its sessions carry `extraction_results`, never a score. Report outcomes.
 
 ### 2. Pull
 
@@ -96,7 +100,11 @@ Every read below is `ttai:list_resources` or `ttai:get_resource` with type
 - **Usage, minutes, member activity** — `ttai:get_workspace_info(sections:
   ["usage"])`, `start_date` / `end_date` (org-wide for EDIT+ org roles).
 - **Phone call or bot outcomes** — `ttai:list_resources(bots)` (`kinds`,
-  `include_fields: ["failure"]`) → `session_id` per record.
+  `created_at_gte` / `created_at_lte` or `batch_ids`,
+  `include_fields: ["failure"]`) → `status`, `failure_reason`, and
+  `session_id` per record. Page with `next_cursor` to count.
+- **Extracted outcomes** — sessions list with `ids` and
+  `include_fields: ["extraction"]`.
 
 Notes:
 
@@ -126,6 +134,12 @@ Compute per Scenario:
   quote the shortest excerpt that shows it. Reports without evidence read as
   opinion.
 
+**Outcome Scenarios.** Reach comes from the bots: dialled, connected
+(`call_ended`), and failed by `failure_reason`; every dial gets a session, so a
+session count overstates reach. Then the count and percent of each outcome
+value over connected calls, and the nulls and off-list values as their own
+counts ([data-model.md](references/data-model.md#extraction-results)).
+
 Fewer than ~10 analyzed sessions → report observations, not statistics, and say
 so.
 
@@ -140,10 +154,11 @@ Use the matching template in
 - **Pattern map:** "what do prospects actually say?" — counterpart moves, red
   flags, and persona pools from transcripts, handed to `ttai-agent` for a
   Scenario build
+- **Call outcomes:** "how did yesterday's calls go?" on an outcome Scenario
 
-Every report states the population and window, the score summary, the top 3–5
-improvement areas with evidence, concrete actions, and `analytics_url` links for
-sessions worth a human review.
+Every report states the population and window, the score or outcome summary,
+the top 3–5 improvement areas with evidence, concrete actions, and
+`analytics_url` links for sessions worth a human review.
 
 ### 5. Fill gaps or ingest (only on request)
 
@@ -198,7 +213,7 @@ per slide or section, evidence quote included.
 - [references/data-model.md](references/data-model.md): tools, parameters,
   limits, response fields, score scales, status values
 - [references/report-templates.md](references/report-templates.md): team,
-  Scenario health, coaching, and pattern-map formats
+  Scenario health, coaching, pattern-map, and call outcome formats
 - [references/ingest-and-reprocess.md](references/ingest-and-reprocess.md):
   `ttai:upload_session` ingest, `ttai:analyze_session` backfill,
   confirmation and polling

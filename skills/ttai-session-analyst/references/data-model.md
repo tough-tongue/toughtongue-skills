@@ -5,6 +5,7 @@
 - Read tools and parameters
 - Session fields by tool
 - Evaluation shape and score scales
+- Extraction results
 - Status values
 - Phone call and meeting-bot records
 - Analytics rollup
@@ -117,9 +118,20 @@ learning_results:            # present when Scenario learning is enabled
   issue, evidence, suggestion, summary: string
 ```
 
-Any of these can be `null`. Configured extraction variables arrive as the
-free-form `extraction_results` object (typed reads: `include_fields:
-["extraction"]`).
+Any of these can be `null`.
+
+## Extraction results
+
+`extraction_results` (typed reads: `include_fields: ["extraction"]`) holds one
+key per `session_analysis.extraction_vars[].name` on the Scenario.
+
+- The outcome variable is the one whose `description` lists its values
+  ("Return exactly one of: …"). Match values ignoring case and spacing; count
+  the rest as off-list.
+- A key with nothing to extract is `null`. Dials that never connected still
+  get a session with every variable `null`.
+- `extraction_results: null` on a row where you requested it means no
+  extraction ran: check `post_session_status`.
 
 ## Status values
 
@@ -136,7 +148,10 @@ free-form `extraction_results` object (typed reads: `include_fields:
 `scenario_id`, `scenario_version_id`, `session_id`, `status`, `batch_id`,
 `scheduled_ts`, `bot_joined_at`, `call_ended_at`, `created_at`, `updated_at`;
 `meeting_provider` and `bot_name` with `include_fields: ["meeting"]`;
-`failure_reason` (`busy`, `no_answer`, `voicemail`, …) with `["failure"]`.
+`failure_reason` (`busy`, `no_answer`, `voicemail`, `unavailable`, …) with
+`["failure"]`. An answered call reads `call_ended`; a dial that never connected
+reads `failed`. A voicemail can read `call_ended`: the outcome variable marks
+it.
 Phone numbers and meeting URLs are never returned.
 
 To score calls, collect their `session_id` values and read those sessions.

@@ -9,6 +9,7 @@ Scores are on the 0–10 scale of `final_score` and `report_card[].score`.
 - Scenario health report
 - Individual coaching report
 - Pattern map (from call transcripts)
+- Call outcomes (outcome Scenarios, no scores)
 
 ## Team Performance Report
 
@@ -157,3 +158,38 @@ three sessions; quote the best line heard, marked tone only, never as a script.
 - Red flags cap the score even when the outcome was good
 - Facts the human states must match [source]; an unsourced one costs points
 ```
+
+## Call Outcomes
+
+Reach from the bots, outcomes from the connected calls' sessions. State each
+denominator.
+
+```markdown
+# [Scenario Name]: Call Outcomes
+
+**Window**: [from] – [to] [timezone] · **Outcome variable**: `[name]`
+
+## Reach
+
+- Dialled [N] · connected [c] ([x]%) · [success value] [s] ([x]% of connected)
+- Not connected: [failure_reason] [n], [failure_reason] [n]
+
+## Outcomes (connected calls)
+
+| Outcome  | Calls | % of connected |
+| -------- | ----- | -------------- |
+| [value]  | [n]   | [x]%           |
+| null     | [n]   | [x]%           |
+| off-list | [n]   | [x]%           |
+
+## Problem Outcomes
+
+- [Outcome value], [n] calls: [theme] — "[short quote]" ([analytics_url])
+
+## Actions
+
+1. [Prompt or extraction fix, with the evidence] → `ttai-agent` skill
+2. [Follow-ups due, e.g. callbacks booked]
+```
+
+Keep phone numbers and lead names out of a shared report.

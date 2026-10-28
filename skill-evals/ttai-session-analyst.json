@@ -40,5 +40,15 @@
       "Skips sessions whose post_session_status.state is running and does not loop retries; explains that analyze_session only fills missing results and does not regrade scored sessions",
       "Polls with bounded backoff until state is idle with evaluation_results (or failed), then reports any sessions still unscored and builds the summary from analyzed sessions only"
     ]
+  },
+  {
+    "skills": ["ttai-session-analyst"],
+    "query": "How did yesterday's calls on our 'Lead Qualifier' agent go? It doesn't have scores, just the call outcomes.",
+    "expected_behavior": [
+      "Reads the Scenario with ttai:get_resource(scenarios) to find its extraction_vars and the outcome variable's declared values",
+      "Counts dialled, connected (call_ended), and failed calls by failure_reason from ttai:list_resources(bots) for yesterday, not from sessions",
+      "Reads the connected calls' sessions with include_fields extraction and reports the outcome distribution over connected calls, with nulls and off-list values counted separately",
+      "Does not claim or average scores, and keeps phone numbers and lead names out of the report"
+    ]
   }
 ]

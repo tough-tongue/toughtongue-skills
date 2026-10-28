@@ -208,6 +208,30 @@
   },
   {
     "skills": ["ttai-agent"],
+    "query": "Build an MBA video-essay practice: show each of 4 questions on screen, 30 seconds to think, 60 seconds to answer, then score how they come across on camera.",
+    "expected_behavior": [
+      "Loads references/conversation/built-in-tools.md (Timed answers) and sends an explicit tools_config with card, timer and end_session, each with should_register and add_to_system_prompt",
+      "Shows each question with runCardCommand (command publish) and never reads the card aloud",
+      "Starts think time with setTimer and a distinct message, starts answer time only after [conductor:timer] reports think time complete, and treats the setTimer result as the clock starting",
+      "Tells the agent what to say on a forced turn before the timer completes (one short line, no advancing, no new setTimer), because a new setTimer cancels the running one",
+      "Sets multimodal_analysis: true, is_recording: true and an evaluation_target, and adds a processed_rubrik criterion for on-camera presence with requires_video: true, sending the whole processed_rubrik",
+      "Creates via ttai:create_scenario"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Make a video KYC agent that reads the customer's ID card from their camera.",
+    "expected_behavior": [
+      "Loads references/conversation/built-in-tools.md (Document capture) and registers webcam_snapshot, collect_data and end_session with add_to_system_prompt: true",
+      "Has the agent call captureWebcam (command capture) and wait for the image in the next message; it never comments on a card it has not seen",
+      "Names the fields to read, gives one coaching line for framing, glare or blur before each recapture, and caps retries before marking the document not captured",
+      "Never invents numbers, names or dates, and never speaks a full ID number (last four characters only)",
+      "Calls collectData once at the end with every field, writing not captured for gaps; extraction_vars descriptions prefer the collectData note",
+      "States the Scenario runs on the web link, not over phone, because the camera tool is web only"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
     "query": "Trainees say my coaching scenario marks them wrong when they explain the idea in their own words, and once when the transcript was garbled. Scenario name is 'Refund Policy Coach'. Fix it.",
     "expected_behavior": [
       "Reads the live Scenario with ttai:get_resource before editing, because update_scenario replaces ai_instructions whole",

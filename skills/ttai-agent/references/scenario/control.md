@@ -157,6 +157,9 @@ Faces come from `ttai:list_resources` with resource type `avatar` (`type`
   and prompts only `end_session`.
 - On update, `tool_settings` is replaced whole: read, merge, write.
 
+Function names, prompt rules, and every tool id:
+[../conversation/built-in-tools.md](../conversation/built-in-tools.md).
+
 - `end_session` — any Scenario that can close; `disconnectDelaySeconds` default
   15.
 - `card`, `mcq`, `emoji_reaction` — coaching content, knowledge checks,
@@ -169,18 +172,25 @@ Faces come from `ttai:list_resources` with resource type `avatar` (`type`
   `contextId` is set by the platform.
 - `google_slides` — teach or demo from a Google Slides deck; settings
   `embedUrl` (the published `/pubembed` link). See Google Slides decks below.
+- `timer` — think and answer windows, usually with `card`; see Timed answers
+  in built-in-tools.md.
+- `webcam_snapshot` — reads an ID or document held up to the camera; see
+  Document capture in built-in-tools.md.
+- `notepad`, `architecture_board` — shared notes the agent writes and the
+  user's design canvas; see Shared notes in built-in-tools.md.
 - `knowledge_base_search` — only when `knowledge_base_ids` attaches a Knowledge
   Base (legacy RAG). Knowledge FileBases need no `tools_config` entry: linking
   `knowledge_filebase_ids` gives the agent `getKnowledgeBite` and
   `listKnowledgeBites`.
-- `collect_data` — phone: record structured answers.
+- `collect_data` — web and phone: records answers as one structured note
+  (`collectData`).
 - `cold_transfer` — phone: transfer to `tool_settings.transfer_to`.
 
 Phone (SIP) runs only server-side tools: `end_session`, `knowledge_base_search`,
 `collect_data`, `cold_transfer`, `ask_conductor` when an on-demand conductor
 message exists, `getKnowledgeBite` and `listKnowledgeBites` when
 `knowledge_filebase_ids` is set, and attached Custom Functions and MCP servers.
-Visual tools are unavailable on phone — never prescribe them there.
+Every other built-in tool is web only — never prescribe one there.
 
 | Tool                    | Cold call | Sales | Coaching          |
 | ----------------------- | --------- | ----- | ----------------- |

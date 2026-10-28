@@ -207,11 +207,6 @@ CALL block says ([ending.md](../conversation/ending.md)):
 - **NURTURE** — agree on a follow-up plan.
 - **DEAD LEAD** — one polite goodbye.
 
-By default the agent ends after the lead's reply to the closing line. A
-scripted caller whose closing line settles the call (a booked time, a clear
-no) may instead start the closing turn with `endSession(reason)`, then say the
-line; farewell mode handles the lead's goodbye.
-
 ---
 
 ## Compliance and Sensitivity Rules
@@ -282,8 +277,7 @@ CALL decides when the tool fires.]
 [Other enabled tools and when to call them.]
 
 ## ENDING THE CALL
-[The block from conversation/ending.md. Default: end after the lead's reply to
-the closing line; a fixed script may use the tool-with-closing-line variant.]
+[The block from conversation/ending.md.]
 
 ## HANDLING QUESTIONS
 [FAQ guidance for likely product/company questions]

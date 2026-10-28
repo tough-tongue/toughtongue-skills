@@ -95,23 +95,19 @@ and rubric must evaluate the same person and outcome.
 
 ## Closure and re-engagement
 
-- Treat closure as a short state transition, not one tool call. By default,
-  state the outcome and goodbye in one turn, wait for the other person to
-  respond, then call `end_session` when the conversation is still complete.
-- `end_session` hangs up; it never marks the end of a phase. Do not call it in
-  the same turn as a question or pitch. The person needs a natural chance to
-  answer or re-open the conversation.
+- Treat closure as a short state transition, not one tool call: state the
+  outcome and goodbye in one turn, wait for the other person to respond, then
+  call `end_session` when the conversation is still complete.
+- Do not call `end_session` in the same turn as a question, pitch, summary, or
+  goodbye. The person needs a natural chance to acknowledge or re-open the
+  conversation.
 - When a session end is pending, ordinary thanks, goodbyes, noise, or crosstalk
   do not reopen it. A substantive question, a request to wait, or a new topic
   does: cancel the pending end before responding.
 - Specify the closing condition for the situation. A firm, explicit request to
-  stop ends the call at once; a soft objection, a bare "ok", or a garbled reply
-  is not an exit.
-- A scripted outbound call whose closing line settles it may instead call
-  `end_session` at the start of the closing turn, then say the line; the
-  disconnect delay leaves room for the other person's goodbye. Copy-ready
-  block, both variants, settings, and fixes:
-  [ending.md](../conversation/ending.md).
+  stop ends the call at once. Phone calls: the ENDING THE CALL block in
+  [ending.md](../conversation/ending.md), including the one exception for
+  scripted callers.
 
 ## Evaluation and iteration
 

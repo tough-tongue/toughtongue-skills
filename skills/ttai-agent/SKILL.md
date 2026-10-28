@@ -65,7 +65,8 @@ The core job. Full procedure:
 
 Loop: resolve workspace → fetch current Scenario
 (`ttai:get_resource(scenarios)`) → load the matching recipe and Scenario
-references → draft → load the live write schema → write → re-fetch → report the
+references → draft → load the live write schema → write → re-fetch → test
+([evaluation/testing.md](references/evaluation/testing.md)) → report the
 change, the run link `https://app.toughtongueai.com/run/<scenario_id>`, and that
 edits affect new sessions only.
 

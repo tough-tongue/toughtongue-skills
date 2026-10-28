@@ -82,6 +82,8 @@ Every entry in `tools_config.tools.<tool_id>` has two booleans:
   re-opens the conversation. Thanks, goodbyes, and noise do not cancel.
 - The goodbye is its own turn; call the tool only after the user's reply.
   Premature calls are the #1 source of "the agent hung up on me" complaints.
+- Phone calls: use the ENDING THE CALL block in
+  [ending.md](../conversation/ending.md), with `add_to_system_prompt: false`.
 
 ### Session-surface differences
 

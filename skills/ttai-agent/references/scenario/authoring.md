@@ -104,8 +104,10 @@ and rubric must evaluate the same person and outcome.
 - When a session end is pending, ordinary thanks, goodbyes, noise, or crosstalk
   do not reopen it. A substantive question, a request to wait, or a new topic
   does: cancel the pending end before responding.
-- Specify the closing condition for the situation. A firm opt-out may begin an
-  immediate close, but it still follows the goodbye → response → end sequence.
+- Specify the closing condition for the situation. A firm, explicit request to
+  stop ends the call at once. Phone calls: the ENDING THE CALL block in
+  [ending.md](../conversation/ending.md), including the one exception for
+  scripted callers.
 
 ## Evaluation and iteration
 

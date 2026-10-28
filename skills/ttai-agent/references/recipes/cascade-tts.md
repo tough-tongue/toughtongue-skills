@@ -215,7 +215,9 @@ Cascade pipelines have inherent latency (STT + LLM + TTS). Keep responses tight.
 
 - **One question per turn.** Never stack questions. Wait for a response.
 - **Pause after key information.** Let the customer absorb before moving on.
-- **Wait for their goodbye.** Never end a call after your own last line.
+- **Wait for their goodbye.** By default, end a call only after their reply to
+  your own last line; the one exception is the scripted-close variant in
+  [ending.md](../conversation/ending.md).
 - **Don't front-load.** Spread information across turns.
 
 ---

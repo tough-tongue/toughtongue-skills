@@ -5,8 +5,8 @@ description: >-
   sessions, scores, report cards, strengths, weaknesses, extracted call
   outcomes, and transcripts from practice roleplays, AI phone calls, and
   meeting-bot calls for a Scenario, person, or date range, then writes team
-  performance, Scenario health, individual coaching, or calling-campaign
-  outcome reports with action items. Can also ingest an external
+  performance, Scenario health, individual coaching, or call outcome reports
+  with action items. Can also ingest an external
   call transcript or recording as a scored session (ttai:upload_session) and
   fill in missing analysis (ttai:analyze_session), each after the user
   confirms. Use when the user asks "how is my team doing?", "top improvement
@@ -69,11 +69,9 @@ Read-only by default. The only writes are `ttai:upload_session` and
    `ttai:list_resources(scenarios, query)` call with the title, take the ID, and continue by ID.
 3. Pin down the population: Scenario(s), date window, people, and how many
    sessions. When the window is vague, use the last 30 days and say so.
-4. Learn what the Scenario records: `ttai:get_resource(scenarios, id)`. A
-   `rubrik` with `session_analysis.is_auto_analysis: true` means scores.
-   Extraction on (`enable_extraction`, `extraction_vars`) with no rubric and
-   analysis off is an **outcome Scenario**: its sessions carry
-   `extraction_results` and never a score. Report outcomes, not "no scores".
+4. Learn what the Scenario records: `ttai:get_resource(scenarios, id)`.
+   Extraction on with no rubric and analysis off is an **outcome Scenario**:
+   its sessions carry `extraction_results`, never a score. Report outcomes.
 
 ### 2. Pull
 
@@ -101,12 +99,11 @@ Every read below is `ttai:list_resources` or `ttai:get_resource` with type
   list by person or window and match IDs.
 - **Usage, minutes, member activity** — `ttai:get_workspace_info(sections:
   ["usage"])`, `start_date` / `end_date` (org-wide for EDIT+ org roles).
-- **Phone calls and bots** — `ttai:list_resources(bots)`
-  (`kinds: ["phone"]`, `phone_directions`, `batch_ids` or `created_at_gte` /
-  `created_at_lte`, `include_fields: ["failure"]`) → `status`,
-  `failure_reason`, and `session_id` per record. No `include_total`: page with
-  `next_cursor` to count.
-- **Outcomes for chosen sessions** — list: `ids` (up to 100 per call),
+- **Phone call or bot outcomes** — `ttai:list_resources(bots)` (`kinds`,
+  `created_at_gte` / `created_at_lte` or `batch_ids`,
+  `include_fields: ["failure"]`) → `status`, `failure_reason`, and
+  `session_id` per record. Page with `next_cursor` to count.
+- **Extracted outcomes** — sessions list with `ids` and
   `include_fields: ["extraction"]`.
 
 Notes:
@@ -137,21 +134,11 @@ Compute per Scenario:
   quote the shortest excerpt that shows it. Reports without evidence read as
   opinion.
 
-**Outcome Scenarios (no rubric).** Aggregate the outcome variable instead of
-scores. Value shapes and null rules:
-[references/data-model.md](references/data-model.md#extraction-results).
-
-- **Reach from bots.** Dialled (outbound phone bots in the window), connected
-  (`call_ended`), and failed by `failure_reason`. Every dial gets a session,
-  failed ones included, so a session count overstates reach.
-- **Outcome distribution.** Count and percent of each outcome value over
-  connected calls. Conversion is the success value (such as a callback booked)
-  over connected calls; ask which value counts as success when unclear.
-- **Data quality.** Count nulls, values outside the declared list, and values
-  off the declared format. Never fold them into a bucket silently.
-- **Mix and themes.** The language split when a language variable exists.
-  Cluster the summary or handoff variable per problem outcome, and quote 1–2
-  transcripts for each.
+**Outcome Scenarios.** Reach comes from the bots: dialled, connected
+(`call_ended`), and failed by `failure_reason`; every dial gets a session, so a
+session count overstates reach. Then the count and percent of each outcome
+value over connected calls, and the nulls and off-list values as their own
+counts ([data-model.md](references/data-model.md#extraction-results)).
 
 Fewer than ~10 analyzed sessions → report observations, not statistics, and say
 so.
@@ -167,8 +154,7 @@ Use the matching template in
 - **Pattern map:** "what do prospects actually say?" — counterpart moves, red
   flags, and persona pools from transcripts, handed to `ttai-agent` for a
   Scenario build
-- **Campaign outcomes:** "how did yesterday's calls go?" on an outcome
-  Scenario — reach, outcome mix, not-connected reasons, data quality
+- **Call outcomes:** "how did yesterday's calls go?" on an outcome Scenario
 
 Every report states the population and window, the score or outcome summary,
 the top 3–5 improvement areas with evidence, concrete actions, and
@@ -204,16 +190,6 @@ per slide or section, evidence quote included.
 - **"Is this Scenario working?"** Status counts via `include_total` (count
   old `active` sessions as abandoned) → `ttai:list_resources(sessions)` with
   `hasLearning: "issue"` for flagged transcripts → Scenario health report.
-- **"How did yesterday's calls go?" (no scores)** Read the Scenario's
-  `extraction_vars` → `ttai:list_resources(bots)` (`kinds: ["phone"]`,
-  `phone_directions: ["outbound"]`, `scenario_ids`, `batch_ids` or
-  `created_at_gte` / `created_at_lte` as timestamps with the user's UTC offset,
-  `include_fields: ["failure"]`; page to the end) → connected calls'
-  `session_id` values → `ttai:list_resources(sessions)` (`ids`,
-  `include_fields: ["extraction"]`) → reach, outcome distribution, and
-  data-quality counts → transcripts for 1–2 sessions per problem outcome →
-  Campaign outcomes report → prompt or extraction fixes to the `ttai-agent`
-  skill.
 
 ## Pitfalls
 
@@ -225,9 +201,6 @@ per slide or section, evidence quote included.
   sessions can still read `active` there.
 - **Math on numbers.** Use `score` and `final_score`; `score_str` and
   `overall_score` are display text.
-- **Unrequested is `null`.** Typed rows return every field; ones you did not
-  request in `include_fields` read `null`. Request `extraction` before
-  concluding nothing was extracted.
 - **Typed-list scope.** `ttai:list_resources(sessions)` returns other people's sessions only
   when the caller holds EDIT or higher on the Scenario (pass `scenario_ids`) or
   in the selected organization. Otherwise it returns only the caller's own. An
@@ -238,9 +211,9 @@ per slide or section, evidence quote included.
 ## Key Files
 
 - [references/data-model.md](references/data-model.md): tools, parameters,
-  limits, response fields, score scales, extraction results, status values
+  limits, response fields, score scales, status values
 - [references/report-templates.md](references/report-templates.md): team,
-  Scenario health, coaching, pattern-map, and campaign-outcome formats
+  Scenario health, coaching, pattern-map, and call outcome formats
 - [references/ingest-and-reprocess.md](references/ingest-and-reprocess.md):
   `ttai:upload_session` ingest, `ttai:analyze_session` backfill,
   confirmation and polling

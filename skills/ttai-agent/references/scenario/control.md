@@ -90,7 +90,8 @@ flow: `name`, `instructions`; stage: `name`, `instructions`, `goal`, `role`).
 
 **Silence:** `silence_threshold` in ms (minimum 3000); `end_session: true` hangs
 up, `false` keeps the call alive; `force_agent_to_speak: true` injects a fixed
-check-in, `false` lets a small model write the nudge. Practice default:
+check-in, `false` lets a small model write the nudge; `nudge_text` sends exact
+text instead. Practice default:
 5000–8000, `end_session: false`. Roleplay counterparts (prospect, interviewer)
 use `force_agent_to_speak: false` so the nudge stays in character; AI-led
 callers use `true`, and outbound calls run lower thresholds (3000–5000) than

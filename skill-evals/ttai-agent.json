@@ -24,9 +24,19 @@
     "query": "Which fields do I set on a scenario besides the long AI instructions and the rubric?",
     "expected_behavior": [
       "Loads references/scenario/model-selection.md and/or control.md and does not paste a full ai_instructions essay",
-      "Covers ai_model_config (realtime Galaxy/Ocean, Landmass realtime with separate TTS, Landmass cascade; cold call and slide demos start on Landmass cascade + Cartesia, sales roleplay on Galaxy, coaching and browser demos on Ocean; super Scenarios require Landmass; never cascade-01; never invent tts_voice_id)",
+      "Covers ai_model_config (realtime Galaxy/Ocean, Landmass realtime with separate TTS, Landmass cascade; outbound calls start on Landmass cascade for scripted lines or tuned Landmass gemini-stable voice-to-voice for open conversations, slide demos on Landmass cascade + Cartesia, sales roleplay on Galaxy, coaching and browser demos on Ocean; super Scenarios require Landmass; never cascade-01; never invent tts_voice_id)",
       "Covers strategy (opening lives in FLOW, no welcome_instructions field; omitted silence means 120 s then hang up), appearance.voice and language_code, an explicit tools_config with end_session, and session_analysis.is_auto_analysis",
       "Points at references/scenario/ai-instructions.md for the instruction shape and a recipe under references/recipes/ for rubric patterns"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Our outbound research calls feel slow and the agent keeps talking over people on the phone. Should we switch pipelines?",
+    "expected_behavior": [
+      "Loads references/scenario/model-selection.md and reads the Scenario's ai_model_config and recent transcripts before recommending",
+      "Recommends the tuned Landmass gemini-stable stamp for open conversations (or tuning its gemini_realtime_config): low sensitivities, silence_duration_ms, thinking_budget 0, as starting values",
+      "Keeps Cascade for calls whose lines must be said as written",
+      "Resends the whole ai_model_config and confirms before ttai:update_scenario"
     ]
   },
   {

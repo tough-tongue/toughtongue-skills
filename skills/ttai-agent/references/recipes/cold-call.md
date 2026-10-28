@@ -16,10 +16,10 @@ whose data is (at least partially) known. The user plays the lead.
 
 Key facts:
 
-- **Recommended stamp:** Landmass `cascade` + Cartesia (was `cascade-01` in
-  older docs). Load [cascade-tts.md](cascade-tts.md). See
-  [model-selection.md](../scenario/model-selection.md). Ocean realtime is a
-  fallback only when Cascade is unavailable for the account — never Galaxy.
+- **Stamp:** scripted lines → Landmass `cascade` + Cartesia (load
+  [cascade-tts.md](cascade-tts.md)); open conversation → tuned Landmass
+  `gemini-stable` ([model-selection.md](../scenario/model-selection.md)). Ocean
+  realtime only when neither is available — never Galaxy.
 - Three call sub-types: true cold, warm lead, follow-up — each has different
   opening and termination risk
 - Two-beat opening: Identity + Reason + Permission → Response branching (4
@@ -67,13 +67,11 @@ for the account. Do **not** stamp Galaxy for outbound cold calls.
 **Half-cascade** (Landmass realtime + external TTS): when voice cloning matters
 but you want realtime listening — no full Cascade speech blocks.
 
-**Long, consultative calls.** Cascade stays the default: it gives the most
-natural cold-call voice and most teams run it. When the call is a long
-conversation with many back-and-forths (discovery beyond a handful of
-questions, consultative selling), ask the user whether to try a voice-to-voice
-stamp (Landmass `gemini-stable` or Galaxy) instead. Some teams saw better
-qualification that way on long calls; it is not consistent, so it is their
-call.
+**Open conversations.** For research calls, confirmations, follow-ups, or long
+consultative discovery, where lines are tone references and turn-taking
+matters more than exact wording, use the tuned Landmass `gemini-stable` stamp
+in [model-selection.md](../scenario/model-selection.md) instead: no
+cascade-tts blocks.
 
 ---
 
@@ -411,7 +409,7 @@ Same strategy / tools / session_analysis as above. No cascade-tts blocks.
 | Breaks when a `{{ var }}` is blank | Missing-data fallbacks                  |
 | `skip_auto_start: true`            | Always `false`                          |
 | No conductor timeout               | Always set                              |
-| Galaxy or casual Ocean stamp       | Cascade default; Ocean only as fallback |
+| Galaxy or casual Ocean stamp       | Cascade or Gemini Live; Ocean as backup |
 
 ---
 
@@ -422,8 +420,8 @@ Same strategy / tools / session_analysis as above. No cascade-tts blocks.
 - [ ] PERSONALITY/TONE, HANDLING QUESTIONS, EDGE CASES, NEVER list
 - [ ] Missing-data fallbacks; compliance if regulated
 - [ ] `end_session` + `skip_auto_start: false` + talkative silence + conductor
-- [ ] Stamp: Landmass `cascade` + real Cartesia ID + cascade-tts blocks (or
-      documented Ocean fallback)
+- [ ] Stamp: Landmass `cascade` + real Cartesia ID + cascade-tts blocks, or
+      tuned `gemini-stable` for open conversation (or documented Ocean fallback)
 - [ ] Rubric scores the LEAD, not the AI
 
 ## Key Files

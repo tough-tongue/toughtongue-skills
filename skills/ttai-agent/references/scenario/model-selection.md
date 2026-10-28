@@ -88,8 +88,9 @@ Load [../recipes/cascade-tts.md](../recipes/cascade-tts.md) into
 `tts_provider`: `cartesia` | `openai` | `elevenlabs` | `sarvam`.\
 `llm_provider`: `google` | `google_vertex` | `openai` | `cerebras` | `sarvam`.\
 `stt_provider`: `deepgram` | `cartesia` | `sarvam` | `google`. `stt_keyterms`:
-terms to boost Deepgram recognition. `speed`: TTS rate multiplier (0.25-4;
-providers clamp tighter).
+terms to boost Deepgram recognition. `stt_mode` (Sarvam only): `codemix` keeps
+Hinglish as Devanagari Hindi plus Latin English. `speed`: TTS rate multiplier
+(Cartesia 0.6–2.0, ElevenLabs 0.8–1.2).
 
 `gemini_realtime_config` tunes Gemini Live (Landmass `gemini*` only):
 `start_of_speech_sensitivity` / `end_of_speech_sensitivity` (`low`|`high`),
@@ -97,6 +98,35 @@ providers clamp tighter).
 (`interrupt`|`no_interruption`), `thinking_level`
 (`minimal`|`low`|`medium`|`high`), `thinking_budget`, `proactivity`,
 `enable_affective_dialog`. Unsupported settings are dropped server-side.
+`openai_realtime_config` tunes OpenAI realtime (Ocean, Landmass `openai`) in
+OpenAI's session shape; `audio.input.transcription.prompt` lists names to spell
+right.
+
+### Voice-to-voice on the phone
+
+For open phone conversations (research calls, confirmations, follow-ups),
+stamp Landmass `gemini-stable` with these starting values, then tune from
+transcripts:
+
+```json
+{
+  "provider": "Landmass",
+  "model": "gemini-stable",
+  "gemini_realtime_config": {
+    "start_of_speech_sensitivity": "low",
+    "end_of_speech_sensitivity": "low",
+    "silence_duration_ms": 900,
+    "thinking_budget": 0,
+    "proactivity": false
+  }
+}
+```
+
+Low sensitivities stop line noise and "hmm" from cutting the agent off, and
+keep it from jumping in at short pauses. `silence_duration_ms` is the pause
+that ends their turn: raise it if the agent talks over people, lower it if
+replies feel slow. `thinking_budget: 0` removes thinking delay. The voice is
+`appearance.voice`; add no `tts_*`.
 
 ## Need-based overrides
 
@@ -115,7 +145,8 @@ Starting defaults:
 
 | Situation         | Stamp                         | Pipeline |
 | ----------------- | ----------------------------- | -------- |
-| Cold call / SDR   | Landmass `cascade` + Cartesia | Cascade  |
+| Phone, scripted   | Landmass `cascade` + Cartesia | Cascade  |
+| Phone, open talk  | Landmass `gemini-stable`      | Realtime |
 | Sales roleplay    | Galaxy `medium-stable`        | Realtime |
 | Coaching          | Ocean `medium-stable`         | Realtime |
 | Demo — browser    | Ocean `medium-stable`         | Realtime |
@@ -123,16 +154,15 @@ Starting defaults:
 | Text-only         | Ocean `medium-stable`         | —        |
 | High-quality text | Ocean `medium-super`          | —        |
 
-Cold call **and** slide demos use Cascade: outbound / narrated AI speech wants
-controllable TTS (Cartesia) + explicit STT/LLM. Load
-[../recipes/cascade-tts.md](../recipes/cascade-tts.md) for both.
+Outbound phone: Cascade when lines must be said as written (a tested script, a
+chosen external voice, Hinglish code-mix STT); tuned Gemini Live
+(voice-to-voice on the phone, above) for open conversations. Slide demos use
+Cascade too. Load [../recipes/cascade-tts.md](../recipes/cascade-tts.md) for
+Cascade.
 
 Overrides:
 
-- Cold call → Ocean only if Cascade / Cartesia is unavailable.
-- Cold call that is a long conversation with many back-and-forths → Cascade is
-  still the default; ask the user whether to try voice-to-voice (Landmass
-  `gemini-stable` or Galaxy). Results vary by team, so it is their call.
+- Outbound phone → Ocean only if neither Landmass stamp is available.
 - Coaching → Galaxy if Ocean is unavailable.
 - Sales also needs `skip_auto_start: true` (see [control.md](control.md)).
 

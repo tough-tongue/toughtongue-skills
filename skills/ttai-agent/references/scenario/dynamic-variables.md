@@ -30,6 +30,11 @@ itself is in [ai-instructions.md](ai-instructions.md).
 - **Calls and bots** — `dynamic_vars` on `ttai:schedule_bot` (`kind: "phone"`
   or `"meeting"`). The same values reach post-session hooks.
 - All values arrive as **strings**.
+- **Platform (reserved)** — filled by Tough Tongue AI, never by the user:
+  `tt_session_type` (`web`, `meeting_bot`, `sip_inbound`, `sip_outbound`) and
+  `tt_call_time["+05:30"]` (session start at a fixed UTC offset, no daylight
+  saving; a phone call gets the clock only when the prompt references it).
+  Never ask for, pass, or invent a `tt_*` value.
 
 ## What runs where
 
@@ -91,17 +96,19 @@ Each one replaces a copy of the Scenario.
 4. **Language per lead.** `{% case preferred_language %}` with a default and
    one block per language. Never announce the choice aloud.
 
-5. **Clock-aware rules.** The platform does not inject the time into
-   `ai_instructions`. Pass it as a variable (for example `current_datetime` as
-   `YYYY-MM-DD HH:MM`) and derive what the flow needs:
+5. **Clock-aware rules.** Reference `tt_call_time` at the callee's offset and
+   state the rule in words.
 
    ```
-   {% assign hm = current_datetime | date: "%H%M" | plus: 0 %}
-   {% if hm < 1100 or hm > 1930 %}Experts are off now: book a time between eleven and seven thirty.{% endif %}
+   It is now {{ tt_call_time["+05:30"] }} for the customer.
+   Experts call back only between eleven AM and seven thirty PM India time. Offer a slot inside those hours; if today's are over, offer tomorrow from eleven.
    ```
 
 6. **Campaign text.**
    `{% if current_offer != blank %}Mention {{ current_offer }} once, in your own words, after the first question.{% endif %}`
+
+7. **One Scenario for web and phone.** Branch screen-only steps with
+   `{% if tt_session_type == "web" %}` instead of keeping a phone copy.
 
 ## Worked example
 
@@ -154,6 +161,8 @@ Then ask what time an expert should call back. One question per turn.
 
 - [ ] Every `{{ var }}` has a `default:` or a `!= blank` branch
 - [ ] Numeric comparisons go through `plus: 0`
+- [ ] No `tt_*` value requested from the user, passed in `dynamic_vars`, or
+      invented; `tt_call_time` uses the offset of the people on the call
 - [ ] Each `case` or `if` branch tested from a run link with and without the
       value
 - [ ] No `&` or quotes in values the caller passes

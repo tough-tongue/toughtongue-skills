@@ -30,10 +30,13 @@ Notes:
 - `organizations` lists each membership's `id`, `name`, `slug`, the caller's
   `role`, and `quota_enabled`. Never send the slug as `org_id`.
 - Roles: `view` < `edit` (Admin in the app) < `owner`; `no_access` = end users.
+  `get_workspace_info` can report `view` as `read`; treat the two as the same.
 - `members` (org only, `query` filters name/email) lists people, roles, and
   `quota_available`.
-- Inviting members, changing roles, creating organizations, and plan changes
-  happen in the web app at
+- An organization's description, logo, and cover image change with
+  `ttai:update_org` (role EDIT+); `organizations[].editable` holds the current
+  values. Inviting members, changing roles, creating or renaming
+  organizations, and plan changes happen in the web app at
   [app.toughtongueai.com](https://app.toughtongueai.com).
 - A `403` means the caller lacks access to that organization or resource: switch
   workspace or have the user fix membership in the app.

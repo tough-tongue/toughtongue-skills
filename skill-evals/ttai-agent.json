@@ -187,6 +187,27 @@
   },
   {
     "skills": ["ttai-agent"],
+    "query": "Clean up my 'Pricing Coach' scenario: delete the old archived versions, keep only what's live.",
+    "expected_behavior": [
+      "Resolves the Scenario by title, then lists its versions with ttai:list_resources(scenario-versions, filters: {scenario_id})",
+      "Shows the archived versions (name and date) and leaves out the row with is_current: true; never tries to delete the current version",
+      "Confirms the exact list with the user before deleting anything",
+      "Calls ttai:delete_scenario_version(scenario_id, version_id) once per confirmed archive",
+      "Reports any refusal as a version a live Session or active Bot still runs, and says finished Sessions on deleted versions now read the current version"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "My outbound caller should know the local time in India so it never offers a callback outside 11am–7:30pm.",
+    "expected_behavior": [
+      "Adds {{ tt_call_time[\"+05:30\"] }} to ai_instructions with the callback window stated in words, per references/scenario/dynamic-variables.md",
+      "Does not ask the user for a current_datetime or any tt_* value, and does not send tt_* keys in dynamic_vars",
+      "Says phone calls get the clock only because the instructions reference tt_call_time, and that the offset is fixed (no daylight saving)",
+      "Applies a surgical ttai:update_scenario (id plus ai_instructions) after confirming, and reminds that edits affect new sessions only"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
     "query": "Create a practice scenario where my reps cold-call a small-business owner who filled out a form last month. The AI plays the owner.",
     "expected_behavior": [
       "Classifies the scenario as sales roleplay (the human is the caller) and loads references/recipes/sales-roleplay.md, not the cold-call recipe",

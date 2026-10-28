@@ -5,11 +5,12 @@ description: >-
   behind voice agents (sales calls, lead qualification, demos, screening,
   support, booking) and practice roleplays (negotiations, interviews,
   coaching). Writes ai_instructions, ai_model_config, strategy, tools_config,
-  and rubrik through ttai:create_scenario and ttai:update_scenario. Also
-  resolves the personal or organization workspace, checks plan and balance,
-  places or cancels SIP calls, schedules or cancels meeting bots, mints
-  private Scenario links, grounds a Scenario in the user's documents with
-  knowledge FileBases, and troubleshoots ttai MCP sign-in. Use when the user
+  and rubrik through ttai:create_scenario and ttai:update_scenario, and prunes
+  archived Scenario versions. Also resolves the personal or organization
+  workspace, checks plan and balance, updates organization branding, places or
+  cancels SIP calls, schedules or cancels meeting bots, mints private Scenario
+  links, grounds a Scenario in the user's documents with knowledge FileBases,
+  and troubleshoots ttai MCP sign-in. Use when the user
   wants a voice agent or practice Scenario created or improved ("create a
   voice agent", "the agent ends calls too early", "make it sound more
   natural"), a call placed, a meeting bot sent, or a Tough Tongue AI account
@@ -102,7 +103,8 @@ the job, the file, and when to read it.
   shape, opening, spoken-line rules.
 - **Personalize or branch a Scenario with variables** —
   [scenario/dynamic-variables.md](references/scenario/dynamic-variables.md).
-  `{{ var }}` defaults, `case`/`if` variants, allow-lists, per-run facts.
+  `{{ var }}` defaults, `case`/`if` variants, allow-lists, per-run facts, the
+  platform's clock and channel (`tt_call_time`, `tt_session_type`).
 - **Pick `ai_model_config`** —
   [scenario/model-selection.md](references/scenario/model-selection.md). Model
   family, pipeline, voice.

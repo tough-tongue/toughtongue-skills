@@ -1,7 +1,7 @@
 # MCP tools
 
 The `ttai` MCP server (`https://api.toughtongueai.com/api/public/mcp`) is the
-action surface: 15 public tools, named `verb_resource`. Tools
+action surface: 17 public tools, named `verb_resource`. Tools
 appear as `ttai:<name>` (some clients show `mcp__ttai__<name>`). The connected
 `tools/list` and each tool's input schema are authoritative; this file is the
 map.
@@ -29,7 +29,8 @@ keeps its own tools because risk hints are per tool.
 | Read workspace   | `ttai:get_workspace_info` (`sections`)                   |
 | Read records     | `ttai:list_resources`, `ttai:get_resource`               |
 | Read a schema    | `ttai:get_schema` (`"scenario"`)                         |
-| Scenarios        | `ttai:create_scenario`, `ttai:update_scenario`           |
+| Scenarios        | `ttai:create_scenario`, `ttai:update_scenario`, `ttai:delete_scenario_version` |
+| Org settings     | `ttai:update_org` (description, logo, cover image)       |
 | Sessions         | `ttai:upload_session`, `ttai:analyze_session`            |
 | FileBases        | `ttai:create_filebase`, `ttai:write_filebase`                |
 | Bots             | `ttai:schedule_bot`, `ttai:cancel_bot` (meeting and phone) |
@@ -49,7 +50,7 @@ organization), `org_id`, your `role`, and the sections you ask for (others
 | Section         | Holds                                                         | Default |
 | --------------- | ------------------------------------------------------------- | ------- |
 | `me`            | your id, name, email, preferences                             | yes     |
-| `organizations` | every membership: `id` (your `org_id`), name, slug, role, `quota_enabled` | yes |
+| `organizations` | every membership: `id` (your `org_id`), name, slug, role, `quota_enabled`, `editable` (what `ttai:update_org` changes) | yes |
 | `plan`          | effective entitlements for the scope (SIP, models, limits)    | yes     |
 | `balance`       | personal or org wallet; your quota when quotas are on         | yes     |
 | `members`       | org only: id, email, name, role, `quota_available`; `query` filters name/email (max 100, `total`) | no |
@@ -62,7 +63,7 @@ rate-limit response.
 
 `ttai:list_resources(type, query?, filters?, include_fields?, cursor?, limit?,
 include_total?)` lists; `ttai:get_resource(type, id, filters?,
-include_fields?, paths?)` reads one record (`id` is always required). The server's MCP
+include_fields?, paths?, download?)` reads one record (`id` is always required). The server's MCP
 instructions name every type, and `ttai:read_guide` lists each type's filter
 names — read it when unsure. These skills write
 `ttai:list_resources(sessions)` as shorthand for `ttai:list_resources` with
@@ -101,8 +102,10 @@ names — read it when unsure. These skills write
   `get_resource(scenarios, id)`.
 - **Scenario history** (needs edit access) →
   `list_resources(scenario-versions, filters: {scenario_id})`, then
-  `get_resource(scenarios, id, filters: {version_id})`. Omit the filter for
-  current.
+  `get_resource(scenarios, id, filters: {version_id})` or `{version_name}`.
+  Omit the filter for current; its list row has `is_current: true`.
+- **Recently changed Scenarios** → `list_resources(scenarios, filters:
+  {updated_at_gte})` (add `updated_at_lte` for a window).
 - **Sessions by person, date, or learning result** → `list_resources(sessions,
   filters: {user_email | from_date | to_date | hasLearning | is_org})` — these
   switch to the enriched legacy list (`is_org: true` for the org-wide admin
@@ -123,9 +126,10 @@ names — read it when unsure. These skills write
 State the exact target (phone number, meeting URL, Scenario ID, audience,
 timing) and get the user's go-ahead before any of these. Never dial or dispatch
 a bot from inferred data. The server's tool annotations flag the same risks
-(destructive: `update_scenario`, `write_filebase`, `cancel_bot`; open world:
-every tool below except `write_filebase` and `create_token`); confirm
-even when a client hides them.
+(destructive: `cancel_bot`, `update_scenario`, `delete_scenario_version`,
+`write_filebase`; open world: `schedule_bot`, `cancel_bot`,
+`authenticate_browser`, `upload_session`, `analyze_session`,
+`update_scenario`); confirm even when a client hides them.
 
 - `ttai:schedule_bot` — `kind: "phone"` dials real phones (one unscheduled
   entry rings immediately); `kind: "meeting"` sends a visible bot into a real
@@ -134,6 +138,12 @@ even when a client hides them.
   starts.
 - `ttai:update_scenario` — overwrites the fields you send; changes the live
   agent.
+- `ttai:delete_scenario_version` — removes one archived version for good. The
+  current version is never deleted; an archive a live Session or active Bot
+  runs is refused. Finished Sessions on a deleted archive read the current
+  version. Needs edit access.
+- `ttai:update_org` — changes the description, logo, or cover image every
+  organization member sees; show the current and new values.
 - `ttai:write_filebase` — replaces or deletes files in a FileBase.
 - `ttai:analyze_session` — fills only missing results (never re-scores); may
   fire the Scenario's post-session hooks.
@@ -168,6 +178,10 @@ even when a client hides them.
     applies the change. The label names the new version you are saving; the
     archived copy keeps its own earlier label ("Initial version" if it had
     none).
+- Prune archives: `list_resources(scenario-versions, filters: {scenario_id})`
+  → skip the `is_current: true` row → show the rest and confirm →
+  `ttai:delete_scenario_version(scenario_id, version_id)` per archive. Report
+  any refusal: a live Session or active Bot still runs that version.
 - `get_resource(scenarios, id)` omits linked-resource IDs
   (`knowledge_base_ids`, `knowledge_filebase_ids`, `custom_function_ids`,
   `pre_connect`); the create/update response returns the full authoring state.
@@ -192,13 +206,20 @@ A FileBase is a folder of files with a `kind`: `app` (an Agent Desktop app) or
   create (no MCP tool changes it). Featured FileBases are read-only (`403`).
   List rows carry `visibility`, `featured`, `org_id` and `editable`; check
   `editable` before writing.
-- `ttai:write_filebase(id, files, delete)` → whole-file upserts by relative path
-  (no leading `/`), then deletes. The receipt has `kind`, `written`,
-  `deleted`, `files` (the tree after), `revision`, an advisory `warning`, and
-  `missing`: convention files still to add. Write the entry file in the first
-  call: `README.md` for an app, `index.md` for knowledge.
+- `ttai:write_filebase(id, files?, edits?, upload?, commit?, delete?)` →
+  upserts by relative path (no leading `/`), then deletes; one call bumps
+  `revision` once. The receipt has `kind`, `written`, `deleted`, `files` (the
+  tree after), `revision`, an advisory `warning`, and `missing`: convention
+  files still to add. Write the entry file in the first call: `README.md` for
+  an app, `index.md` for knowledge.
+- Modes: `files` for new text files; `edits: [{path, old, new}]` to change
+  existing text (`old` matches once; never retry an edit that succeeded);
+  with a shell, `upload: [paths]` returns a ticket whose `script` you run,
+  then `write_filebase(id, commit: upload_id)`. Per call: 200 paths, 20 MB a
+  file, 30 MB total. `get_resource(..., download: true)` returns GET URLs to
+  fetch files with a shell.
 - List: `list_resources(filebases, filters: {kind}, query?)`. Read before
-  rewriting: `get_resource(filebases, id, paths: [...])` (≤ 20 files) returns
+  changing: `get_resource(filebases, id, paths: [...])` (≤ 20 files) returns
   `{filebase, files}`.
 - Apps: `README.md` (the agent's manual), `src/App.tsx`, and `data/**` the
   live agent rewrites; no `spec.json`. Results carry `view_url`, the preview
@@ -211,11 +232,13 @@ Not the legacy Knowledge Base (`knowledge-bases`, `knowledge_base_ids`, tool
 `knowledge_base_search`), which is created in the web app only.
 
 - Entry: root `index.md`, not `README.md`: what the base covers and which file
-  answers what, linking every other file. Keep it under 4 KB; a short index is
-  inlined in the agent's prompt.
+  answers what, linking every other file with relative paths (keep them working
+  when files move). Keep it under 4 KB; a short index is inlined in the
+  agent's prompt.
 - Workflow: the user attaches PDFs or docs → distill them into focused
   markdown files plus `index.md` → `create_filebase(kind: knowledge)` →
-  `write_filebase` (index first) → confirm, then link the id on the Scenario.
+  `write_filebase` (index first; `files`, or `upload` + `commit` from a shell)
+  → confirm, then link the id on the Scenario.
 - Link: `knowledge_filebase_ids` on `create_scenario` / `update_scenario`
   replaces the whole list, and a Scenario read omits it. Keep the ids the last
   create/update response showed. Current list unknown → say linking replaces
@@ -236,6 +259,9 @@ Not the legacy Knowledge Base (`knowledge-bases`, `knowledge_base_ids`, tool
 - `ttai:read_guide` returns the server's usage guide, the same text as the
   `ttai://guide/mcp-agent` resource. Call it once at the first action in a
   conversation unless the guide is already in context.
+- The `ttai://reference/speech-support` resource lists which realtime model,
+  voice provider (`tts_provider`), and speech recognizer (`stt_provider`)
+  support each language. Read it before a non-English Scenario.
 - On connect the server also sends MCP `instructions`: a short index of this
   map. `tools/list` is ordered by importance (the guide first, `int_` tools
   last).
@@ -296,14 +322,19 @@ Not the legacy Knowledge Base (`knowledge-bases`, `knowledge_base_ids`, tool
   `enable_recording_tool: true` adds a tab for recording replayable steps.
   Hand the link to the user; the agent cannot log in for them.
 - Collections are read-only through MCP.
+- `ttai:update_org(org_id, settings)` needs role EDIT+ in the organization and
+  changes only `description`, `logo_url`, and `cover_image_url` (http(s)
+  URLs). Omit a field to keep it; `""` clears it. Read the current values from
+  `get_workspace_info(sections: [organizations])` `editable`. Name, slug,
+  billing, members, roles, domains, and SSO stay in the web app.
 
 ## Directory endpoint
 
 `https://api.toughtongueai.com/api/public/mcp/directory` is a policy-limited
-surface for connector directories. It has the same 15 tools, but its
-`ttai:schedule_bot` accepts only `kind: "meeting"` (no outbound dialing). Inspect
-`tools/list` before inferring what it can do. Place calls from a full MCP
-client.
+surface for connector directories. Its `ttai:schedule_bot` accepts only
+`kind: "meeting"` (no outbound dialing), and its tool list can differ from the
+full server's. Inspect `tools/list` before inferring what it can do. Place
+calls from a full MCP client.
 
 ## Key Files
 

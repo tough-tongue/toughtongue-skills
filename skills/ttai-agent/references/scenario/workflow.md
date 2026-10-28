@@ -61,6 +61,9 @@ required. Always send an explicit `tools_config`: when it is omitted, the server
 registers a broad default tool set. On a validation error, fix the named field
 and retry.
 
+Before hand-off, test any branch or pressure rule
+([testing.md](../evaluation/testing.md)).
+
 Return the run link `https://app.toughtongueai.com/run/<scenario_id>`. For a
 private Scenario (only when the user asked to limit access; phone calls cannot
 run one), offer a Scenario Access Token when the user wants to share it

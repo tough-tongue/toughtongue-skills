@@ -94,6 +94,9 @@ the job, the file, and when to read it.
 
 - **Create / edit / refine a Scenario** —
   [scenario/workflow.md](references/scenario/workflow.md). Any Scenario write.
+- **Test before you hand off** —
+  [evaluation/testing.md](references/evaluation/testing.md). Branch links and
+  a scripted counterpart that probes the rules.
 - **Design a good Scenario** —
   [scenario/authoring.md](references/scenario/authoring.md). Before drafting
   content.

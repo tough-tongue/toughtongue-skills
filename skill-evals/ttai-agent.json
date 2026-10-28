@@ -220,6 +220,16 @@
   },
   {
     "skills": ["ttai-agent"],
+    "query": "Before I give the 'Supplier Negotiation' roleplay to my class, make sure the AI never reveals its walk-away price early, even if students keep asking.",
+    "expected_behavior": [
+      "Loads references/evaluation/testing.md and fetches the Scenario with ttai:get_resource(scenarios)",
+      "Writes a TEST: counterpart Scenario whose numbered probe plan asks for the walk-away price several times in different words before disclosing anything",
+      "Runs the two Scenarios as meeting bots in one meeting with each ttai:schedule_bot dispatch confirmed, or hands the user the plan and the run link",
+      "Marks each probe held or broke from the transcript, fixes only the rule that broke, and re-runs the same plan"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
     "query": "My slide-based coaching scenario pops up the MCQ while the coach is still explaining the slide. Scenario name is 'Pricing Coach'. Fix it.",
     "expected_behavior": [
       "Reads the live Scenario with ttai:get_resource before editing, because update_scenario replaces ai_instructions whole",

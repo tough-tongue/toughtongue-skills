@@ -190,7 +190,7 @@
     "expected_behavior": [
       "Resolves the Scenario by title, fetches it with ttai:get_resource(scenarios), and loads references/evaluation/testing.md",
       "Runs the pre-flight check against the saved Scenario and reports any failing line",
-      "Writes a private TEST: counterpart Scenario (is_public false, analysis and recording off, the opposite opener to the real Scenario's skip_auto_start, silent start, generous silence, a duration cap, end_session only) whose numbered probe plan asks for the walk-away price several times in different words before disclosing anything",
+      "Writes a TEST: counterpart Scenario (public, so it can join as a meeting bot; analysis and recording off, the opposite opener to the real Scenario's skip_auto_start, silent start, generous silence, a duration cap, end_session only) whose numbered probe plan asks for the walk-away price several times in different words before disclosing anything",
       "Explains how to run it: the real and test Scenarios as two ttai:schedule_bot meeting bots in one meeting, each dispatch confirmed with the user, or the user following the plan from the run link",
       "Reads the real Scenario's transcript, marks each probe held or broke, and checks the rubric and extraction output",
       "Fixes only the narrowest rule that broke, saves with ttai:update_scenario and a save_as_version label naming the rule that now holds, and re-runs the same plan"

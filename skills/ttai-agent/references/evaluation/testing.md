@@ -71,7 +71,7 @@ For a Scenario with `{% if %}` or `{% case %}` branches
 
 ## Scripted counterpart tests
 
-A second, private Scenario plays the human from a numbered plan of probes and
+A second Scenario plays the human from a numbered plan of probes and
 meets the real Scenario in one meeting. Use one for rules a cooperative tester
 will not trigger:
 
@@ -137,8 +137,10 @@ Create it with `ttai:create_scenario` in the real Scenario's workspace.
 - `name` starts with `TEST:`; `user_friendly_description` and
   `user_instructions` say which Scenario it tests and that it is not for
   learners.
-- `is_public: false`. Leave analysis, extraction, and recording off (the
-  defaults); the real Scenario's session carries the scores.
+- Keep `is_public: true` (the default): meeting bots and phone calls cannot
+  run a private Scenario, and that includes the real Scenario under test.
+  Leave analysis, extraction, and recording off (the defaults); the real
+  Scenario's session carries the scores.
 - Opposite opener: if the real Scenario speaks first, the test waits
   (`skip_auto_start: true`) and its step 1 says so; if the real one waits,
   the test opens.
@@ -198,7 +200,8 @@ Create it with `ttai:create_scenario` in the real Scenario's workspace.
 
 ## Keep the test Scenario
 
-- Keep it private; never share its link with learners or customers.
+- Never share its link with learners or customers; its name and
+  `user_friendly_description` say it is a test.
 - Reuse it after every change to the real Scenario, and add a probe when a
   new rule ships.
 

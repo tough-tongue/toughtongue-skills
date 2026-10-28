@@ -20,32 +20,32 @@ saved Scenario against this list. Each line links the reference that owns the
 rule; fix it there.
 
 - [ ] Every `{{ var }}` has a `default:` or a `!= blank` branch —
-      [dynamic-variables.md](dynamic-variables.md#checklist).
+      [dynamic-variables.md](../scenario/dynamic-variables.md#checklist).
 - [ ] FLOW and TOOLS name only tools that `tools_config` registers, and
       `tools_config` was sent explicitly —
-      [control.md](control.md#tools_config).
+      [control.md](../scenario/control.md#tools_config).
 - [ ] A Scenario that runs over phone prescribes no visual tool (card, MCQ,
       slides, browser) —
-      [runtime.md](runtime.md#session-surface-differences).
+      [runtime.md](../scenario/runtime.md#session-surface-differences).
 - [ ] The opening is a directive, not a quote, and `skip_auto_start` matches
       who speaks first —
-      [ai-instructions.md](ai-instructions.md#spoken-lines).
+      [ai-instructions.md](../scenario/ai-instructions.md#spoken-lines).
 - [ ] No unlabelled quotes: example lines are plain and marked tone only;
       exact lines are marked word for word —
-      [ai-instructions.md](ai-instructions.md#spoken-lines).
+      [ai-instructions.md](../scenario/ai-instructions.md#spoken-lines).
 - [ ] `strategy.silence` is set; omitted, the call hangs up after 120 s of
-      silence — [control.md](control.md#strategy).
+      silence — [control.md](../scenario/control.md#strategy).
 - [ ] Every conductor `time_seconds` is below `max_duration_seconds` —
-      [control.md](control.md#strategy).
+      [control.md](../scenario/control.md#strategy).
 - [ ] `appearance.language_code` matches the Scenario's language, and
       `transcribe_config.language` when set —
-      [control.md](control.md#appearance).
+      [control.md](../scenario/control.md#appearance).
 - [ ] Ending rules are present: the goodbye is its own turn and
       `end_session` comes after the reply —
-      [authoring.md](authoring.md#closure-and-re-engagement).
+      [authoring.md](../scenario/authoring.md#closure-and-re-engagement).
 - [ ] ROLE, `user_instructions`, and the rubric name the same person;
       `evaluation_target` is set for a multi-party session —
-      [rubric.md](rubric.md#agent-rules).
+      [rubric.md](../scenario/rubric.md#agent-rules).
 
 A pass proves the configuration, not the behaviour. Report the failing lines
 and fix them before the next check.
@@ -53,7 +53,7 @@ and fix them before the next check.
 ## Branch tests from run links
 
 For a Scenario with `{% if %}` or `{% case %}` branches
-([dynamic-variables.md](dynamic-variables.md)).
+([dynamic-variables.md](../scenario/dynamic-variables.md)).
 
 - Write one run link per branch:
   `https://app.toughtongueai.com/run/<scenario_id>?t_level=L2`. Add one with
@@ -64,8 +64,8 @@ For a Scenario with `{% if %}` or `{% case %}` branches
 - Never pass a value the platform injects (names starting `tt_`, such as
   the session type). Test those branches on the surface that sets them.
 - A branch can pass on the run page and fail on a phone call
-  ([dynamic-variables.md](dynamic-variables.md#pitfalls)). Before a phone
-  campaign, place one confirmed test call per branch to a number the user
+  ([dynamic-variables.md](../scenario/dynamic-variables.md#pitfalls)). Before a
+  phone campaign, place one confirmed test call per branch to a number the user
   owns: `ttai:schedule_bot`, `kind: "phone"`, with that branch's
   `dynamic_vars`.
 
@@ -185,7 +185,7 @@ Create it with `ttai:create_scenario` in the real Scenario's workspace.
 
 - Fix one broken rule at a time, in the narrowest field that owns it (often
   one reveal or limit line in `ai_instructions`); procedure in
-  [workflow.md](workflow.md).
+  [workflow.md](../scenario/workflow.md).
 - Save with `ttai:update_scenario` and a `save_as_version` label that names
   the behaviour now holding, not `fix` or `update`:
   `v3 walk-away price holds under repeated asking`.
@@ -204,6 +204,7 @@ Create it with `ttai:create_scenario` in the real Scenario's workspace.
 
 ## Key Files
 
-- [workflow.md](workflow.md) — create, edit, refine procedure
-- [dynamic-variables.md](dynamic-variables.md) — branches and run-link values
+- [workflow.md](../scenario/workflow.md) — create, edit, refine procedure
+- [dynamic-variables.md](../scenario/dynamic-variables.md) — branches and
+  run-link values
 - [../mcp/tools.md](../mcp/tools.md) — `ttai:schedule_bot` and confirmations

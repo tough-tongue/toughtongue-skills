@@ -61,9 +61,9 @@ required. Always send an explicit `tools_config`: when it is omitted, the server
 registers a broad default tool set. On a validation error, fix the named field
 and retry.
 
-Before hand-off, test it ([testing.md](testing.md)): the pre-flight check, a
-run link per Liquid branch, and a scripted counterpart for any rule a
-cooperative tester will not trigger.
+Before hand-off, test it ([testing.md](../evaluation/testing.md)): the
+pre-flight check, a run link per Liquid branch, and a scripted counterpart for
+any rule a cooperative tester will not trigger.
 
 Return the run link `https://app.toughtongueai.com/run/<scenario_id>`. For a
 private Scenario, offer a Scenario Access Token only when the user wants to
@@ -99,8 +99,8 @@ Recorded browser steps → the `ttai-browser-demo-builder` skill.
    supports; separate what the Scenario prescribes from what happened. Do not
    layer more prose onto a weak prompt.
 4. Update the narrowest field that improves it, then re-fetch.
-5. Re-test with [testing.md](testing.md): the pre-flight check, then the same
-   run link or probe plan that exposed the failure.
+5. Re-test with [testing.md](../evaluation/testing.md): the pre-flight check,
+   then the same run link or probe plan that exposed the failure.
 
 ## Report and hand off
 

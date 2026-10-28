@@ -154,6 +154,16 @@
   },
   {
     "skills": ["ttai-agent"],
+    "query": "Our outbound qualification agent should push results into our CRM: the outcome, the callback time, and a short note for the sales rep. Set that up on 'Lead Qualifier'.",
+    "expected_behavior": [
+      "Loads references/evaluation/extraction.md and reads the Scenario's current session_analysis with ttai:get_resource(scenarios) before drafting",
+      "Writes one outcome variable with exactly-one-of values (including no-live-person and catch-all values), a callback-time variable with a strict format and named timezone, and a 2 to 4 sentence handoff summary",
+      "Sets enable_extraction: true and, since nobody is scored, is_auto_analysis: false; sends the full extraction_vars list after confirming with the user",
+      "Names an existing post-session Custom Function (post_session_function_id) as the way into the CRM; never invents a function ID or CRM integration"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
     "query": "Here is a transcript of a call we lost on pricing objections: [transcript]. Build me a practice scenario so our reps can rehearse handling these exact objections.",
     "expected_behavior": [
       "Classifies the scenario as sales roleplay (AI plays the prospect) and loads references/recipes/sales-roleplay.md",

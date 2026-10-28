@@ -20,6 +20,11 @@ Declare the subject first: the human participant, the AI's counterpart, or
 business facts extracted from the conversation. In multi-party sessions also set
 `session_analysis.evaluation_target` (for example `"Sales Rep"`).
 
+Nobody to score — an agent that takes conversations for the business, where
+the result is CRM fields rather than a report: leave `rubrik` empty, set
+`is_auto_analysis: false`, and capture the outcomes with extraction
+([extraction.md](../evaluation/extraction.md)).
+
 ## `processed_rubrik`
 
 Weighted criteria the evaluation pipeline scores against:

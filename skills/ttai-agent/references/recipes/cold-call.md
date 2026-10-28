@@ -312,6 +312,10 @@ sell.
 
 **CRITICAL**: Cold call rubrics evaluate the **LEAD** (the human), not the AI.
 It is a lead-screening brief for the sales/ops team — NOT a performance review.
+For an agent that calls real leads, capture the outcome for the CRM with
+extraction instead ([extraction.md](../evaluation/extraction.md)): one
+`call_result` variable over CONVERTED / NURTURE / DEAD LEAD, plus 'Voicemail'
+and 'Ambiguous'.
 
 ```
 # [Company] Cold Call Report

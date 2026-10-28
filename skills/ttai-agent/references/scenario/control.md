@@ -274,8 +274,8 @@ Scenario.
   run otherwise. `is_auto_submit: true` uploads a recorded session without
   asking the user (it matters only with `is_recording`).
 - `evaluation_target`: the participant to score in multi-party sessions.
-- `enable_extraction` + `extraction_vars` (`name`, `description`, `type`:
-  `text`|`number`|`boolean`|`list`|`date`) for structured capture.
+- `enable_extraction` + `extraction_vars` — structured outcomes for a CRM or
+  the next human: [extraction.md](../evaluation/extraction.md).
 - `analysis_tier`: `standard` (default) or `premium`. `multimodal_analysis`
   analyzes video/audio (plan-gated); `video_config` clips or downsamples.
 - `admin_email` (comma-separated) with `email_analysis` / `email_transcript`

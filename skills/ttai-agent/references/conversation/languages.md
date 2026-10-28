@@ -29,6 +29,12 @@ Two fields, two jobs:
 - `transcribe_config.language` — the language the transcriber listens for. It
   overrides the user's own language preference.
 
+Before a non-English Scenario, check what supports the language: the MCP
+resource `ttai://reference/speech-support` (or the
+[supported languages](https://app.toughtongueai.com/docs/guides/supported-languages)
+page) lists which realtime model, voice provider (`tts_provider`), and speech
+recognizer (`stt_provider`) cover each language.
+
 | The Scenario speaks                                          | `language_code` | `transcribe_config.language` |
 | ------------------------------------------------------------ | --------------- | ---------------------------- |
 | One language (Indian English, Hindi, Tamil, …)               | that code       | the same code                |
@@ -47,7 +53,8 @@ In a `super` Scenario, a flow with its own model can override both with
 ## Hearing the caller, per pipeline
 
 - **Realtime** (Galaxy, Ocean, Landmass `gemini`, `gemini-stable`, `openai`) —
-  the model hears the audio. The two codes above are the language settings.
+  the model hears the audio. The caller's transcript comes from Deepgram in
+  `transcribe_config.language` (left empty, Deepgram detects the language).
   `stt_provider`, `stt_mode`, and `stt_keyterms` are Cascade fields with no
   documented effect here.
 - **Realtime with separate TTS** — as above, plus a `tts_voice_id` that speaks
@@ -183,6 +190,8 @@ For a male agent, swap the examples (बोल रहा हूँ, समझ �
   codes from the valid list (`ta-IN`, `bn-IN`, `mr-IN`, …), a LANGUAGE block,
   and a gender block where the language marks gender.
 - `stt_mode: "codemix"` is documented for Hinglish only.
+- Check the speech-support reference first: a pair needs the realtime model,
+  or the voice provider and recognizer, to list both languages.
 - Only Hindi and Hinglish have been tested this way. For another pair, run test
   calls in both languages and one mid-call switch before launch.
 

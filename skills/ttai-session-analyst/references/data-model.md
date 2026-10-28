@@ -5,6 +5,7 @@
 - Read tools and parameters
 - Session fields by tool
 - Evaluation shape and score scales
+- Extraction results
 - Status values
 - Phone call and meeting-bot records
 - Analytics rollup
@@ -82,7 +83,9 @@ Opt-in via `include_fields`:
 - `recording` — `recording_present`.
 - `processing` — `post_session_status`.
 
-Typed reads do not return `analytics_url`, `duration`, or `scenario_name`.
+Typed reads also return `duration_seconds` (`created_at` to `completed_at`; on
+a phone call that includes ringing), but not `analytics_url` or
+`scenario_name`. A field you did not request comes back `null`.
 
 **Legacy enriched list.** `id`, `scenario_id`,
 `scenario_name`, `created_at`, `completed_at`, `status`, `user_name`,
@@ -91,7 +94,10 @@ Typed reads do not return `analytics_url`, `duration`, or `scenario_name`.
 `extraction_results`, `learning_results`. No transcript and no
 `post_session_status`. Ignore the deprecated flat fields `evaluation_score`,
 `report_card`, `report_card_topics`, `duration_minutes`, and `evaluation_note`;
-read the nested `evaluation_results` instead.
+read the nested `evaluation_results` instead. On phone sessions, `user_email`
+holds the dialled number and `metadata.dynamic_vars` the call's variables;
+`duration` measures differently from the typed `duration_seconds`, so never
+mix the two.
 
 ## Evaluation shape and score scales
 
@@ -117,9 +123,40 @@ learning_results:            # present when Scenario learning is enabled
   issue, evidence, suggestion, summary: string
 ```
 
-Any of these can be `null`. Configured extraction variables arrive as the
-free-form `extraction_results` object (typed reads: `include_fields:
-["extraction"]`).
+Any of these can be `null`.
+
+## Extraction results
+
+Scenarios that record outcomes instead of scores turn on
+`session_analysis.enable_extraction` and list `extraction_vars`: `name`,
+`description`, and `type` (`text`, `number`, `boolean`, `list`, `date`). Many
+voice agents that take calls also have no rubric and
+`is_auto_analysis: false`, so their sessions never carry
+`evaluation_results`. Read the variables with
+`ttai:get_resource(scenarios, id)`.
+
+```
+extraction_results:   # typed: include_fields ["extraction"]; legacy: always
+  <extraction_vars[].name>: value | null
+```
+
+- **Outcome variable.** The one whose `description` lists its values ("Return
+  exactly one of: …"). Other variables hold a fixed format (a callback date
+  and time), a count, a language, or free text such as a summary for the
+  person who follows up.
+- **Null.** Every declared variable comes back as a key, `null` when there was
+  nothing to extract. Treat a missing key as `null`. A declared string value
+  such as `"None"` or `"Unknown"` is an answer, not a null.
+- **Dials that never connected** still get a session whose variables are all
+  `null`. Take reach from the bots, not from sessions.
+- **`extraction_results: null`** on a row where you requested it means no
+  extraction ran: check `post_session_status` and the Scenario's
+  `enable_extraction`.
+- **Off-list and off-format values.** Values are model output: expect a
+  different case, extra words, or a sentence where a time belongs. Match the
+  declared list ignoring case and spacing; count the rest as off-list or
+  off-format and quote one example.
+- `boolean` variables arrive as JSON `true` / `false`.
 
 ## Status values
 
@@ -132,15 +169,29 @@ free-form `extraction_results` object (typed reads: `include_fields:
 
 ## Phone call and meeting-bot records
 
-`bots` records: `id`, `kind` (`meeting` / `phone`), `phone_direction`,
-`scenario_id`, `scenario_version_id`, `session_id`, `status`, `batch_id`,
+`bots` records: `id`, `kind` (`meeting` / `phone`), `phone_direction`
+(`outbound` dialled, `inbound` received), `scenario_id`,
+`scenario_version_id`, `session_id`, `status`, `batch_id`,
 `scheduled_ts`, `bot_joined_at`, `call_ended_at`, `created_at`, `updated_at`;
 `meeting_provider` and `bot_name` with `include_fields: ["meeting"]`;
-`failure_reason` (`busy`, `no_answer`, `voicemail`, …) with `["failure"]`.
+`failure_reason` (`busy`, `no_answer`, `voicemail`, `unavailable`,
+`service_error`, `unknown`, …) with `["failure"]`.
 Phone numbers and meeting URLs are never returned.
 
-To score calls, collect their `session_id` values and read those sessions.
-Records without a `session_id` have no session to score.
+- `status` values: `pending`, `scheduled`, `joining_call`, `in_waiting_room`,
+  `in_call_not_recording`, `in_call_recording`, `call_ended`, `done`,
+  `terminated`, `failed`.
+- An answered phone call reads `call_ended` with `bot_joined_at` set. A dial
+  that never connected reads `failed` with a `failure_reason`; the agent never
+  spoke on it.
+- A voicemail can read `call_ended`: the line was answered. The Scenario's
+  outcome variable, not `failure_reason`, marks it.
+- `call_ended_at` can be empty on ended calls. Take call length from the
+  session.
+
+To score calls or read their outcomes, collect their `session_id` values and
+read those sessions. Failed dials have a `session_id` too, with nothing in it;
+records without one have no session to read.
 
 ## Analytics rollup
 

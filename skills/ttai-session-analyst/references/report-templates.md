@@ -9,6 +9,7 @@ Scores are on the 0–10 scale of `final_score` and `report_card[].score`.
 - Scenario health report
 - Individual coaching report
 - Pattern map (from call transcripts)
+- Campaign outcomes (calls that record outcomes, not scores)
 
 ## Team Performance Report
 
@@ -157,3 +158,79 @@ three sessions; quote the best line heard, marked tone only, never as a script.
 - Red flags cap the score even when the outcome was good
 - Facts the human states must match [source]; an unsourced one costs points
 ```
+
+## Campaign Outcomes
+
+Use for an outcome Scenario: a voice agent whose sessions carry
+`extraction_results` and no score, such as an outbound caller. Reach comes
+from the bots, outcomes from the connected calls' sessions. State each
+denominator: dialled for reach, connected for outcomes.
+
+```markdown
+# [Scenario Name]: Campaign Outcomes
+
+**Window**: [from] – [to] [timezone] (or batch [batch_id]) · **Outcome
+variable**: `[name]` · **Success**: [value, e.g. callback booked]
+
+## Reach
+
+| Stage                             | Calls | % of dialled |
+| --------------------------------- | ----- | ------------ |
+| Dialled (outbound phone bots)     | [N]   | 100%         |
+| Connected (`call_ended`)          | [c]   | [x]%         |
+| Live conversation (not voicemail) | [l]   | [x]%         |
+| [Success value]                   | [s]   | [x]%         |
+
+- Conversion: [s] of [c] connected ([x]%) · [s] of [l] live ([y]%)
+- No session: [n] bot records without a `session_id`
+
+## Outcomes (connected calls)
+
+| Outcome  | Calls | % of connected |
+| -------- | ----- | -------------- |
+| [value]  | [n]   | [x]%           |
+| null     | [n]   | [x]%           |
+| off-list | [n]   | [x]%           |
+
+## Not Connected
+
+| `failure_reason` | Calls | % of dialled |
+| ---------------- | ----- | ------------ |
+| [reason]         | [n]   | [x]%         |
+
+## Data Quality
+
+- Outcome `null` on [n] connected calls; no extraction on [m]
+- Off-list outcome values: [n] (e.g. "[value]")
+- `[format variable]` off format: [n] of [k] filled (e.g. "[value]";
+  expected [format])
+
+## Language Mix
+
+- [language]: [n] ([x]%) · [language]: [n] ([x]%)
+
+## Problem Outcomes
+
+### [Outcome value]: [n] calls
+
+- Theme: [behavior, from the summary variable] ([n] calls)
+- Evidence: "[short transcript quote]" ([analytics_url])
+
+## Actions
+
+1. [Prompt or extraction fix, with the evidence] → `ttai-agent` skill
+2. [Retry, calling hours, or list fix] → `ttai-agent` skill
+3. [Follow-ups due, e.g. callbacks booked, for the team that calls back]
+```
+
+Reading the numbers:
+
+- Failed dials are a list or line matter: the agent never spoke on them.
+- Many null or catch-all outcomes on connected calls → read their transcripts.
+  The agent ending early or mishearing is a prompt fix; a transcript that
+  plainly shows an outcome the variable missed is an extraction fix. Both go to
+  the `ttai-agent` skill with the quotes.
+- Fewer than ~10 connected calls → report counts, not percentages, and say so.
+
+Keep phone numbers, lead names, and `dynamic_vars` out of a shared report
+unless the user asks. Point to calls by `analytics_url` or session ID.

@@ -24,9 +24,22 @@
     "query": "Which fields do I set on a scenario besides the long AI instructions and the rubric?",
     "expected_behavior": [
       "Loads references/scenario/model-selection.md and/or control.md and does not paste a full ai_instructions essay",
-      "Covers ai_model_config (realtime Galaxy/Ocean, Landmass realtime with separate TTS, Landmass cascade; cold call and slide demos start on Landmass cascade + Cartesia, sales roleplay on Galaxy, coaching and browser demos on Ocean; super Scenarios require Landmass; never cascade-01; never invent tts_voice_id)",
+      "Covers ai_model_config (realtime Galaxy/Ocean, Landmass realtime with separate TTS, Landmass cascade; outbound calls start on Landmass cascade for scripted lines or tuned Landmass gemini-stable voice-to-voice for open conversations, slide demos on Landmass cascade + Cartesia, sales roleplay on Galaxy, coaching and browser demos on Ocean; super Scenarios require Landmass; never cascade-01; never invent tts_voice_id)",
       "Covers strategy (opening lives in FLOW, no welcome_instructions field; omitted silence means 120 s then hang up), appearance.voice and language_code, an explicit tools_config with end_session, and session_analysis.is_auto_analysis",
       "Points at references/scenario/ai-instructions.md for the instruction shape and a recipe under references/recipes/ for rubric patterns"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Our outbound research calls feel slow and the agent keeps talking over people on the phone. Should we switch pipelines?",
+    "expected_behavior": [
+      "Loads references/scenario/model-selection.md before recommending a pipeline",
+      "Reads the current Scenario's ai_model_config and strategy.silence with ttai:get_resource, and checks recent transcripts for where the agent cut in or lagged",
+      "Separates scripted calls (Landmass cascade) from open conversations such as research calls, and recommends the tuned Landmass gemini-stable voice-to-voice stamp for this one, or tuning its existing gemini_realtime_config",
+      "Names the settings and why: low start/end-of-speech sensitivity, a longer silence_duration_ms, thinking_budget 0, proactivity false; presents them as starting values to adjust from transcripts",
+      "Resends the whole ai_model_config on update, not just gemini_realtime_config",
+      "Suggests keeping a second Scenario whose name and description end with its pipeline (- Gemini Live, - Cascade) to compare results",
+      "Confirms with the user before calling ttai:update_scenario, and never invents a voice name or ID"
     ]
   },
   {

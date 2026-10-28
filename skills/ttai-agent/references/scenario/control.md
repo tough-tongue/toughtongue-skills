@@ -87,12 +87,16 @@ flow: `name`, `instructions`; stage: `name`, `instructions`, `goal`, `role`).
 
 **Silence:** `silence_threshold` in ms (minimum 3000); `end_session: true` hangs
 up, `false` keeps the call alive; `force_agent_to_speak: true` injects a fixed
-check-in, `false` lets a small model write the nudge. Practice default:
+check-in, `false` lets a small model decide whether to nudge and what to say.
+`nudge_text` makes every nudge that exact text, sent as written with no
+`[conductor]` prefix; omit it for the default. Practice default:
 5000–8000, `end_session: false`. Roleplay counterparts (prospect, interviewer)
-use `force_agent_to_speak: false` so the nudge stays in character; AI-led
-callers use `true`, and outbound calls run lower thresholds (3000–5000) than
-other scenarios. Observers and facilitators may want silence to stay silent —
-see the meeting recipe.
+use `force_agent_to_speak: false` so the nudge stays in character; coaches and
+other AI-led hosts use `true`. Phone callers start from their stamp
+([model-selection.md](model-selection.md)): Cascade at 3000 with `false`;
+Gemini Live voice-to-voice at 4000 (short calls) to 6000 (long ones) with
+`true`. Tune from transcripts. Observers and facilitators may want silence to
+stay silent — see the meeting recipe.
 
 **Conductor messages:** `trigger` `"time"` (needs `time_seconds`) or
 `"on_demand"` (at most one; the agent calls it as a tool when it needs
@@ -103,7 +107,7 @@ retired `prefix`.
 
 | Situation      | `skip_auto_start` | Silence nudge   | Wrap-up timer | Opening                                        |
 | -------------- | ----------------- | --------------- | ------------- | ---------------------------------------------- |
-| Cold call      | `false`           | fixed (`true`)  | 300–450 s     | FLOW Beat 1 directive                          |
+| Cold call      | `false`           | by stamp        | 300–450 s     | FLOW Beat 1 directive                          |
 | Sales roleplay | `true`            | model (`false`) | 600–900 s     | Rep opens; prospect replies with one bare line |
 | Coaching       | `false`           | fixed (`true`)  | 900–1200 s    | FLOW greeting + intro                          |
 

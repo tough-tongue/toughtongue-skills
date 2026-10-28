@@ -5,7 +5,7 @@ whose data is (at least partially) known. The user plays the lead.
 
 ## Contents
 
-- Voice pipeline (cascade default; half-cascade for cloned TTS + barge-in)
+- Voice pipeline (Cascade for scripted calls, Gemini Live for open ones)
 - Opening pattern (two beats, directive in FLOW)
 - Lead context handling (template variables, missing-data rules)
 - Discovery / data collection
@@ -16,10 +16,11 @@ whose data is (at least partially) known. The user plays the lead.
 
 Key facts:
 
-- **Recommended stamp:** Landmass `cascade` + Cartesia (was `cascade-01` in
-  older docs). Load [cascade-tts.md](cascade-tts.md). See
+- **Stamp by call:** scripted lines → Landmass `cascade` (load
+  [cascade-tts.md](cascade-tts.md)); open conversation → tuned Landmass
+  `gemini-stable` voice-to-voice. See
   [model-selection.md](../scenario/model-selection.md). Ocean realtime is a
-  fallback only when Cascade is unavailable for the account — never Galaxy.
+  fallback only when neither is available for the account — never Galaxy.
 - Three call sub-types: true cold, warm lead, follow-up — each has different
   opening and termination risk
 - Two-beat opening: Identity + Reason + Permission → Response branching (4
@@ -57,23 +58,28 @@ Default to **Warm Lead** when the sub-type is unclear from the brief.
 
 ## Voice Pipeline Selection
 
-**Default:** Landmass `cascade` + Cartesia (+ Deepgram STT + Flash Lite LLM).
-Include the three cascade-tts blocks (OUTPUT RULES, STT errors, NATURAL SPEECH)
-from [cascade-tts.md](cascade-tts.md).
+Two proven phone stamps; pick by the call
+([model-selection.md](../scenario/model-selection.md)):
 
-**Fallback:** Ocean `medium-stable` only if Cascade / Cartesia is unavailable
+- **Scripted call → Cascade.** Landmass `cascade` + a Cartesia or ElevenLabs
+  voice + explicit STT and LLM. Pick it when a client's tested lines must be
+  said as written, the flow is fixed, or Hinglish needs Sarvam `codemix`
+  transcription. Include the three cascade-tts blocks (OUTPUT RULES, STT
+  errors, NATURAL SPEECH) from [cascade-tts.md](cascade-tts.md).
+- **Open conversation → Gemini Live voice-to-voice.** Landmass `gemini-stable`
+  with a tuned `gemini_realtime_config`. Pick it when lines are tone
+  references and the agent listens more than it talks: research calls,
+  confirmations, follow-ups, or long discovery and consultative selling. No
+  cascade-tts blocks; the voice is `appearance.voice`.
+
+Unsure which fits? Ask the user, or run both as named variants and compare
+([model-selection.md](../scenario/model-selection.md#name-pipeline-variants)).
+
+**Fallback:** Ocean `medium-stable` only if neither Landmass stamp is available
 for the account. Do **not** stamp Galaxy for outbound cold calls.
 
 **Half-cascade** (Landmass realtime + external TTS): when voice cloning matters
 but you want realtime listening — no full Cascade speech blocks.
-
-**Long, consultative calls.** Cascade stays the default: it gives the most
-natural cold-call voice and most teams run it. When the call is a long
-conversation with many back-and-forths (discovery beyond a handful of
-questions, consultative selling), ask the user whether to try a voice-to-voice
-stamp (Landmass `gemini-stable` or Galaxy) instead. Some teams saw better
-qualification that way on long calls; it is not consistent, so it is their
-call.
 
 ---
 
@@ -338,7 +344,7 @@ didn't connect]
 
 ---
 
-## Technical Config: recommended default (Cascade)
+## Technical Config: Cascade (scripted call)
 
 ```json
 {
@@ -347,17 +353,17 @@ didn't connect]
     "model": "cascade",
     "tts_provider": "cartesia",
     "tts_voice_id": "f786b574-daa5-4673-aa0c-cbe3e8534c02",
-    "llm_provider": "google_vertex",
-    "llm_model": "gemini-3.1-flash-lite",
+    "llm_provider": "google",
+    "llm_model": "gemini-3.5-flash-lite",
     "stt_provider": "deepgram"
   },
   "strategy": {
     "skip_auto_start": false,
     "system_instructions_template": "minimal",
     "silence": {
-      "silence_threshold": 5000,
+      "silence_threshold": 3000,
       "end_session": false,
-      "force_agent_to_speak": true
+      "force_agent_to_speak": false
     },
     "conductor": {
       "enabled": true,
@@ -385,9 +391,42 @@ didn't connect]
 ```
 
 Cartesia ID = American female from model-selection.md. Load
-[cascade-tts.md](cascade-tts.md) into `ai_instructions`.
+[cascade-tts.md](cascade-tts.md) into `ai_instructions`. Hinglish callers swap
+the STT for `"stt_provider": "sarvam"` with `"stt_mode": "codemix"`.
 
-### Ocean fallback (Cascade unavailable)
+### Gemini Live variant (open conversation)
+
+```json
+{
+  "ai_model_config": {
+    "provider": "Landmass",
+    "model": "gemini-stable",
+    "gemini_realtime_config": {
+      "start_of_speech_sensitivity": "low",
+      "end_of_speech_sensitivity": "low",
+      "silence_duration_ms": 900,
+      "thinking_budget": 0,
+      "proactivity": false,
+      "enable_affective_dialog": false
+    }
+  },
+  "appearance": { "voice": "Kore", "language_code": "en-US" },
+  "strategy": {
+    "silence": {
+      "silence_threshold": 6000,
+      "end_session": false,
+      "force_agent_to_speak": true
+    }
+  }
+}
+```
+
+Rest of `strategy`, `tools_config` and `session_analysis` as above; move the
+conductor wrap-up later when calls run longer. No cascade-tts blocks. Why each
+setting:
+[model-selection.md](../scenario/model-selection.md#voice-to-voice-on-the-phone).
+
+### Ocean fallback (neither Landmass stamp available)
 
 ```json
 { "ai_model_config": { "provider": "Ocean", "model": "medium-stable" } }
@@ -411,7 +450,7 @@ Same strategy / tools / session_analysis as above. No cascade-tts blocks.
 | Breaks when a `{{ var }}` is blank | Missing-data fallbacks                  |
 | `skip_auto_start: true`            | Always `false`                          |
 | No conductor timeout               | Always set                              |
-| Galaxy or casual Ocean stamp       | Cascade default; Ocean only as fallback |
+| Galaxy or casual Ocean stamp       | Cascade or Gemini Live; Ocean as backup |
 
 ---
 
@@ -422,8 +461,8 @@ Same strategy / tools / session_analysis as above. No cascade-tts blocks.
 - [ ] PERSONALITY/TONE, HANDLING QUESTIONS, EDGE CASES, NEVER list
 - [ ] Missing-data fallbacks; compliance if regulated
 - [ ] `end_session` + `skip_auto_start: false` + talkative silence + conductor
-- [ ] Stamp: Landmass `cascade` + real Cartesia ID + cascade-tts blocks (or
-      documented Ocean fallback)
+- [ ] Stamp: Cascade + real voice ID + cascade-tts blocks (scripted), or tuned
+      Landmass `gemini-stable` (open conversation), or documented Ocean fallback
 - [ ] Rubric scores the LEAD, not the AI
 
 ## Key Files

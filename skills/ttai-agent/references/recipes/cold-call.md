@@ -312,7 +312,7 @@ sell.
 
 A cold call's result is the lead's outcome for the CRM and the rep who follows
 up, not a score. Capture it with extraction
-([extraction.md](../scenario/extraction.md)): leave `rubrik` empty, set
+([extraction.md](../evaluation/extraction.md)): leave `rubrik` empty, set
 `is_auto_analysis: false` and `enable_extraction: true`, and write
 `extraction_vars`.
 

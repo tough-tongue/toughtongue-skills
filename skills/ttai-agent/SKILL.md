@@ -115,7 +115,7 @@ the job, the file, and when to read it.
 - **Write the rubric** — [scenario/rubric.md](references/scenario/rubric.md).
   `rubrik`, `processed_rubrik`, who is scored.
 - **Capture call outcomes for a CRM** —
-  [scenario/extraction.md](references/scenario/extraction.md).
+  [evaluation/extraction.md](references/evaluation/extraction.md).
   `extraction_vars`, outcome values, formats, handoff summary.
 - **Diagnose runtime behavior** —
   [scenario/runtime.md](references/scenario/runtime.md). Hang-ups, silence,

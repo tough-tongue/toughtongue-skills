@@ -22,8 +22,8 @@ value per variable in `session_analysis.extraction_vars`.
   Leave `rubrik` empty, set `is_auto_analysis: false`, and turn extraction on.
   Sessions then carry `extraction_results` and no report card.
 - **A person is scored** — practice, coaching, interviews. The rubric scores
-  them ([rubric.md](rubric.md)). Add extraction only for fields someone will
-  filter or export.
+  them ([rubric.md](../scenario/rubric.md)). Add extraction only for fields
+  someone will filter or export.
 - **Both** — a practice Scenario can run both: the rubric scores the learner;
   extraction records what the session produced (the agreed price, who does
   what, `full` / `provisional` / `impasse`) and teaching signals (who named
@@ -233,7 +233,8 @@ held up to the webcam, have it record them during the session. Register
 
 ## Key Files
 
-- [rubric.md](rubric.md) — when a person is scored
-- [control.md](control.md) — other `session_analysis` settings
-- [ai-instructions.md](ai-instructions.md) — FLOW outcomes the outcome
-  variable mirrors
+- [../scenario/rubric.md](../scenario/rubric.md) — when a person is scored
+- [../scenario/control.md](../scenario/control.md) — other `session_analysis`
+  settings
+- [../scenario/ai-instructions.md](../scenario/ai-instructions.md) — FLOW
+  outcomes the outcome variable mirrors

@@ -23,7 +23,7 @@ business facts extracted from the conversation. In multi-party sessions also set
 Nobody to score — an agent that takes conversations for the business, where
 the result is CRM fields rather than a report: leave `rubrik` empty, set
 `is_auto_analysis: false`, and capture the outcomes with extraction
-([extraction.md](extraction.md)).
+([extraction.md](../evaluation/extraction.md)).
 
 ## `processed_rubrik`
 

@@ -122,7 +122,7 @@
     "skills": ["ttai-agent"],
     "query": "Our outbound qualification agent should push results into our CRM: the outcome, the callback time, and a short note for the sales rep. Set that up on 'Lead Qualifier'.",
     "expected_behavior": [
-      "Loads references/scenario/extraction.md, finds the Scenario by title, and reads its current session_analysis with ttai:get_resource(scenarios) before drafting",
+      "Loads references/evaluation/extraction.md, finds the Scenario by title, and reads its current session_analysis with ttai:get_resource(scenarios) before drafting",
       "Writes one outcome variable that returns exactly one of a fixed set of values, each with a definition, plus no-live-person and catch-all values, a judge-the-final-state rule, and disambiguation lines for confusable pairs",
       "Writes a callback-time variable with one strict format, a named timezone, special values, a null rule when no time was agreed, and a latest-value rule",
       "Writes a handoff summary variable for the sales rep: 2 to 4 sentences, or one sentence if the call never connected",

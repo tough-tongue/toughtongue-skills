@@ -409,7 +409,14 @@ didn't connect]
       }
     }
   },
-  "session_analysis": { "is_auto_analysis": true, "is_auto_submit": true },
+  "session_analysis": {
+    "is_auto_analysis": false,
+    "is_auto_submit": true,
+    "enable_extraction": true,
+    "extraction_vars": [
+      { "name": "call_result", "type": "text", "description": "[see Call Results]" }
+    ]
+  },
   "is_recording": true
 }
 ```

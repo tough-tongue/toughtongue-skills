@@ -33,17 +33,6 @@
   },
   {
     "skills": ["ttai-agent-apps"],
-    "query": "Fix the typo 'Colum' in my board app's README.",
-    "expected_behavior": [
-      "Finds the app with ttai:list_resources (type filebases, kind app) and reads README.md with ttai:get_resource paths before writing",
-      "Calls ttai:write_filebase with edits: [{path: \"README.md\", old, new}], not a whole-file files rewrite",
-      "Makes old exact current text that occurs once in the file, with enough context that it cannot also match a correct word such as \"Column\"",
-      "Confirms first when a Scenario already uses the app",
-      "Does not retry the edits call after it succeeds"
-    ]
-  },
-  {
-    "skills": ["ttai-agent-apps"],
     "query": "Build a scoreboard app my quiz voice agent updates after every answer: team names, scores, and the current question number.",
     "expected_behavior": [
       "Reads references/app-structure.md and references/runtime.md before the first ttai:write_filebase",

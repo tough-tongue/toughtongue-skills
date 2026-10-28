@@ -30,20 +30,11 @@ itself is in [ai-instructions.md](ai-instructions.md).
 - **Calls and bots** — `dynamic_vars` on `ttai:schedule_bot` (`kind: "phone"`
   or `"meeting"`). The same values reach post-session hooks.
 - All values arrive as **strings**.
-- **Platform (reserved)** — Tough Tongue AI fills these itself, in
-  `ai_instructions` and `super` stage text:
-  - `tt_session_type` — `web`, `meeting_bot`, `sip_inbound`, or
-    `sip_outbound`.
-  - `tt_call_time["<UTC offset>"]` — the session start time at that fixed
-    offset, for example `tt_call_time["+05:30"]` for India. Offsets run from
-    `-12:00` to `+14:00` in 15-minute steps, always `±HH:MM` in double quotes,
-    and never follow daylight saving: US Eastern is `"-04:00"` in summer and
-    `"-05:00"` in winter. Pick the offset of the people on the call. Time is
-    opt-in: a phone call gets no clock unless the instructions reference
-    `tt_call_time`.
-  - The whole `tt_*` namespace belongs to the platform: never ask the user for
-    these values, never pass them in `dynamic_vars` or a run link, and never
-    invent another `tt_*` name.
+- **Platform (reserved)** — filled by Tough Tongue AI, never by the user:
+  `tt_session_type` (`web`, `meeting_bot`, `sip_inbound`, `sip_outbound`) and
+  `tt_call_time["+05:30"]` (session start at a fixed UTC offset, no daylight
+  saving; a phone call gets the clock only when the prompt references it).
+  Never ask for, pass, or invent a `tt_*` value.
 
 ## What runs where
 
@@ -105,9 +96,8 @@ Each one replaces a copy of the Scenario.
 4. **Language per lead.** `{% case preferred_language %}` with a default and
    one block per language. Never announce the choice aloud.
 
-5. **Clock-aware rules.** Reference `tt_call_time` at the offset of the people
-   on the call and state the rule in words; the model applies it to the time
-   it is given. Nothing to pass per run.
+5. **Clock-aware rules.** Reference `tt_call_time` at the callee's offset and
+   state the rule in words.
 
    ```
    It is now {{ tt_call_time["+05:30"] }} for the customer.
@@ -117,13 +107,8 @@ Each one replaces a copy of the Scenario.
 6. **Campaign text.**
    `{% if current_offer != blank %}Mention {{ current_offer }} once, in your own words, after the first question.{% endif %}`
 
-7. **One Scenario for web and phone.** Branch the steps that need a screen on
-   `tt_session_type` instead of keeping a phone copy.
-
-   ```
-   {% if tt_session_type == "web" %}Show the three plans on a card, then ask which fits.
-   {% else %}Read the three plans aloud, one per turn, and ask which fits.{% endif %}
-   ```
+7. **One Scenario for web and phone.** Branch screen-only steps with
+   `{% if tt_session_type == "web" %}` instead of keeping a phone copy.
 
 ## Worked example
 

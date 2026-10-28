@@ -212,28 +212,12 @@ A FileBase is a folder of files with a `kind`: `app` (an Agent Desktop app) or
   tree after), `revision`, an advisory `warning`, and `missing`: convention
   files still to add. Write the entry file in the first call: `README.md` for
   an app, `index.md` for knowledge.
-- Pick the mode by what you have; keep file bytes out of the conversation:
-
-  | You have                          | Use                                                            |
-  | --------------------------------- | -------------------------------------------------------------- |
-  | A shell and the files on disk     | `upload: [paths]` → run the ticket's `script` → `commit`       |
-  | A change to an existing text file | `edits: [{path, old, new}]` (`old` matches exactly once)       |
-  | No shell, new small text files    | `files: {path: contents}` (binary files need a shell)          |
-  | A shell, and want files locally   | `get_resource(filebases, id, paths?, download: true)` → `curl` |
-  | No shell, and want to read files  | `get_resource(filebases, id, paths: [...])` (text, ≤ 20 files) |
-
-- `upload` alone lands nothing: it returns a ticket with `upload_id`,
-  `script` (POSIX `sh`; run it from the folder whose layout matches the
-  paths), `form` (the same POST for any HTTP client), `expires_at` (15 minutes
-  to upload), and `commit_by` (24 hours). Run the script, then call
-  `write_filebase(id, commit: upload_id)`. A ticket commits once: if a commit
-  fails, request a new upload. No shell to run the script → use `files`.
-- Never retry an `edits` call that succeeded: it can apply again. `files`,
-  `edits`, `commit`, and `delete` combine in one call; a path appears once.
-  Caps per call: 200 paths, 20 MB a file, 30 MB total.
-- `download: true` returns `downloads.urls` (path → GET URL for 1 hour; ≤ 64
-  files, the whole tree without `paths`). Fetch each with
-  `curl -sSf --create-dirs -o <path> '<url>'`, edit locally, then upload.
+- Modes: `files` for new text files; `edits: [{path, old, new}]` to change
+  existing text (`old` matches once; never retry an edit that succeeded);
+  with a shell, `upload: [paths]` returns a ticket whose `script` you run,
+  then `write_filebase(id, commit: upload_id)`. Per call: 200 paths, 20 MB a
+  file, 30 MB total. `get_resource(..., download: true)` returns GET URLs to
+  fetch files with a shell.
 - List: `list_resources(filebases, filters: {kind}, query?)`. Read before
   changing: `get_resource(filebases, id, paths: [...])` (≤ 20 files) returns
   `{filebase, files}`.

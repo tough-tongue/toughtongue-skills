@@ -23,7 +23,7 @@ report".
 
 ## Fill missing analysis: `ttai:analyze_session`
 
-Arguments: `session_id` and `req_data: {}` (required; its flags are ignored).
+Argument: `session_id` only.
 
 - The Scenario's analysis settings decide what runs: evaluation, variable
   extraction, and Scenario learning. If none is configured, the call does
@@ -35,6 +35,8 @@ Arguments: `session_id` and `req_data: {}` (required; its flags are ignored).
 - Use it for sessions with no `evaluation_results`, or after
   `post_session_status.state` is `failed`.
 - Do not call it while the state is `running`, and do not loop it.
+- A 429 "Analysis limit reached for this session." is final: report it. Any
+  other 429 is a rate limit: wait, then retry.
 
 ## Poll for results
 

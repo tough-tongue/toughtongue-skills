@@ -8,7 +8,7 @@
       "Averages report_card score per topic (0-10) within this one Scenario, shows each topic's weight, and clusters weaknesses / improvement_areas text into behavior-named themes",
       "Excludes sessions without evaluation_results.final_score from score math and reports how many were excluded",
       "Backs each top improvement area with a transcript quote fetched for selected IDs via ttai:list_resources(sessions) (ids + transcript) or ttai:get_resource(sessions)",
-      "Produces the Team performance report structure and does not call ttai:upload_session or ttai:analyze_session"
+      "Produces the Team performance report structure and does not call ttai:analyze_session"
     ]
   },
   {

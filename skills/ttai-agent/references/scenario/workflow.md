@@ -88,8 +88,7 @@ Recorded browser steps → the `ttai-browser-demo-builder` skill.
    `include_fields: ["transcript"]` or `["evaluation"]` only for the selected
    sessions. `ttai:get_resource(sessions)` gives one full detail. Legacy
    filters (`user_email`, `from_date`, `to_date`, `hasLearning`) on
-   `ttai:list_resources(sessions)` cover person, date, or learning and return
-   `duration`.
+   `ttai:list_resources(sessions)` cover person, date, or learning.
 3. Read [runtime.md](runtime.md). Name one concrete cause that the evidence
    supports; separate what the Scenario prescribes from what happened. Do not
    layer more prose onto a weak prompt.

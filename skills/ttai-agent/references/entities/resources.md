@@ -29,8 +29,8 @@ Each resource: what it is, then what MCP can do with it.
 ## Runs and results
 
 - **Session** — one run: transcript, evaluation, extraction, recording. MCP:
-  type `sessions` (legacy filters for person and date); `ttai:upload_session`
-  (ingest); `ttai:analyze_session`.
+  type `sessions` (legacy filters for person and date); `ttai:analyze_session`;
+  `ttai:set_user_metadata` (your own key/value labels).
 - **Analytics** — aggregates over sessions: usage, durations, top Scenarios,
   members. MCP: `ttai:get_workspace_info(sections: [usage])`.
 

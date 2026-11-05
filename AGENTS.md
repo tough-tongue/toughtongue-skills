@@ -40,8 +40,8 @@ skill is self-contained and follows the Agent Skills standard
   capability-aware action: workspace scope, entities, Scenario
   create/edit/repair, situation recipes, and the MCP tool map. Consumer-neutral:
   coding agents and web conversational plugins share it.
-- `skills/ttai-session-analyst/` — session evidence → reports; transcript
-  ingestion.
+- `skills/ttai-session-analyst/` — session evidence → reports; analysis
+  backfill.
 - `skills/ttai-browser-demo-builder/` — deterministic browser demo steps on a
   Scenario's browser tool.
 - `skills/ttai-agent-apps/` — Agent Desktop apps the voice agent renders and

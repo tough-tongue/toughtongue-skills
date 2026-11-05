@@ -54,10 +54,10 @@ re-renders in place. The app tells the agent what the learner did with `emit`.
 | -------------------- | ------------------------------------------------------------------------- |
 | Discover             | `ttai:list_resources(type: filebases, filters: {kind: app}, query?)`      |
 | Inspect / read files | `ttai:get_resource(type: filebases, id, paths?: [...])` (≤ 20 files)      |
-| Create               | `ttai:create_filebase(kind: app, name, title, description?, visibility?)` |
+| Create               | `ttai:create_filebase(kind: app, name, title, storage, description?, visibility?)` |
 | Write / delete files | `ttai:write_filebase(id, files?, delete?)`: overwrites, confirm           |
 | Check it runs        | `view_url` on the create, write and get results and on list rows          |
-| Share a link         | `ttai:create_token({type: filebase_view, filebase_id, valid_for_hours})`  |
+| Share a link         | `ttai:create_token(request: {type: filebase_view, filebase_id, valid_for_hours})` |
 | Attach               | `ttai:update_scenario` (`tools_config.tools.agent_desktop`)               |
 
 Changing visibility after create, and deleting an app, happen in the web app's
@@ -81,7 +81,7 @@ it, and which Scenario uses it. Split before writing:
 
 ### 2. Create
 
-`ttai:create_filebase` with `kind: app`, `name`, `title`, optional
+`ttai:create_filebase` with `kind: app`, `name`, `title`, `storage`, optional
 `description` and `visibility`.
 
 - `name`: lowercase letters, digits, and hyphens; 2–64 characters; starts with
@@ -89,6 +89,8 @@ it, and which Scenario uses it. Split before writing:
   refused). It is the `app` argument of the agent's `desktop_*` tools and the
   key in the Scenario's `apps`. Avoid featured names (`canvas`, `deck`,
   `brainstorm`, `quiz`).
+- `storage` (required for apps): `cdn` for speed, `private` for files that must
+  not be fetchable by link.
 - `title` and the first line of `description` reach the agent's prompt.
 - Keep the returned `id`; every later call takes it.
 
@@ -130,6 +132,11 @@ signed out, or when a result has no `view_url`: `ttai:create_token` with
 access token, so give it only to the user. To see the agent drive the app, run
 a Scenario that attaches it.
 
+Compile after any `src/**` or `package.json` change: open `view_url` with
+`?debug=1`, signed in as an editor, and click **Compile**. Viewers then boot in
+about 0.2 s instead of 1–4 s. Data and README writes keep the build;
+`ttai:get_resource(filebases, id)` shows `build.state`.
+
 ### 6. Attach to a Scenario
 
 Fetch the Scenario first. `ttai:update_scenario` merges `tools_config.tools` per
@@ -163,7 +170,7 @@ to new sessions.
 ### 7. Iterate
 
 Data or README change → `ttai:write_filebase` on that file only. Code change →
-write the changed `src/` files, then check it runs again. Open sessions keep
+write the changed `src/` files, then check it runs and compile again. Open sessions keep
 the files they loaded: relaunch the app or reload the page.
 
 ## Rules
@@ -186,6 +193,7 @@ the files they loaded: relaunch the app or reload the page.
 - [ ] `## Controls` name the exact file, its fields, allowed values, and each
       `emit`ted event
 - [ ] `view_url` opened (or a `create_token` link given); the app renders
+- [ ] Compiled after the last `src/**` or `package.json` write (`build.state`)
 - [ ] `agent_desktop.tool_settings` merged, not replaced;
       `add_to_system_prompt: true`
 

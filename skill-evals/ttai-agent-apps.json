@@ -3,7 +3,7 @@
     "skills": ["ttai-agent-apps"],
     "query": "Build a checklist app my sales voice agent can tick off during a call, and give me the link.",
     "expected_behavior": [
-      "Resolves workspace scope with ttai:get_workspace_info (organizations) before ttai:create_filebase with kind app",
+      "Resolves workspace scope with ttai:get_workspace_info (organizations) before ttai:create_filebase with kind app and a storage choice (cdn or private)",
       "Separates fixed render code (src/App.tsx) from one flat JSON data file under data/ that the agent edits",
       "Writes README.md in the first ttai:write_filebase call (# Title, a one-line description, ## Data, ## Controls, ## Rules); the receipt's missing list is empty",
       "Re-reads with ttai:get_resource (type filebases, paths) and checks the tree has every imported file",

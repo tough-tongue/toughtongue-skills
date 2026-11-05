@@ -5,16 +5,13 @@ description: >-
   sessions, scores, report cards, strengths, weaknesses, and transcripts from
   practice roleplays, AI phone calls, and meeting-bot calls for a Scenario,
   person, or date range, then writes team performance, Scenario health, or
-  individual coaching reports with action items. Can also ingest an external
-  call transcript or recording as a scored session (ttai:upload_session) and
-  fill in missing analysis (ttai:analyze_session), each after the user
-  confirms. Use when the user asks "how is my team doing?", "top improvement
+  individual coaching reports with action items. Can also fill in missing
+  analysis (ttai:analyze_session) after the user confirms. Use when the user asks "how is my team doing?", "top improvement
   areas for scenario X", "lowest-scoring sessions", "coaching report for
   Priya", or "session trends this month". Not for changing a Scenario,
   rubric, or prompt (ttai-agent).
 when_to_use: >-
-  Also when the user wants an external sales or support call scored against a
-  coaching Scenario.
+  Also when sessions are missing their analysis or report card.
 ---
 
 # Session Analyst
@@ -23,8 +20,8 @@ Pull sessions → aggregate per Scenario → write an evidence-backed report →
 optionally hand it to the user's deck, email, or docs tools.
 
 Practice runs, AI phone calls, and meeting-bot joins all land as **sessions**.
-Read-only by default. The only writes are `ttai:upload_session` and
-`ttai:analyze_session`, and both need explicit confirmation.
+Read-only by default. The only write is `ttai:analyze_session`, and it needs
+explicit confirmation.
 
 ## Hard rules
 
@@ -37,8 +34,9 @@ Read-only by default. The only writes are `ttai:upload_session` and
   `org_id` for personal scope.
 - **Typed list first.** Default to `ttai:list_resources` with type `sessions`.
   Add a legacy filter (`user_email`, `from_date` / `to_date`, `hasLearning`,
-  `is_org`) only when you need a person, a date window, learning flags,
-  `duration`, or `analytics_url` — those switch to the enriched legacy list.
+  `is_org`) only when you need a person, a date window, learning flags, or
+  `analytics_url` — those switch to the enriched legacy list. Typed rows carry
+  `duration_seconds` once completed, and `user_metadata` when set.
 - **Count cheaply.** For a count, call `ttai:list_resources(sessions)` with
   `limit: 1, include_total: true`. Never page through results just to count.
 - **Request only needed fields.** The typed list returns IDs, status, and timestamps unless
@@ -49,10 +47,9 @@ Read-only by default. The only writes are `ttai:upload_session` and
   `ttai:get_resource(sessions)`. The legacy enriched list never returns them.
 - **One rubric per aggregate.** Report-card topics and weights come from each
   Scenario's rubric. Aggregate per Scenario. Compare Scenarios qualitatively.
-- **Confirm before writing.** Before `ttai:upload_session` or
-  `ttai:analyze_session`, state the Scenario ID and session IDs (or
-  transcript source) and wait for a yes. See
-  [references/ingest-and-reprocess.md](references/ingest-and-reprocess.md).
+- **Confirm before writing.** Before `ttai:analyze_session`, state the
+  Scenario ID and session IDs and wait for a yes. See
+  [references/reprocess.md](references/reprocess.md).
 - **Scenario faults go to `ttai-agent`.** This skill diagnoses. It never edits a
   Scenario.
 - **Privacy.** Coaching reports name people. Confirm the audience before sending
@@ -145,12 +142,11 @@ Every report states the population and window, the score summary, the top 3–5
 improvement areas with evidence, concrete actions, and `analytics_url` links for
 sessions worth a human review.
 
-### 5. Fill gaps or ingest (only on request)
+### 5. Fill gaps (only on request)
 
 Missing analysis → confirm IDs, `ttai:analyze_session` per session, poll.
-External call → confirm Scenario and source, `ttai:upload_session`. Steps,
-polling, and failure handling:
-[references/ingest-and-reprocess.md](references/ingest-and-reprocess.md).
+Steps, polling, failure handling, and why external calls are not ingested
+here: [references/reprocess.md](references/reprocess.md).
 
 ### 6. Distribute (optional)
 
@@ -191,7 +187,8 @@ per slide or section, evidence quote included.
   in the selected organization. Otherwise it returns only the caller's own. An
   empty page can mean missing permission.
 - **Advanced filters are REST-only.** `meta_*` and `$gte_created_at`-style
-  filters do nothing over MCP. Filter such fields after fetching.
+  filters are rejected over MCP (`Unsupported argument`). Typed rows return
+  `user_metadata`; filter on it after fetching.
 
 ## Key Files
 
@@ -199,6 +196,5 @@ per slide or section, evidence quote included.
   limits, response fields, score scales, status values
 - [references/report-templates.md](references/report-templates.md): team,
   Scenario health, coaching, and pattern-map formats
-- [references/ingest-and-reprocess.md](references/ingest-and-reprocess.md):
-  `ttai:upload_session` ingest, `ttai:analyze_session` backfill,
-  confirmation and polling
+- [references/reprocess.md](references/reprocess.md):
+  `ttai:analyze_session` backfill, confirmation and polling

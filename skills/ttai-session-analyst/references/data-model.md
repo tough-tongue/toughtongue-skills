@@ -70,7 +70,8 @@ the selected organization. Otherwise it returns the caller's own sessions.
 ## Session fields by tool
 
 **Typed list and get.** Always returned: `id`, `scenario_id`,
-`scenario_version_id`, `status`, `created_at`, `updated_at`, `completed_at`.
+`scenario_version_id`, `status`, `created_at`, `updated_at`, `completed_at`;
+`duration_seconds` once completed and `user_metadata` when set.
 Opt-in via `include_fields`:
 
 - `participant` — `user_name`, `user_email`.
@@ -82,7 +83,7 @@ Opt-in via `include_fields`:
 - `recording` — `recording_present`.
 - `processing` — `post_session_status`.
 
-Typed reads do not return `analytics_url`, `duration`, or `scenario_name`.
+Typed reads do not return `analytics_url` or `scenario_name`.
 
 **Legacy enriched list.** `id`, `scenario_id`,
 `scenario_name`, `created_at`, `completed_at`, `status`, `user_name`,

@@ -24,7 +24,8 @@ Each channel: what the user experiences, then how it starts.
 - **Meeting bot** — the agent joins Google Meet, Zoom, or Teams. Starts with
   `ttai:schedule_bot` with `kind: "meeting"`.
 - **Ingested** — an external transcript or recording, analyzed. Starts with
-  `ttai:upload_session`.
+  the REST API, not MCP:
+  [Create session](https://app.toughtongueai.com/docs/api-reference/sessions/create).
 
 Inbound calls route by trunk configuration in the web app; MCP lists trunks and
 calls. Choose the model for the voice and interaction, not the channel

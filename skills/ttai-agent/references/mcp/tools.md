@@ -30,7 +30,7 @@ keeps its own tools because risk hints are per tool.
 | Read records     | `ttai:list_resources`, `ttai:get_resource`               |
 | Read a schema    | `ttai:get_schema` (`"scenario"`)                         |
 | Scenarios        | `ttai:create_scenario`, `ttai:update_scenario`           |
-| Sessions         | `ttai:upload_session`, `ttai:analyze_session`            |
+| Sessions         | `ttai:analyze_session`, `ttai:set_user_metadata`         |
 | FileBases        | `ttai:create_filebase`, `ttai:write_filebase`                |
 | Bots             | `ttai:schedule_bot`, `ttai:cancel_bot` (meeting and phone) |
 | Access           | `ttai:create_token`, `ttai:authenticate_browser`         |
@@ -137,8 +137,6 @@ even when a client hides them.
 - `ttai:write_filebase` — replaces or deletes files in a FileBase.
 - `ttai:analyze_session` — fills only missing results (never re-scores); may
   fire the Scenario's post-session hooks.
-- `ttai:upload_session` — fetches a remote recording when `recording_url` is
-  given.
 - `ttai:authenticate_browser` — opens a live browser on the Scenario's browser
   profile.
 - `ttai:create_token` — grants access by link; a `scenario_access` email can
@@ -184,9 +182,10 @@ even when a client hides them.
 A FileBase is a folder of files with a `kind`: `app` (an Agent Desktop app) or
 `knowledge` (plain files an agent reads). Read them as type `filebases`.
 
-- `ttai:create_filebase(kind: app | knowledge, name, title, description?, visibility?)`
+- `ttai:create_filebase(kind: app | knowledge, name, title, description?, visibility?, storage?)`
   → an empty FileBase in the current org or personal space. `name` is a slug,
-  fixed at create, unique per space.
+  fixed at create, unique per space. An app requires `storage`: `cdn` (fast)
+  or `private` (files never fetchable by link). Knowledge omits it.
 - Access: an org FileBase is visible to every member; its creator and role
   EDIT+ edit it. `visibility: "private"` keeps it to its creator; set it at
   create (no MCP tool changes it). Featured FileBases are read-only (`403`).
@@ -273,15 +272,19 @@ Not the legacy Knowledge Base (`knowledge-bases`, `knowledge_base_ids`, tool
   Nothing is read from the user's machine. A meeting bot for a private
   Scenario needs it; without it the server rejects the bot. Otherwise omit it
   unless requested.
-- `ttai:upload_session(req_data)` is for automations that use Tough Tongue AI's analysis
-  and extraction on calls held elsewhere (dialer, Gong, Zoom): it uploads a
-  transcript or `recording_url` as a completed session, then the Scenario's
-  rubric and extraction variables run in the background. No live agent runs.
+- No MCP tool ingests calls held elsewhere (dialer, Gong, Zoom); that is the
+  REST API's
+  [Create session](https://app.toughtongueai.com/docs/api-reference/sessions/create).
 - `ttai:analyze_session(session_id, req_data: {})` queues the missing
   analysis/extraction configured on the Scenario. `req_data` is required; its
   flags are ignored. Poll `get_resource(sessions, id, include_fields: [processing])`
   until `post_session_status.state` leaves `running` (`idle` = done, `failed` =
   error), then read the results.
+- `ttai:set_user_metadata(type: "sessions", id, set?, unset?)` labels a session
+  with your own keys (deal stage, disposition, follow-up owner): `set` writes
+  string, number, or boolean values; `unset` removes keys. Needs EDIT on the
+  Scenario. Reads return them as `user_metadata`; MCP list filters cannot
+  match on them, so filter after fetching.
 - `ttai:create_token` takes one `request` with a `type` and returns `{type,
   token, expires_at, url}`:
   - `type: "scenario_access"` — `scenario_id`, `valid_for_hours` (1–168),

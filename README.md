@@ -137,8 +137,8 @@ one directly, for example `/toughtongue:ttai-agent`.
   lowest-scoring onboarding sessions and refine the scenario."_
 - **Prep for a meeting.** _"I meet Sarah Chen from Acme in 30 minutes. Create a
   quick practice scenario."_
-- **Score real calls automatically.** _"Every time a call ends in Gong, score
-  the transcript and email the rep a coaching report."_
+- **Label calls for follow-up.** _"Tag yesterday's calls where the prospect
+  asked about pricing with `follow_up: pricing`."_
 
 ## Update
 

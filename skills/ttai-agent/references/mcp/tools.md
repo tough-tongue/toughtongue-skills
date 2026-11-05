@@ -254,6 +254,7 @@ Not the legacy Knowledge Base (`knowledge-bases`, `knowledge_base_ids`, tool
     `start`–`end` window in `HH:MM`) and `retry` (`max_retries` 1–5, one
     `delays_minutes` entry per retry, `retry_on_failed` default `true`,
     `extraction_conditions` that must all match, `check_recent_calls`).
+    Needs edit access to the Scenario; private Scenarios are allowed.
     Procedure:
     [../entities/scenario-engine.md](../entities/scenario-engine.md#calling-campaigns).
   - `kind: "meeting"` — joins Google Meet, Zoom, or Teams visibly. Required:
@@ -265,21 +266,27 @@ Not the legacy Knowledge Base (`knowledge-bases`, `knowledge_base_ids`, tool
     artifacts), `login_required` (a signed-in Google Meet bot). `meeting_url`
     may hold several URLs, one per line. Needs a paid plan and edit access to
     the Scenario.
-- `ttai:cancel_bot(id)` takes a bot id from `list_resources(bots)` and cancels
-  either kind.
-- `session_credentials: "bot_uc"` is a server-side setting: the call or bot
-  runs the Scenario's attached MCP tools as the deploying Tough Tongue AI user.
-  Nothing is read from the user's machine. A meeting bot for a private
-  Scenario needs it; without it the server rejects the bot. Otherwise omit it
-  unless requested.
+- Follow a bot: `ttai:schedule_bot` returns `bots[].bot_id` (meeting),
+  `call_id` (one phone entry), or `batch_id` (several entries). Read status
+  with `get_resource(bots, id)` or
+  `list_resources(bots, filters: {batch_ids: [batch_id]})`; the bot's
+  `session_id` is the conversation, readable once it ends.
+- `ttai:cancel_bot(id)` cancels either kind only before it starts; a bot
+  already in its meeting or a ringing call cannot be stopped here.
+- `session_credentials: "bot_uc"` is a server-side setting: the session belongs
+  to the deploying Tough Tongue AI user and the agent gets that user's MCP
+  tools. Omitted, it runs as an anonymous guest with no MCP tools. Nothing is
+  read from the user's machine. A meeting bot for a private Scenario needs it;
+  without it the server rejects the bot. Otherwise omit it unless requested.
 - No MCP tool ingests calls held elsewhere (dialer, Gong, Zoom); that is the
   REST API's
   [Create session](https://app.toughtongueai.com/docs/api-reference/sessions/create).
-- `ttai:analyze_session(session_id, req_data: {})` queues the missing
-  analysis/extraction configured on the Scenario. `req_data` is required; its
-  flags are ignored. Poll `get_resource(sessions, id, include_fields: [processing])`
-  until `post_session_status.state` leaves `running` (`idle` = done, `failed` =
-  error), then read the results.
+- `ttai:analyze_session(session_id)` queues the missing analysis/extraction
+  configured on the Scenario. Poll
+  `get_resource(sessions, id, include_fields: [processing])` until
+  `post_session_status.state` leaves `running` (`idle` = done, `failed` =
+  error), then read the results. A 429 "Analysis limit reached for this
+  session." is final; any other 429 is a rate limit: wait, then retry.
 - `ttai:set_user_metadata(type: "sessions", id, set?, unset?)` labels a session
   with your own keys (deal stage, disposition, follow-up owner): `set` writes
   string, number, or boolean values; `unset` removes keys. Needs EDIT on the

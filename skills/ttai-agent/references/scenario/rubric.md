@@ -5,10 +5,24 @@ you write) and `processed_rubrik` (structured criteria derived from it).
 
 ## Contents
 
+- When to write one
 - `rubrik`
 - `processed_rubrik`
 - Reading scores
 - Agent rules
+
+## When to write one
+
+`rubrik` is optional; analysis is not. Keep `session_analysis.is_auto_analysis`
+true on every Scenario ([control.md](control.md)).
+
+- Empty `rubrik` → sessions are scored on default criteria: Communication
+  Skills, Problem-Solving Approach, Domain Knowledge, Professional Behavior.
+  Fine for general practice and most first drafts.
+- Write a custom `rubrik` only when scoring must be specific: sales stages, a
+  hiring bar, lead qualification, demo intelligence, a coaching pattern, or the
+  user asks for it. The recipes mark these cases.
+- Unsure whether the defaults fit? Ask the user before writing one.
 
 ## `rubrik`
 
@@ -37,7 +51,8 @@ whole object: it is replaced, not merged.
 
 ## Reading scores
 
-Analysis runs only when `session_analysis.is_auto_analysis` is true.
+Analysis runs only when `session_analysis.is_auto_analysis` is true, with or
+without a `rubrik`.
 
 - Compact: `ttai:list_resources(sessions)` with `include_fields: ["evaluation"]`.
 - Full detail: `ttai:get_resource(sessions)` (`evaluation_results.final_score`,

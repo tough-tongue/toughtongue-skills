@@ -270,8 +270,9 @@ Scenario.
 { "is_auto_analysis": true, "is_auto_submit": true, "enable_extraction": false }
 ```
 
-- `is_auto_analysis: true` whenever anyone will read reports; analysis does not
-  run otherwise. `is_auto_submit: true` uploads a recorded session without
+- `is_auto_analysis: true` always: send it on every create, and keep it on in
+  edits. Analysis does not run otherwise. Turn it off only when the user asks.
+  A `rubrik` is optional ([rubric.md](rubric.md)). `is_auto_submit: true` uploads a recorded session without
   asking the user (it matters only with `is_recording`).
 - `evaluation_target`: the participant to score in multi-party sessions.
 - `enable_extraction` + `extraction_vars` (`name`, `description`, `type`:

@@ -50,14 +50,16 @@ Load, in order:
 4. [control.md](control.md) — `strategy`, `appearance`, `tools_config`,
    `session_analysis`.
 5. [ai-instructions.md](ai-instructions.md) — prompt shape.
-6. [rubric.md](rubric.md) — who is scored and how.
+6. [rubric.md](rubric.md) — only when scoring must be specific; otherwise
+   leave `rubrik` empty and sessions score on default criteria.
 
 Build from supplied facts, not generic filler. The recipe decides the AI role,
 resistance, success evidence, and rubric subject; the references decide
 pipeline, controls, and prompt shape.
 
 Call `ttai:create_scenario` with no `id`; `name` and `ai_instructions` are
-required. Always send an explicit `tools_config`: when it is omitted, the server
+required. Always send `session_analysis` with `is_auto_analysis: true`. Always
+send an explicit `tools_config`: when it is omitted, the server
 registers a broad default tool set. On a validation error, fix the named field
 and retry.
 

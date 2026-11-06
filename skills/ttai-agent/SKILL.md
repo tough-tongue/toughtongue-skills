@@ -113,8 +113,10 @@ the job, the file, and when to read it.
 - **Answer from the user's documents** —
   [mcp/tools.md](references/mcp/tools.md#knowledge-filebases). PDFs or docs →
   knowledge FileBase → `knowledge_filebase_ids`.
-- **Write the rubric** — [scenario/rubric.md](references/scenario/rubric.md).
-  `rubrik`, `processed_rubrik`, who is scored.
+- **Write the rubric (optional)** —
+  [scenario/rubric.md](references/scenario/rubric.md). Analysis always on;
+  empty `rubrik` scores on default criteria. Custom one only for specific
+  scoring, or ask.
 - **Diagnose runtime behavior** —
   [scenario/runtime.md](references/scenario/runtime.md). Hang-ups, silence,
   wrap-up timing, tools over SIP.

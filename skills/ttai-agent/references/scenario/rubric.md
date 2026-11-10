@@ -5,24 +5,26 @@ you write) and `processed_rubrik` (structured criteria derived from it).
 
 ## Contents
 
-- When to write one
+- A rubric needs analysis on
 - `rubrik`
 - `processed_rubrik`
 - Reading scores
 - Agent rules
 
-## When to write one
+## A rubric needs analysis on
 
-`rubrik` is optional; analysis is not. Keep `session_analysis.is_auto_analysis`
-true on every Scenario ([control.md](control.md)).
+A `rubrik` is applied only when `session_analysis.is_auto_analysis` is true,
+and the server default is `false`. A Scenario with a rubric and analysis off
+shows the rubric in the web app but never scores a session, so the user gets no
+report.
 
-- Empty `rubrik` → sessions are scored on default criteria: Communication
-  Skills, Problem-Solving Approach, Domain Knowledge, Professional Behavior.
-  Fine for general practice and most first drafts.
-- Write a custom `rubrik` only when scoring must be specific: sales stages, a
-  hiring bar, lead qualification, demo intelligence, a coaching pattern, or the
-  user asks for it. The recipes mark these cases.
-- Unsure whether the defaults fit? Ask the user before writing one.
+- **Create:** send `session_analysis` with `is_auto_analysis: true` in the same
+  `ttai:create_scenario` call as `rubrik`.
+- **Edit:** before adding or changing `rubrik`, read the current
+  `session_analysis.is_auto_analysis`. If it is false or missing, set it to true
+  in the same `ttai:update_scenario` call and tell the user.
+- **Review or refine:** a Scenario that has a rubric with analysis off is a
+  defect. Name it and offer to turn analysis on.
 
 ## `rubrik`
 

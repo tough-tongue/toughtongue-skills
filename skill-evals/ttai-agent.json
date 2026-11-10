@@ -264,11 +264,20 @@
   },
   {
     "skills": ["ttai-agent"],
-    "query": "Create a quick practice scenario where I can rehearse small talk with a new colleague.",
+    "query": "Create a 10-minute first-round phone screen for a front-desk receptionist at our clinic. Score each candidate so I can compare them.",
     "expected_behavior": [
-      "Calls ttai:create_scenario with session_analysis.is_auto_analysis set to true",
-      "Leaves rubrik empty (default criteria) or asks the user whether they want custom scoring; does not invent a weighted rubric unprompted",
+      "Loads references/recipes/interview.md and writes a rubrik that scores observable candidate evidence",
+      "Calls ttai:create_scenario with rubrik and session_analysis.is_auto_analysis set to true in the same call",
       "Sends an explicit tools_config with end_session and returns the run link"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Add a rubric to my 'Clinic Front Desk Screen' scenario that scores empathy, accuracy and booking the appointment.",
+    "expected_behavior": [
+      "Reads the live Scenario with ttai:get_resource and checks session_analysis.is_auto_analysis before editing",
+      "When analysis is off or missing, sends rubrik and session_analysis.is_auto_analysis true in the same ttai:update_scenario call",
+      "Tells the user analysis is now on, then re-fetches to verify"
     ]
   }
 ]

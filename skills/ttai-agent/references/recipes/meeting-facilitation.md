@@ -110,7 +110,9 @@ If evaluated, make the target explicit:
 - **Meeting output** — decision clarity, ownership, risks surfaced, and
   follow-up quality.
 
-Do not use a generic sales or coaching rubric for a meeting.
+Do not use a generic sales or coaching rubric for a meeting. When you write a
+`rubrik`, send `"session_analysis": { "is_auto_analysis": true }` in the same
+call, or the meeting is never evaluated.
 
 ## Tools, closure, and quality checklist
 
@@ -126,7 +128,8 @@ Do not use a generic sales or coaching rubric for a meeting.
 - [ ] Nudge triggers, channel, cadence, and return-to-observation behavior are
       explicit.
 - [ ] Synthesis separates decisions, owners, disagreements, and unknowns.
-- [ ] Rubric evaluates the stated target only.
+- [ ] Rubric evaluates the stated target only, and is sent with
+      `session_analysis.is_auto_analysis: true`.
 
 ## Key Files
 

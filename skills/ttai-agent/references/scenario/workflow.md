@@ -50,18 +50,19 @@ Load, in order:
 4. [control.md](control.md) — `strategy`, `appearance`, `tools_config`,
    `session_analysis`.
 5. [ai-instructions.md](ai-instructions.md) — prompt shape.
-6. [rubric.md](rubric.md) — only when scoring must be specific; otherwise
-   leave `rubrik` empty and sessions score on default criteria.
+6. [rubric.md](rubric.md) — who is scored and how; a `rubrik` always goes with
+   `is_auto_analysis: true`.
 
 Build from supplied facts, not generic filler. The recipe decides the AI role,
 resistance, success evidence, and rubric subject; the references decide
 pipeline, controls, and prompt shape.
 
 Call `ttai:create_scenario` with no `id`; `name` and `ai_instructions` are
-required. Always send `session_analysis` with `is_auto_analysis: true`. Always
-send an explicit `tools_config`: when it is omitted, the server
-registers a broad default tool set. On a validation error, fix the named field
-and retry.
+required. When you send `rubrik` (the usual case), send `session_analysis`
+with `is_auto_analysis: true` in the same call: the server default is `false`,
+and a rubric without it never runs. Always send an explicit `tools_config`:
+when it is omitted, the server registers a broad default tool set. On a
+validation error, fix the named field and retry.
 
 Return the run link `https://app.toughtongueai.com/run/<scenario_id>`. For a
 private Scenario (only when the user asked to limit access), offer a Scenario
@@ -75,7 +76,10 @@ Recorded browser steps → the `ttai-browser-demo-builder` skill.
 2. Change only the requested fields. Most nested objects merge one level, but a
    tool's `tool_settings` and the whole `ai_model_config` are replaced: send the
    full current object plus your change. Full merge rules:
-   [../mcp/tools.md](../mcp/tools.md#updating-a-scenario).
+   [../mcp/tools.md](../mcp/tools.md#updating-a-scenario). Adding or changing
+   `rubrik`: if the fetched `session_analysis.is_auto_analysis` is false or
+   missing, also send `"session_analysis": { "is_auto_analysis": true }` and
+   tell the user analysis is now on.
 3. Call `ttai:update_scenario` with one `scenario` object: its `id` plus those
    fields. Put `save_as_version` (a 1–100 character label) inside it to archive
    the prior state first when the change is risky. The label names the new

@@ -108,6 +108,7 @@ providers clamp tighter).
 | Polished TTS / full STT·LLM·TTS       | Landmass `cascade`                    |
 | `super` Scenario / live avatar        | Landmass `gemini` or `gemini-stable`  |
 | Silent meeting assistant              | `meet_assist`; verify its live schema |
+| Meeting participant, silent until called | `super` + standby flow on Landmass realtime ([recipe](../recipes/meeting-facilitation.md#participant-that-speaks-only-when-called)) |
 
 ## Situation → starting stamp
 

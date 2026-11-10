@@ -12,7 +12,8 @@ description: >-
   knowledge FileBases, and troubleshoots ttai MCP sign-in. Use when the user
   wants a voice agent or practice Scenario created or improved ("create a
   voice agent", "the agent ends calls too early", "make it sound more
-  natural"), a call placed, a meeting bot sent, or a Tough Tongue AI account
+  natural", "only speak when we say its name"), a call placed, a meeting bot
+  sent, or a Tough Tongue AI account
   question answered. Not for reports across many sessions
   (ttai-session-analyst) or browser demo steps (ttai-browser-demo-builder).
 when_to_use: >-
@@ -133,9 +134,10 @@ the job, the file, and when to read it.
   Browser or slide demo.
 - **Interviewer** — [recipes/interview.md](references/recipes/interview.md).
   Case, behavioral, screening interviews.
-- **Meeting facilitator or observer** —
+- **Meeting facilitator, observer, or participant** —
   [recipes/meeting-facilitation.md](references/recipes/meeting-facilitation.md).
-  Agenda, nudges, synthesis.
+  Agenda, nudges, synthesis; a participant that stays silent until called by
+  name (wake name, quiet words).
 - **Add-on: Cascade speech rules** —
   [recipes/cascade-tts.md](references/recipes/cascade-tts.md). Only when the
   model is Landmass `cascade`.

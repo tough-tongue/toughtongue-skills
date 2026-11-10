@@ -46,6 +46,10 @@ Create **requires** `name` and `ai_instructions`; set the rest deliberately.
 
 `super` needs a Landmass model and a non-empty first stage with flows (each
 flow: `name`, `instructions`; stage: `name`, `instructions`, `goal`, `role`).
+A flow may set `ai_model`: omit it to speak with the Scenario's voice, or send
+`{ "provider": "standby", "model": "standby" }` for a silent flow that listens
+and hands off but never speaks (the meeting participant pattern in
+[../recipes/meeting-facilitation.md](../recipes/meeting-facilitation.md#participant-that-speaks-only-when-called)).
 `coding` uses `coding_question`. Never send `super_agent`.
 
 ## strategy
@@ -94,8 +98,9 @@ check-in, `false` lets a small model write the nudge. Practice default:
 5000–8000, `end_session: false`. Roleplay counterparts (prospect, interviewer)
 use `force_agent_to_speak: false` so the nudge stays in character; AI-led
 callers use `true`, and outbound calls run lower thresholds (3000–5000) than
-other scenarios. Observers and facilitators may want silence to stay silent —
-see the meeting recipe.
+other scenarios. Observers, facilitators, and meeting participants want
+silence to stay silent: a long threshold with `end_session: false` and
+`force_agent_to_speak: false` — see the meeting recipe.
 
 **Conductor messages:** `trigger` `"time"` (needs `time_seconds`) or
 `"on_demand"` (at most one; the agent calls it as a tool when it needs

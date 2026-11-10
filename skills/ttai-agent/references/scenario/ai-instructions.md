@@ -42,7 +42,8 @@ outperform a long prompt with duplicated instructions.
 - **Follow the thread.** If they say something interesting, pursue it — do not
   jump phases robotically.
 - **Silence can be the job.** Meeting observers and notetakers stay quiet until
-  addressed. Do not fill pauses.
+  addressed. Do not fill pauses. In a group meeting a prompt rule alone does not
+  keep an agent silent; use the participant pattern in the meeting recipe.
 - Every `{{ var }}` has a missing-value fallback: a `default:` filter or an
   `{% if var != blank %}` branch ([dynamic-variables.md](dynamic-variables.md)).
   An unset variable renders as empty text, so a bare line around it breaks.

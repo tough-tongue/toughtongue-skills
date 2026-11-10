@@ -279,5 +279,29 @@
       "When analysis is off or missing, sends rubrik and session_analysis.is_auto_analysis true in the same ttai:update_scenario call",
       "Tells the user analysis is now on, then re-fetches to verify"
     ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Build an agent called Maya that sits in our weekly product Google Meet and only talks when someone says her name. If we tell her to be quiet she should stop right away.",
+    "expected_behavior": [
+      "Loads references/recipes/meeting-facilitation.md and uses the participant pattern, not a default Scenario with a 'speak only when called' prompt rule",
+      "Creates a super Scenario with one stage and one flow named observer whose ai_model is exactly {provider: 'standby', model: 'standby'}",
+      "Supervisor instructions hand off to the observer silently at session start and after every answer; quiet words stop it without a reply or apology",
+      "Observer instructions list concrete hand-back and stay-silent examples, including the name alone and the name with a quiet word",
+      "Sets strategy.skip_auto_start true, a long strategy.silence threshold with end_session false and force_agent_to_speak false, and a max_duration_seconds that covers the meeting",
+      "Uses a Landmass realtime model and does not instruct the agent to call end_session unless that tool is registered",
+      "Asks what Maya may answer from, and offers the five-step test before sending it into a real meeting; does not call ttai:schedule_bot without the user confirming the meeting link"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "My agent 'Sales Engineer Sam' keeps talking over everyone in our team Zoom even though the prompt says to stay quiet unless asked. Fix it.",
+    "expected_behavior": [
+      "Reads the current Scenario with ttai:get_resource before changing it",
+      "Explains that a default Scenario answers every turn in a group meeting and that a prompt rule alone does not hold",
+      "Proposes converting it to the participant pattern (super Scenario, supervisor plus standby observer flow) and keeps the existing facts, voice, and language",
+      "Uses save_as_version on ttai:update_scenario so the prior state is archived, after confirming the change with the user",
+      "States the limits plainly: the wake decision is a model judgment, there is no chime, and each new question needs the name"
+    ]
   }
 ]

@@ -170,7 +170,8 @@ even when a client hides them.
   (`knowledge_base_ids`, `knowledge_filebase_ids`, `custom_function_ids`,
   `pre_connect`); the create/update response returns the full authoring state.
 - Type rules: `default` is the normal agent; `super` needs `stages` with a
-  non-empty first stage and flows, and a Landmass model; `quiz`, `coding`
+  non-empty first stage and flows, and a Landmass model (a flow's `ai_model`
+  may be the standby pair `{provider: "standby", model: "standby"}`); `quiz`, `coding`
   (`coding_question`), and `meet_assist` need their schema-defined
   configuration. Never send `super_agent`.
 - Plan checks run on write: Scenario count limits, Ocean model access, and

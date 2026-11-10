@@ -261,5 +261,23 @@
       "Writes a SLIDE MAP with the exact slide count and one line per slide (key figures included), and starts each FLOW step with its slide",
       "Keeps the curriculum, mentions the deck in user_instructions, updates via ttai:update_scenario with a save_as_version label for the new version, then re-fetches to verify"
     ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Create a 10-minute first-round phone screen for a front-desk receptionist at our clinic. Score each candidate so I can compare them.",
+    "expected_behavior": [
+      "Loads references/recipes/interview.md and writes a rubrik that scores observable candidate evidence",
+      "Calls ttai:create_scenario with rubrik and session_analysis.is_auto_analysis set to true in the same call",
+      "Sends an explicit tools_config with end_session and returns the run link"
+    ]
+  },
+  {
+    "skills": ["ttai-agent"],
+    "query": "Add a rubric to my 'Clinic Front Desk Screen' scenario that scores empathy, accuracy and booking the appointment.",
+    "expected_behavior": [
+      "Reads the live Scenario with ttai:get_resource and checks session_analysis.is_auto_analysis before editing",
+      "When analysis is off or missing, sends rubrik and session_analysis.is_auto_analysis true in the same ttai:update_scenario call",
+      "Tells the user analysis is now on, then re-fetches to verify"
+    ]
   }
 ]

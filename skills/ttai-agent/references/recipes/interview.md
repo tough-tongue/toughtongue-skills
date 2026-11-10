@@ -120,6 +120,10 @@ Score observable evidence:
 Adjust or omit dimensions to fit the competency. Do not invent a universal
 weighting formula; the rubric defines its own internally consistent scoring.
 
+Send the rubric with `"session_analysis": { "is_auto_analysis": true }` in the
+same call. Without it no candidate is scored and no report is sent
+([../scenario/rubric.md](../scenario/rubric.md)).
+
 ## Tools, closure, and quality checklist
 
 - Enable a visual tool only when an exhibit, case card, or timed artifact is
@@ -134,6 +138,7 @@ weighting formula; the rubric defines its own internally consistent scoring.
 - [ ] Reference answers and later exhibits cannot leak early.
 - [ ] Candidate gets credit for defensible alternatives.
 - [ ] Rubric scores observable candidate evidence.
+- [ ] `rubrik` is sent with `session_analysis.is_auto_analysis: true`.
 
 ## Key Files
 

@@ -114,7 +114,8 @@ the job, the file, and when to read it.
   [mcp/tools.md](references/mcp/tools.md#knowledge-filebases). PDFs or docs →
   knowledge FileBase → `knowledge_filebase_ids`.
 - **Write the rubric** — [scenario/rubric.md](references/scenario/rubric.md).
-  `rubrik`, `processed_rubrik`, who is scored.
+  `rubrik`, `processed_rubrik`, who is scored. A `rubrik` always goes with
+  `session_analysis.is_auto_analysis: true`; without it the rubric never runs.
 - **Diagnose runtime behavior** —
   [scenario/runtime.md](references/scenario/runtime.md). Hang-ups, silence,
   wrap-up timing, tools over SIP.

@@ -5,10 +5,26 @@ you write) and `processed_rubrik` (structured criteria derived from it).
 
 ## Contents
 
+- A rubric needs analysis on
 - `rubrik`
 - `processed_rubrik`
 - Reading scores
 - Agent rules
+
+## A rubric needs analysis on
+
+A `rubrik` is applied only when `session_analysis.is_auto_analysis` is true,
+and the server default is `false`. A Scenario with a rubric and analysis off
+shows the rubric in the web app but never scores a session, so the user gets no
+report.
+
+- **Create:** send `session_analysis` with `is_auto_analysis: true` in the same
+  `ttai:create_scenario` call as `rubrik`.
+- **Edit:** before adding or changing `rubrik`, read the current
+  `session_analysis.is_auto_analysis`. If it is false or missing, set it to true
+  in the same `ttai:update_scenario` call and tell the user.
+- **Review or refine:** a Scenario that has a rubric with analysis off is a
+  defect. Name it and offer to turn analysis on.
 
 ## `rubrik`
 
@@ -37,7 +53,8 @@ whole object: it is replaced, not merged.
 
 ## Reading scores
 
-Analysis runs only when `session_analysis.is_auto_analysis` is true.
+Analysis runs only when `session_analysis.is_auto_analysis` is true, with or
+without a `rubrik`.
 
 - Compact: `ttai:list_resources(sessions)` with `include_fields: ["evaluation"]`.
 - Full detail: `ttai:get_resource(sessions)` (`evaluation_results.final_score`,

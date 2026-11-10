@@ -270,9 +270,13 @@ Scenario.
 { "is_auto_analysis": true, "is_auto_submit": true, "enable_extraction": false }
 ```
 
-- `is_auto_analysis: true` whenever anyone will read reports; analysis does not
-  run otherwise. `is_auto_submit: true` uploads a recorded session without
-  asking the user (it matters only with `is_recording`).
+- `is_auto_analysis: true` whenever the Scenario has a `rubrik`, whether you
+  just wrote it or it was already there: send both in the same call. The
+  server default is `false`, and a rubric with analysis off is never applied,
+  so the user gets no report ([rubric.md](rubric.md)). With no rubric, turn it
+  on when anyone will read reports. Turn it off only when the user asks.
+- `is_auto_submit: true` uploads a recorded session without asking the user (it
+  matters only with `is_recording`).
 - `evaluation_target`: the participant to score in multi-party sessions.
 - `enable_extraction` + `extraction_vars` (`name`, `description`, `type`:
   `text`|`number`|`boolean`|`list`|`date`) for structured capture.
